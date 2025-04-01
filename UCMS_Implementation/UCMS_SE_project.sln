@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UCMS", "UCMS\UCMS.csproj", "{8DE58E76-458E-4A27-920D-237DB46F3B54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UCMS_Test", "UCMS_Test\UCMS_Test.csproj", "{797E4A8A-6C82-4EA3-8E21-D1652693702C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8DE58E76-458E-4A27-920D-237DB46F3B54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DE58E76-458E-4A27-920D-237DB46F3B54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DE58E76-458E-4A27-920D-237DB46F3B54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DE58E76-458E-4A27-920D-237DB46F3B54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{797E4A8A-6C82-4EA3-8E21-D1652693702C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{797E4A8A-6C82-4EA3-8E21-D1652693702C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{797E4A8A-6C82-4EA3-8E21-D1652693702C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{797E4A8A-6C82-4EA3-8E21-D1652693702C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

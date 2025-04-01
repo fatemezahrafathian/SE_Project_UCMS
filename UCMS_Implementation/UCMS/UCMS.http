@@ -1,0 +1,6 @@
+@UCMS_HostAddress = http://localhost:5269
+
+GET {{UCMS_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
