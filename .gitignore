@@ -1,0 +1,59 @@
+# .gitignore for ASP.NET Core MVC
+# Visual Studio files  
+.vs/  
+*.suo  
+*.user  
+*.userosscache  
+*.sln.docstates  
+
+# Build results  
+[Dd]ebug/  
+[Rr]elease/  
+[xX]64/  
+[xX]86/  
+[Aa][Rr]m/  
+[Aa][Rr]m64/  
+binaries/  
+obj/  
+bin/  
+
+# ASP.NET Core  
+wwwroot/lib/  
+wwwroot/css/  
+wwwroot/js/  
+
+# Publish results  
+publish/  
+publishoutput/  
+
+# NuGet Packages  
+*.nupkg  
+*.snupkg  
+*.nuspec  
+*.db  
+
+# User secrets  
+secrets.json  
+
+# Sensitive files  
+appsettings.Development.json  
+appsettings.Production.json  
+appsettings.*.json  
+
+# Temporary files  
+*.log  
+*.tlog  
+*.tmp  
+*.temp  
+
+# Coverage Results  
+coverage/  
+*.coverage  
+*.coveragexml  
+
+# IDE and Editor specific files  
+*.vs  
+*.vscode  
+
+# Other files  
+.env  
