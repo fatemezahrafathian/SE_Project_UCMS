@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using UCMS.DTOs.User;
 using UCMS.Models;
 using UCMS.Services.UserService;
 
@@ -17,9 +18,11 @@ namespace UCMS.Controllers
         {
             _userService = userService;
         }
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+
+        [HttpGet("users")]
+        public async Task<ActionResult<List<OutputUserDto>>> GetUsers()
         {
-            var users = await _userService.GetAllAsync();
+            var users = await _userService.GetAllUsersAsync();
             return Ok(users);
         }
     }
