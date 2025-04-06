@@ -23,8 +23,8 @@ jobs:
       id: project-path  
       run: echo "PROJECT_PATH=UCMS_Implementation\UCMS\UCMS.csproj" >> $GITHUB_ENV  
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore ${{ env.PROJECT_PATH }}
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test ${{ env.PROJECT_PATH }} --configuration Release --no-build --verbosity normal
