@@ -1,5 +1,4 @@
 # This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
 name: .NET
 
@@ -20,6 +19,9 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
+    - name: Define Project Path  
+      id: project-path  
+      run: echo "PROJECT_PATH=UCMS_Implementation\UCMS\UCMS.csproj" >> $GITHUB_ENV  
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
