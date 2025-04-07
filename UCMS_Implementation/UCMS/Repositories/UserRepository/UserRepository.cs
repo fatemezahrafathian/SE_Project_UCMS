@@ -45,6 +45,19 @@ public class UserRepository : IUserRepository
         return await _context.Users.FirstOrDefaultAsync(u => u.VerificationToken == verificationToken);
     }
 
+    public async Task<bool> DeleteUserById(int id)
+    {
+        var user = await GetUserByIdAsync(id);
+
+        if (user != null)
+        {
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        return false;
+    }
+
     public async Task UpdateUserAsync(User user) // to be implemented
     {
         // if (user == null)

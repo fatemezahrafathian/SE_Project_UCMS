@@ -52,5 +52,23 @@ namespace UCMS.Services.UserService
                 Message = Messages.UserFound
             };
         }
+
+        public async Task<ServiceResponse<bool>> DeleteUserAsync(int userId)
+        {
+            bool reuslt = await _userRepository.DeleteUserById(userId);
+
+            ServiceResponse<bool> serviceResponse = new ServiceResponse<bool>
+            {
+                Data = reuslt,
+                Success = reuslt,
+            };
+
+            if (reuslt)
+                serviceResponse.Message = string.Format(Messages.DeleteUser, userId);
+            else serviceResponse.Message = string.Format(Messages.UserNotFound, userId);
+
+            return serviceResponse;
+        }
+
     }
 }

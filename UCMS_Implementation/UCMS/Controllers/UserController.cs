@@ -7,7 +7,7 @@ using UCMS.Services.UserService;
 
 namespace UCMS.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -19,7 +19,7 @@ namespace UCMS.Controllers
             _userService = userService;
         }
 
-        [HttpGet("users")]
+        [HttpGet]
         public async Task<ActionResult<List<OutputUserDto>>> GetUsers()
         {
             var users = await _userService.GetAllUsersAsync();
@@ -32,6 +32,16 @@ namespace UCMS.Controllers
             var response = await _userService.GetUserByIdAsync(id);
 
             if (response.Data == null) return NotFound(response.Message);
+
+            return Ok(response);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<bool>> deleteUserById(int id)
+        {
+            var response = await _userService.DeleteUserAsync(id);
+
+            if (response.Data == false) return NotFound(response.Message);
 
             return Ok(response);
         }

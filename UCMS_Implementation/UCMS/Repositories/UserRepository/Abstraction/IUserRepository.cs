@@ -10,5 +10,7 @@ public interface IUserRepository
     Task<User?> GetUserByEmailAsync(string email);
     Task<User?> GetUserByUsernameAsync(string username);
     Task<User?> GetUserByVerificationTokenAsync(string verificationToken);
+
+    Task<bool> DeleteUserById(int id);
     Task UpdateUserAsync(User user);
 }

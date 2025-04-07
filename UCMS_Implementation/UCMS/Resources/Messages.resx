@@ -150,4 +150,7 @@
   <data name="AllUsers" xml:space="preserve">
     <value>All users.</value>
   </data>
+  <data name="DeleteUser" xml:space="preserve">
+    <value>User with id = {0} deleted successfully.</value>
+  </data>
 </root>

@@ -8,5 +8,5 @@ public interface IUserService
     Task<ServiceResponse<List<OutputUserDto>>> GetAllUsersAsync();
     // Task<ServiceResponse<bool>> UpdateUserProfileAsync(int userId, UpdateUserDto updateUserDto);
     // Task<ServiceResponse<bool>> ChangePasswordAsync(int userId, ChangePasswordDto changePasswordDto);
-    // Task<ServiceResponse<bool>> DeleteUserAsync(int userId);
+     Task<ServiceResponse<bool>> DeleteUserAsync(int userId);
 }
