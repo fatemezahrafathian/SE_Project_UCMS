@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using UCMS.DTOs.User;
 using UCMS.Models;
 using UCMS.Repositories.UserRepository.Abstraction;
+using UCMS.Resources;
 
 namespace UCMS.Services.UserService
 {
@@ -25,9 +27,30 @@ namespace UCMS.Services.UserService
             {
                 Data = responseUsers,
                 Success = true,
-                Message = "All Users"
+                Message = Messages.AllUsers
             };
-          
+        }
+
+        public async Task<ServiceResponse<OutputUserDto>> GetUserByIdAsync(int userId)
+        {
+            User? user = await _userRepository.GetUserByIdAsync(userId);
+
+            if (user == null)
+            {
+                return new ServiceResponse<OutputUserDto>
+                {
+                    Success = false,
+                    Message = String.Format(Messages.UserNotFound, userId)
+                };
+            }
+
+            OutputUserDto responseUser = _mapper.Map<OutputUserDto>(user);
+            return new ServiceResponse<OutputUserDto>
+            {
+                Data = responseUser,
+                Success = true,
+                Message = Messages.UserFound
+            };
         }
     }
 }

@@ -25,5 +25,15 @@ namespace UCMS.Controllers
             var users = await _userService.GetAllUsersAsync();
             return Ok(users);
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<OutputUserDto>> GetUserById(int id)
+        {
+            var response = await _userService.GetUserByIdAsync(id);
+
+            if (response.Data == null) return NotFound(response.Message);
+
+            return Ok(response);
+        }
     }
 }
