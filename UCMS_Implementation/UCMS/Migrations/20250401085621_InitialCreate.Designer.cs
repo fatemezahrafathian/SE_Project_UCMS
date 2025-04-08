@@ -71,7 +71,17 @@ namespace UCMS.Migrations
                     b.Property<string>("LastName")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+                    b.OwnsOne("UCMS.Models.OneTimeCode", "OneTimeCode", cb =>
+                    {
+                        cb.Property<string>("Code")
+                            .HasColumnName("OneTimeCode_Code")
+                            .HasColumnType("text");
 
+                        cb.Property<DateTime>("Expiry")
+                            .HasColumnName("OneTimeCode_Expiry")
+                            .HasColumnType("timestamp with time zone");
+                    });
+                    
                     b.Property<byte[]>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(256)

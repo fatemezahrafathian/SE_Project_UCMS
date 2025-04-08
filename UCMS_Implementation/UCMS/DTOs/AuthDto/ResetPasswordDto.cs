@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
+using UCMS.Models;
 
 namespace UCMS.DTOs.AuthDto;
 
-public class LoginDto
+public class ResetPasswordDto
 {
     [Required, MaxLength(100)]
     public string Email { get; init; }
-    [Required, MinLength(6), MaxLength(100)]
-    public string Password { get; init; }
+    public OneTimeCode OneTimeCode { get; set; }
 }

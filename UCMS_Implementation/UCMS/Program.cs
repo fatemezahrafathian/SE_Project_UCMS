@@ -46,6 +46,8 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICookieService,CookieService>();
 builder.Services.AddScoped<ITokenService,TokenService>();
+builder.Services.AddScoped<IOneTimeCodeService, OneTimeCodeService>();
+builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(options =>{
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

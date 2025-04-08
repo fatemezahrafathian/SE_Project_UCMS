@@ -87,6 +87,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Expired code.
+        /// </summary>
+        public static string ExpiredCode {
+            get {
+                return ResourceManager.GetString("ExpiredCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Internal Server Error.
         /// </summary>
         public static string InternalServerError {
@@ -96,11 +105,11 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to InvalidInputeMessage.
+        ///   Looks up a localized string similar to InvalidInputMessage.
         /// </summary>
-        public static string InvalidInputeMessage {
+        public static string InvalidInputMessage {
             get {
-                return ResourceManager.GetString("InvalidInputeMessage", resourceCulture);
+                return ResourceManager.GetString("InvalidInputMessage", resourceCulture);
             }
         }
         
@@ -128,6 +137,15 @@ namespace UCMS.Resources {
         public static string LogoutSuccessfulyMessage {
             get {
                 return ResourceManager.GetString("LogoutSuccessfulyMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OneTimeCodeSent.
+        /// </summary>
+        public static string OneTimeCodeSent {
+            get {
+                return ResourceManager.GetString("OneTimeCodeSent", resourceCulture);
             }
         }
         

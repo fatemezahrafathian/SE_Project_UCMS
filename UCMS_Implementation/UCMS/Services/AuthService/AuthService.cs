@@ -2,9 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Routing;
 using UCMS.DTOs.AuthDto;
 using UCMS.Models;
@@ -125,17 +123,17 @@ public class AuthService : IAuthService
 
         return confirmationUrl;
     }
-    public async Task<ServiceResponse<string>> Login(LoginDto loginDto)
+    public async Task<ServiceResponse<string?>> Login(LoginDto loginDto)
     {
-        if (string.IsNullOrEmpty(loginDto.Emaile) || string.IsNullOrEmpty(loginDto.Password))
-            return new ServiceResponse<string?>{Success = false,Message = Resources.Messages.InvalidInputeMessage};
+        if (string.IsNullOrEmpty(loginDto.Email) || string.IsNullOrEmpty(loginDto.Password))
+            return new ServiceResponse<string?>{Success = false,Message = Messages.InvalidInputMessage};
 
-        var user = await _userRepository.GetUserByEmailAsync(loginDto.Emaile);
+        var user = await _userRepository.GetUserByEmailAsync(loginDto.Email);
 
         if (user is null)
-            return new ServiceResponse<string?> { Success = false, Message = Resources.Messages.UserNotFoundMessage };
+            return new ServiceResponse<string?> { Success = false, Message = Messages.UserNotFoundMessage };
         if (!await _passwordService.VerifyPasswordAsync(loginDto.Password, user.PasswordSalt, user.PasswordHash))
-            return new ServiceResponse<string?> { Success = false, Message = Resources.Messages.WrongPasswordMessage };
+            return new ServiceResponse<string?> { Success = false, Message = Messages.WrongPasswordMessage };
         var claims = new List<Claim>()
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -144,28 +142,28 @@ public class AuthService : IAuthService
         };
         _cookieService.CreateCookie(_tokenService.GenerateToken(claims));
 
-        return new ServiceResponse<string?> { Success = true, Message = Resources.Messages.LoginSuccessfulMessage };
+        return new ServiceResponse<string?> { Success = true, Message = Messages.LoginSuccessfulMessage };
     }
     public async Task<ServiceResponse<string?>> Logout()
     {
         if (_cookieService.GetCookieValue() != null) _cookieService.DeleteTokenCookie();
 
-        return new ServiceResponse<string?> { Success = true, Message = Resources.Messages.LogoutSuccessfulyMessage };
+        return new ServiceResponse<string?> { Success = true, Message = Messages.LogoutSuccessfulyMessage };
     }
     public async Task<ServiceResponse<string>> GetAuthorized()
     {
         var token = _cookieService.GetCookieValue();
         if (string.IsNullOrEmpty(token))
-            return new ServiceResponse<string>
-                { Data = null, Success = false, Message = Resources.Messages.UnauthorizedMessage };
+            return new ServiceResponse<string>{Success = false, Message = Messages.UnauthorizedMessage };
 
         int userId = _tokenService.GetUserId(_httpContextAccessor.HttpContext?.User);
         var user = await _userRepository.GetUserByIdAsync(userId);
         if (user is null)
             return new ServiceResponse<string>
-                { Data = null, Success = false, Message = Resources.Messages.UserNotFoundMessage };
+                { Success = false, Message = Messages.UserNotFoundMessage };
 
         return new ServiceResponse<string>
-            { Data = null, Success = true, Message = Resources.Messages.AuthorizedMessage };
+            { Success = true, Message = Messages.AuthorizedMessage };
     }
+    
 }

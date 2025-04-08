@@ -12,9 +12,11 @@ namespace UCMS.Controllers;
 public class AuthController: ControllerBase
 {
     private readonly IAuthService _authService;
-    public AuthController(IAuthService authService)
+    private readonly IPasswordService _passwordService;
+    public AuthController(IAuthService authService, IPasswordService passwordService)
     {
         _authService = authService;
+        _passwordService=passwordService;
     }
 
     [HttpPost("register")]
@@ -70,7 +72,7 @@ public class AuthController: ControllerBase
             {
                 return Ok(new { message = response.Message }); 
             }
-            if (response.Message=="InvalidInputeMessage")
+            if (response.Message=="InvalidInputMessage")
             {
                 return BadRequest(new { message = response.Message }); 
             }
@@ -105,6 +107,25 @@ public class AuthController: ControllerBase
         {
             return Unauthorized(new { message = response.Message });
         }
+        return Ok(new { message = response.Message });
+    }
+    [HttpPost("RequestTempPassword")]
+    public async Task<IActionResult> RequestTempPassword([FromBody] ForgetPasswordDto forgetPasswordDto)
+    {
+        var response = await _passwordService.RequestPasswordResetAsync(forgetPasswordDto);
+        if (!response.Success)
+            return BadRequest(new { message = response.Message });
+
+        return Ok(new { message = response.Message });
+    }
+
+    [HttpPost("TempPassword")]
+    public async Task<IActionResult> TempPassword([FromBody] ResetPasswordDto dto)
+    {
+        var response = await _passwordService.TempPasswordAsync(dto);
+        if (!response.Success)
+            return BadRequest(new { message = response.Message });
+
         return Ok(new { message = response.Message });
     }
 }

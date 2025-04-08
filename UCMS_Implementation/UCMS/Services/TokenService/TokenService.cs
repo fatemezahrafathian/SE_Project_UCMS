@@ -3,7 +3,6 @@ using System.Security.Claims;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
-using UCMS.Models;
 
 namespace UCMS.Services.TokenService;
 
@@ -32,9 +31,9 @@ public class TokenService : ITokenService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-    public int GetUserId(ClaimsPrincipal user)
+    public int GetUserId(ClaimsPrincipal claimsPrincipal)
     {
-        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+        var userIdClaim = claimsPrincipal.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId))
         {
             return userId;
@@ -44,7 +43,7 @@ public class TokenService : ITokenService
 
     public string? GetUserRole(ClaimsPrincipal user)
     {
-        return user?.FindFirst(ClaimTypes.Role)?.Value;
+        return user.FindFirst(ClaimTypes.Role)?.Value;
     }
 
 }

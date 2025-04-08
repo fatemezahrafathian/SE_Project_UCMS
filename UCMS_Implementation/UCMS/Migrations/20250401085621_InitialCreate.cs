@@ -37,6 +37,8 @@ namespace UCMS.Migrations
                     VerificationToken = table.Column<string>(type: "character varying(44)", maxLength: 44, nullable: true),
                     IsConfirmed = table.Column<bool>(type: "boolean", nullable: false),
                     Role = table.Column<bool>(type: "integer", nullable: false,defaultValue: 0),
+                    OneTimeCode_Code = table.Column<string>(type: "text", nullable: true),
+                    OneTimeCode_Expiry = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                 },
                 constraints: table =>
                 {

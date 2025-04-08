@@ -20,5 +20,7 @@ public class DataContext : DbContext
         modelBuilder.Entity<User>()
             .HasIndex(u => u.Username)
             .IsUnique();
+        modelBuilder.Entity<User>()
+            .OwnsOne(u => u.OneTimeCode);
     }
 }

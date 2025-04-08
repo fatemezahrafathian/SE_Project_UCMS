@@ -42,8 +42,8 @@
     <data name="InternalServerError" xml:space="preserve">
         <value>Internal Server Error</value>
     </data>
-    <data name="InvalidInputeMessage" xml:space="preserve">
-        <value>InvalidInputeMessage</value>
+    <data name="InvalidInputMessage" xml:space="preserve">
+        <value>InvalidInputMessage</value>
     </data>
     <data name="UserNotFoundMessage" xml:space="preserve">
         <value>UserNotFoundMessage</value>
@@ -62,5 +62,11 @@
     </data>
     <data name="AuthorizedMessage" xml:space="preserve">
         <value>AuthorizedMessage</value>
+    </data>
+    <data name="OneTimeCodeSent" xml:space="preserve">
+        <value>OneTimeCodeSent</value>
+    </data>
+    <data name="ExpiredCode" xml:space="preserve">
+        <value>Expired code</value>
     </data>
 </root>
