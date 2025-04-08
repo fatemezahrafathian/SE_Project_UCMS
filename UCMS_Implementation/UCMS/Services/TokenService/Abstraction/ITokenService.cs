@@ -6,5 +6,5 @@ public interface ITokenService
 {
     public string GenerateToken(List<Claim> claims);
     public int? GetUserId(ClaimsPrincipal user);
-    public List<string> GetUserRoles(ClaimsPrincipal user);
+    public string? GetUserRole(ClaimsPrincipal user);
 }

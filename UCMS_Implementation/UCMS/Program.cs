@@ -9,8 +9,12 @@ using UCMS.Repositories.UserRepository;
 using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Services.AuthService;
 using UCMS.Services.AuthService.Abstraction;
+using UCMS.Services.CookieService;
+using UCMS.Services.CookieService.Abstraction;
 using UCMS.Services.EmailService;
 using UCMS.Services.EmailService.Abstraction;
+using UCMS.Services.TokenService;
+using UCMS.Services.TokenService.Abstraction;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,15 +44,22 @@ builder.Services.AddSingleton<IUrlHelperFactory, UrlHelperFactory>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICookieService,CookieService>();
+builder.Services.AddScoped<ITokenService,TokenService>();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(options =>{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
     .AddJwtBearer(options =>
     {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
         options.Events = new JwtBearerEvents
         {
             OnMessageReceived = context =>
             {
-                var token = context.Request.Cookies["access_token"];
+                var token = context.HttpContext.Request.Cookies["access_token"];
                 if (!string.IsNullOrEmpty(token))
                 {
                     context.Token = token;

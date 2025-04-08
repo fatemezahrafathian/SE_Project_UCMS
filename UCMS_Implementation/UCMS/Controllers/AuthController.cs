@@ -12,7 +12,6 @@ namespace UCMS.Controllers;
 public class AuthController: ControllerBase
 {
     private readonly IAuthService _authService;
-
     public AuthController(IAuthService authService)
     {
         _authService = authService;
@@ -59,5 +58,37 @@ public class AuthController: ControllerBase
     public async Task<IActionResult> GetUserById(int id)
     {
         return Ok(1);
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDto request)
+    {
+        try
+        {
+            var response = await _authService.Login(request);
+            if (response.Success)
+            {
+                return Ok(new { message = response.Message }); 
+            }
+            if (response.Message=="InvalidInputeMessage")
+            {
+                return BadRequest(new { message = response.Message }); 
+            }
+            if (response.Message=="UserNotFoundMessage")
+            {
+                return NotFound(new { message = response.Message });
+            }
+            return Unauthorized(new { message = response.Message });
+        }
+        catch (Exception ex)
+        {
+            return Problem(
+                detail: ex.Message,
+                statusCode: 500,
+                title: Messages.InternalServerError,
+                instance: HttpContext.Request.Path
+            );
+        }
+        
     }
 }

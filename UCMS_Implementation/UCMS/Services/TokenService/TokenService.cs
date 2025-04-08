@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+using UCMS.Models;
 
 namespace UCMS.Services.TokenService;
 
@@ -41,11 +42,10 @@ public class TokenService : ITokenService
         return null;
     }
 
-    public List<string> GetUserRoles(ClaimsPrincipal user)
+    public string? GetUserRole(ClaimsPrincipal user)
     {
-        return user.FindAll(ClaimTypes.Role)
-            .Select(roleClaim => roleClaim.Value)
-            .ToList();
+        return user.FindFirst(ClaimTypes.Role)?.Value;
     }
+
 }
 
