@@ -1,10 +1,10 @@
-using UCMS.Services.Abstraction;
-
-namespace UCMS.Services;
+using UCMS.Services.TokenService.Abstraction;
 using System.Security.Claims;
 using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
+
+namespace UCMS.Services.TokenService;
 
 public class TokenService : ITokenService 
 {

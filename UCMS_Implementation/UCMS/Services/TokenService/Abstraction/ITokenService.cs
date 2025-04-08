@@ -1,6 +1,6 @@
 using System.Security.Claims;
 
-namespace UCMS.Services.Abstraction;
+namespace UCMS.Services.TokenService.Abstraction;
 
 public interface ITokenService
 {
