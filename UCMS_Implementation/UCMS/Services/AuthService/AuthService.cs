@@ -146,4 +146,26 @@ public class AuthService : IAuthService
 
         return new ServiceResponse<string?> { Success = true, Message = Resources.Messages.LoginSuccessfulMessage };
     }
+    public async Task<ServiceResponse<string?>> Logout()
+    {
+        if (_cookieService.GetCookieValue() != null) _cookieService.DeleteTokenCookie();
+
+        return new ServiceResponse<string?> { Success = true, Message = Resources.Messages.LogoutSuccessfulyMessage };
+    }
+    public async Task<ServiceResponse<string>> GetAuthorized()
+    {
+        var token = _cookieService.GetCookieValue();
+        if (string.IsNullOrEmpty(token))
+            return new ServiceResponse<string>
+                { Data = null, Success = false, Message = Resources.Messages.UnauthorizedMessage };
+
+        int userId = _tokenService.GetUserId(_httpContextAccessor.HttpContext?.User);
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user is null)
+            return new ServiceResponse<string>
+                { Data = null, Success = false, Message = Resources.Messages.UserNotFoundMessage };
+
+        return new ServiceResponse<string>
+            { Data = null, Success = true, Message = Resources.Messages.AuthorizedMessage };
+    }
 }

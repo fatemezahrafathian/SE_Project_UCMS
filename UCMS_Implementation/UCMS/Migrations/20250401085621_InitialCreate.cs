@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using UCMS.Models;
 
 #nullable disable
 
@@ -34,7 +35,8 @@ namespace UCMS.Migrations
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     VerificationToken = table.Column<string>(type: "character varying(44)", maxLength: 44, nullable: true),
-                    IsConfirmed = table.Column<bool>(type: "boolean", nullable: false)
+                    IsConfirmed = table.Column<bool>(type: "boolean", nullable: false),
+                    Role = table.Column<bool>(type: "integer", nullable: false,defaultValue: 0),
                 },
                 constraints: table =>
                 {

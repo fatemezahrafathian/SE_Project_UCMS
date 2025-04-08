@@ -91,4 +91,20 @@ public class AuthController: ControllerBase
         }
         
     }
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        var response =await _authService.Logout();
+        return Ok(new { message = response.Message });
+    }
+    [HttpGet("status")]
+    public async Task<IActionResult> GetAuthorized()
+    {
+        var response = await _authService.GetAuthorized();
+        if (!response.Success)
+        {
+            return Unauthorized(new { message = response.Message });
+        }
+        return Ok(new { message = response.Message });
+    }
 }

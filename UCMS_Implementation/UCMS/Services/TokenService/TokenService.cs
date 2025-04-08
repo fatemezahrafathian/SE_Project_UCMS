@@ -32,19 +32,19 @@ public class TokenService : ITokenService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-    public int? GetUserId(ClaimsPrincipal user)
+    public int GetUserId(ClaimsPrincipal user)
     {
         var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
         if (userIdClaim != null && int.TryParse(userIdClaim.Value, out int userId))
         {
             return userId;
         }
-        return null;
+        return -1;
     }
 
     public string? GetUserRole(ClaimsPrincipal user)
     {
-        return user.FindFirst(ClaimTypes.Role)?.Value;
+        return user?.FindFirst(ClaimTypes.Role)?.Value;
     }
 
 }

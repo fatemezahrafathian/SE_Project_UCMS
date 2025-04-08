@@ -54,4 +54,13 @@
     <data name="LoginSuccessfulMessage" xml:space="preserve">
         <value>LoginSuccessfulMessage</value>
     </data>
+    <data name="LogoutSuccessfulyMessage" xml:space="preserve">
+        <value>LogoutSuccessfulyMessage</value>
+    </data>
+    <data name="UnauthorizedMessage" xml:space="preserve">
+        <value>UnauthorizedMessage</value>
+    </data>
+    <data name="AuthorizedMessage" xml:space="preserve">
+        <value>AuthorizedMessage</value>
+    </data>
 </root>

@@ -27,6 +27,7 @@ public class User
     [MaxLength(50)]
     public string? LastName { get; set; }
     
+    [Required]
     public Role Role { get; set; }
 
     public Gender? Gender { get; set; }

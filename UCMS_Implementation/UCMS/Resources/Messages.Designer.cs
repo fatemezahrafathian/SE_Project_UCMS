@@ -69,6 +69,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to AuthorizedMessage.
+        /// </summary>
+        public static string AuthorizedMessage {
+            get {
+                return ResourceManager.GetString("AuthorizedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Email is already taken..
         /// </summary>
         public static string EmailAlreadyTaken {
@@ -114,6 +123,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to LogoutSuccessfulyMessage.
+        /// </summary>
+        public static string LogoutSuccessfulyMessage {
+            get {
+                return ResourceManager.GetString("LogoutSuccessfulyMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Passwords do no.t match.
         /// </summary>
         public static string PasswordNotMatch {
@@ -137,6 +155,15 @@ namespace UCMS.Resources {
         public static string RegisteredSuccessfully {
             get {
                 return ResourceManager.GetString("RegisteredSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to UnauthorizedMessage.
+        /// </summary>
+        public static string UnauthorizedMessage {
+            get {
+                return ResourceManager.GetString("UnauthorizedMessage", resourceCulture);
             }
         }
         
