@@ -1,0 +1,10 @@
+using System.Security.Claims;
+
+namespace UCMS.Services.Abstraction;
+
+public interface ITokenService
+{
+    public string GenerateToken(List<Claim> claims);
+    public int? GetUserId(ClaimsPrincipal user);
+    public List<string> GetUserRoles(ClaimsPrincipal user);
+}
