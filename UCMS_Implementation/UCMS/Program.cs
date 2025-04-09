@@ -1,13 +1,20 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using UCMS.Data;
 using UCMS.Profile;
 using UCMS.Repositories.UserRepository;
 using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Services.AuthService;
 using UCMS.Services.AuthService.Abstraction;
+using UCMS.Services.CookieService;
+using UCMS.Services.CookieService.Abstraction;
 using UCMS.Services.EmailService;
 using UCMS.Services.EmailService.Abstraction;
+using UCMS.Services.TokenService;
+using UCMS.Services.TokenService.Abstraction;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +44,43 @@ builder.Services.AddSingleton<IUrlHelperFactory, UrlHelperFactory>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ICookieService,CookieService>();
+builder.Services.AddScoped<ITokenService,TokenService>();
+builder.Services.AddScoped<IOneTimeCodeService, OneTimeCodeService>();
+builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddAuthentication(options =>{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false;
+        options.SaveToken = true;
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var token = context.HttpContext.Request.Cookies["access_token"];
+                if (!string.IsNullOrEmpty(token))
+                {
+                    context.Token = token;
+                }
+                return Task.CompletedTask;
+            }
+        };
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+    });
 
 
 // builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");

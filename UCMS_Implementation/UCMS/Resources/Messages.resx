@@ -42,4 +42,31 @@
     <data name="InternalServerError" xml:space="preserve">
         <value>Internal Server Error</value>
     </data>
+    <data name="InvalidInputMessage" xml:space="preserve">
+        <value>InvalidInputMessage</value>
+    </data>
+    <data name="UserNotFoundMessage" xml:space="preserve">
+        <value>UserNotFoundMessage</value>
+    </data>
+    <data name="WrongPasswordMessage" xml:space="preserve">
+        <value>WrongPasswordMessage</value>
+    </data>
+    <data name="LoginSuccessfulMessage" xml:space="preserve">
+        <value>LoginSuccessfulMessage</value>
+    </data>
+    <data name="LogoutSuccessfulyMessage" xml:space="preserve">
+        <value>LogoutSuccessfulyMessage</value>
+    </data>
+    <data name="UnauthorizedMessage" xml:space="preserve">
+        <value>UnauthorizedMessage</value>
+    </data>
+    <data name="AuthorizedMessage" xml:space="preserve">
+        <value>AuthorizedMessage</value>
+    </data>
+    <data name="OneTimeCodeSent" xml:space="preserve">
+        <value>OneTimeCodeSent</value>
+    </data>
+    <data name="ExpiredCode" xml:space="preserve">
+        <value>Expired code</value>
+    </data>
 </root>

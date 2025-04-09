@@ -6,4 +6,7 @@ public interface IAuthService
 {
     Task<ServiceResponse<int>> Register(RegisterDto registerDto);
     Task<ServiceResponse<bool>> ConfirmEmail(string token);
+    Task<ServiceResponse<string?>> Login(LoginDto request);
+    Task<ServiceResponse<string?>> Logout();
+    Task<ServiceResponse<string>> GetAuthorized();
 }
