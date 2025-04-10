@@ -1,3 +1,4 @@
+using UCMS.DTOs;
 using UCMS.DTOs.AuthDto;
 
 namespace UCMS.Services.AuthService.Abstraction;

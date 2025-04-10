@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using Konscious.Security.Cryptography;
+using UCMS.DTOs;
 using UCMS.DTOs.AuthDto;
 using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Services.AuthService.Abstraction;

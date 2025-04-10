@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using UCMS.DTOs;
 using UCMS.DTOs.AuthDto;
 using UCMS.Models;
 using UCMS.Repositories.UserRepository.Abstraction;
@@ -137,7 +138,7 @@ public class AuthService : IAuthService
         var claims = new List<Claim>()
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Role, user.Role.ToString()),
+            // new Claim(ClaimTypes.Role, user.Role.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
         _cookieService.CreateCookie(_tokenService.GenerateToken(claims));

@@ -17,5 +17,5 @@ public class RegisterDto
     [Required, Compare("Password", ErrorMessage = "Passwords do not match.")]
     public string ConfirmPassword { get; set; }
     [Required]
-    public Role Role { get; set; }=Role.Student;
+    public int RoleId { get; set; }
 }

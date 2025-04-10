@@ -69,4 +69,7 @@
     <data name="ExpiredCode" xml:space="preserve">
         <value>Expired code</value>
     </data>
+    <data name="AllRolesFetchedSuccessfully" xml:space="preserve">
+        <value>All roles fetched successfully.</value>
+    </data>
 </root>
