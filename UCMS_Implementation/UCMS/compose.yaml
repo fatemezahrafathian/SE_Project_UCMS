@@ -1,28 +1,33 @@
+version: '3.8'
 
 services:
   server:
     build:
       context: .
-      target: final  
+      target: runtime
     ports:
-      - "8080:8080"  
+      - "8080:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - CONNECTION_STRING=Host=db;Port=5432;Database=UCMS;Username=postgres;Password=@Simpleuser01  
     depends_on:
-      - db  
+      - db
+    command: ["sh", "-c", "until pg_isready -h db -U postgres; do echo 'Waiting for DB...'; sleep 2; done && dotnet ef database update && dotnet UCMS.dll"]
 
   db:
     image: postgres:alpine
     container_name: postgres-db
     restart: always
     environment:
-      POSTGRES_USER: postgres 
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: "@Simpleuser01"
-      POSTGRES_DB: UCMS 
+      POSTGRES_DB: UCMS
     ports:
-      - "5432:5432" 
+      - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready"]
+      test: ["CMD", "pg_isready", "-U", "postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
