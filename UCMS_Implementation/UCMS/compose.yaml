@@ -12,7 +12,10 @@ services:
       - CONNECTION_STRING=Host=db;Port=5432;Database=UCMS;Username=postgres;Password=@Simpleuser01  
     depends_on:
       - db
-    command: ["sh", "-c", "until pg_isready -h db -U postgres; do echo 'Waiting for DB...'; sleep 2; done && dotnet ef database update && dotnet UCMS.dll"]
+    command: >
+         sh -c "
+            until pg_isready -h db -U postgres; do echo 'Waiting for DB...'; sleep 2; done &&
+            dotnet UCMS.dll"
 
   db:
     image: postgres:alpine

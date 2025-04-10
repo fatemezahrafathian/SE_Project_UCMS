@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using UCMS.Data;
@@ -47,6 +48,12 @@ builder.Services.AddHttpContextAccessor();
 // builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+    db.Database.Migrate(); // This applies all migrations
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
