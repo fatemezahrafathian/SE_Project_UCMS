@@ -3,14 +3,13 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
 # Copy csproj and restore dependencies
-COPY *.sln .
-COPY */*.csproj ./src/
-RUN for file in src/*.csproj; do dotnet restore "$file"; done
+COPY UCMS.csproj ./
+RUN dotnet restore
 
 # Copy the rest of the source code
 COPY . .
 
-# Publish the app (self-contained if needed)
+# Publish the app
 RUN dotnet publish -c Release -o /app/publish --no-restore
 
 # Stage 2: Runtime
@@ -22,4 +21,4 @@ COPY --from=build /app/publish .
 ENV ASPNETCORE_URLS=http://+:80
 EXPOSE 80
 
-ENTRYPOINT ["dotnet", "YourAppName.dll"]
+ENTRYPOINT ["dotnet", "UCMS.dll"]
