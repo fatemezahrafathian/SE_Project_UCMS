@@ -89,6 +89,16 @@ builder.Services.AddAuthentication(options =>{
         };
     });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost5173", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173", "https://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
+    });
+});
 
 // builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
@@ -110,6 +120,7 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // app.UseRouting();
 app.UseHttpsRedirection();
+app.UseCors("AllowLocalhost5173");
 app.UseAuthentication();
 app.UseMiddleware<AuthenticationMiddleware>();
 app.UseAuthorization();
