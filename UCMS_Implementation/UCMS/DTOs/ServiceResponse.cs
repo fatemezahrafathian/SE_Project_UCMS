@@ -1,4 +1,4 @@
-namespace UCMS.Services;
+namespace UCMS.DTOs;
 
 public class ServiceResponse<T>
 {

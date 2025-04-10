@@ -27,6 +27,11 @@ public class User
     [MaxLength(50)]
     public string? LastName { get; set; }
 
+    public int RoleId { get; set; }
+
+    [Required]
+    public Role Role { get; set; }
+
     public Gender? Gender { get; set; }
    
     [MaxLength(250)]
@@ -48,6 +53,8 @@ public class User
     [MaxLength((32 / 3 + (32 % 3 == 0 ? 0 : 1)) * 4)]  // conf file
     public string? VerificationToken { get; set; }
     public bool IsConfirmed { get; set; }
+
+    public OneTimeCode? OneTimeCode { get; set; }
     // only for required attibutes
     // public User(string email, string username, byte[] passwordSalt, byte[] passwordHash)
     // {

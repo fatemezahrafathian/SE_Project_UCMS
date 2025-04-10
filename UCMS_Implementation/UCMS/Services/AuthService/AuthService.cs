@@ -1,13 +1,18 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using UCMS.DTOs;
 using UCMS.DTOs.AuthDto;
 using UCMS.Models;
 using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.AuthService.Abstraction;
+using UCMS.Services.CookieService.Abstraction;
 using UCMS.Services.EmailService.Abstraction;
+using UCMS.Services.TokenService.Abstraction;
 
 namespace UCMS.Services.AuthService;
 
@@ -15,16 +20,21 @@ public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordService _passwordService;
+    private readonly ICookieService _cookieService;
+    private readonly ITokenService _tokenService;
     private readonly IMapper _mapper;
     private readonly IEmailService _emailService;
     private readonly IUrlHelperFactory _urlHelperFactory;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public AuthService(IUserRepository userRepository, IPasswordService passwordService, IMapper mapper,
-        IEmailService emailService, IUrlHelperFactory urlHelperFactory, IHttpContextAccessor httpContextAccessor)
+        IEmailService emailService, IUrlHelperFactory urlHelperFactory, IHttpContextAccessor httpContextAccessor,
+        ITokenService tokenService,ICookieService cookieService)
     {
         _userRepository = userRepository;
         _passwordService = passwordService;
+        _cookieService = cookieService;
+        _tokenService = tokenService;
         _mapper = mapper;
         _emailService = emailService;
         _urlHelperFactory = urlHelperFactory;
@@ -114,4 +124,47 @@ public class AuthService : IAuthService
 
         return confirmationUrl;
     }
+    public async Task<ServiceResponse<string?>> Login(LoginDto loginDto)
+    {
+        if (string.IsNullOrEmpty(loginDto.Email) || string.IsNullOrEmpty(loginDto.Password))
+            return new ServiceResponse<string?>{Success = false,Message = Messages.InvalidInputMessage};
+
+        var user = await _userRepository.GetUserByEmailAsync(loginDto.Email);
+
+        if (user is null)
+            return new ServiceResponse<string?> { Success = false, Message = Messages.UserNotFoundMessage };
+        if (!await _passwordService.VerifyPasswordAsync(loginDto.Password, user.PasswordSalt, user.PasswordHash))
+            return new ServiceResponse<string?> { Success = false, Message = Messages.WrongPasswordMessage };
+        var claims = new List<Claim>()
+        {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            // new Claim(ClaimTypes.Role, user.Role.ToString()),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
+        _cookieService.CreateCookie(_tokenService.GenerateToken(claims));
+
+        return new ServiceResponse<string?> { Success = true, Message = Messages.LoginSuccessfulMessage };
+    }
+    public async Task<ServiceResponse<string?>> Logout()
+    {
+        if (_cookieService.GetCookieValue() != null) _cookieService.DeleteTokenCookie();
+
+        return new ServiceResponse<string?> { Success = true, Message = Messages.LogoutSuccessfulyMessage };
+    }
+    public async Task<ServiceResponse<string>> GetAuthorized()
+    {
+        var token = _cookieService.GetCookieValue();
+        if (string.IsNullOrEmpty(token))
+            return new ServiceResponse<string>{Success = false, Message = Messages.UnauthorizedMessage };
+
+        int userId = _tokenService.GetUserId(_httpContextAccessor.HttpContext?.User);
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user is null)
+            return new ServiceResponse<string>
+                { Success = false, Message = Messages.UserNotFoundMessage };
+
+        return new ServiceResponse<string>
+            { Success = true, Message = Messages.AuthorizedMessage };
+    }
+    
 }
