@@ -1,14 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
+using UCMS.Attributes;
 using UCMS.DTOs.AuthDto;
+using UCMS.Models;
 using UCMS.Resources;
 using UCMS.Services.AuthService.Abstraction;
 
 namespace UCMS.Controllers;
 [Route("api/auth")]
 [ApiController]
-// role system
-// email service
-// email service test
 public class AuthController: ControllerBase
 {
     private readonly IAuthService _authService;
@@ -56,17 +55,23 @@ public class AuthController: ControllerBase
         return Ok(response.Message);
     }
     
+    // to test authorization attribute
+    [RoleBasedAuthorization("Instructor")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUserById(int id)
     {
-        return Ok(1);
+        var user = HttpContext.Items["User"] as User;
+        // user = null; // to test exception middleware
+        var username = user.Username;
+
+        return Ok(new { RequestedId = id, CurrentUsername = username });    
     }
 
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto request)
     {
-        try
-        {
+        // try
+        // {
             var response = await _authService.Login(request);
             if (response.Success)
             {
@@ -81,16 +86,16 @@ public class AuthController: ControllerBase
                 return NotFound(new { message = response.Message });
             }
             return Unauthorized(new { message = response.Message });
-        }
-        catch (Exception ex)
-        {
-            return Problem(
-                detail: ex.Message,
-                statusCode: 500,
-                title: Messages.InternalServerError,
-                instance: HttpContext.Request.Path
-            );
-        }
+        // }
+        // catch (Exception ex)
+        // {
+        //     return Problem(
+        //         detail: ex.Message,
+        //         statusCode: 500,
+        //         title: Messages.InternalServerError,
+        //         instance: HttpContext.Request.Path
+        //     );
+        // }
         
     }
     [HttpPost("logout")]

@@ -12,7 +12,7 @@ using UCMS.Data;
 namespace UCMS.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250401085621_InitialCreate")]
+    [Migration("20250410095639_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -24,6 +24,26 @@ namespace UCMS.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("UCMS.Models.Role", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Roles");
+                });
 
             modelBuilder.Entity("UCMS.Models.User", b =>
                 {
@@ -71,17 +91,7 @@ namespace UCMS.Migrations
                     b.Property<string>("LastName")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
-                    b.OwnsOne("UCMS.Models.OneTimeCode", "OneTimeCode", cb =>
-                    {
-                        cb.Property<string>("Code")
-                            .HasColumnName("OneTimeCode_Code")
-                            .HasColumnType("text");
 
-                        cb.Property<DateTime>("Expiry")
-                            .HasColumnName("OneTimeCode_Expiry")
-                            .HasColumnType("timestamp with time zone");
-                    });
-                    
                     b.Property<byte[]>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -95,6 +105,9 @@ namespace UCMS.Migrations
                     b.Property<string>("ProfileImagePath")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -113,10 +126,50 @@ namespace UCMS.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
+                    b.HasIndex("RoleId");
+
                     b.HasIndex("Username")
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("UCMS.Models.User", b =>
+                {
+                    b.HasOne("UCMS.Models.Role", "Role")
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("UCMS.Models.OneTimeCode", "OneTimeCode", b1 =>
+                        {
+                            b1.Property<int>("UserId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("Code")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<DateTime>("Expiry")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.Navigation("OneTimeCode");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("UCMS.Models.Role", b =>
+                {
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

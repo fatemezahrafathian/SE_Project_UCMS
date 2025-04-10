@@ -1,7 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace UCMS.Models;
 
-public enum Role
+public class Role
 {
-    Student,
-    Instructor
+    [Key]
+    public int Id { get; set; }
+    public string Name { get; set; }
+    
+    public ICollection<User> Users { get; set; }
 }

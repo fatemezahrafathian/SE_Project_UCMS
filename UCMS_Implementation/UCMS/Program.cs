@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using UCMS.Data;
+using UCMS.Middleware;
 using UCMS.Profile;
+using UCMS.Repositories.RoleRepository;
+using UCMS.Repositories.RoleRepository.Abstraction;
 using UCMS.Repositories.UserRepository;
 using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Services.AuthService;
@@ -13,6 +16,8 @@ using UCMS.Services.CookieService;
 using UCMS.Services.CookieService.Abstraction;
 using UCMS.Services.EmailService;
 using UCMS.Services.EmailService.Abstraction;
+using UCMS.Services.RoleService;
+using UCMS.Services.RoleService.Abstraction;
 using UCMS.Services.TokenService;
 using UCMS.Services.TokenService.Abstraction;
 
@@ -48,6 +53,8 @@ builder.Services.AddScoped<ICookieService,CookieService>();
 builder.Services.AddScoped<ITokenService,TokenService>();
 builder.Services.AddScoped<IOneTimeCodeService, OneTimeCodeService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(options =>{
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -87,16 +94,24 @@ builder.Services.AddAuthentication(options =>{
 
 var app = builder.Build();
 
+// Seed data
+var scope = app.Services.CreateScope();
+var roleService = scope.ServiceProvider.GetRequiredService<IRoleService>();
+await SeedData.Initialize(scope.ServiceProvider, roleService);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-// app.UseRouting();
+// global exception handling
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
+// app.UseRouting();
 app.UseHttpsRedirection();
 app.UseAuthentication();
+app.UseMiddleware<AuthenticationMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();
