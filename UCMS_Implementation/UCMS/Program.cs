@@ -6,12 +6,17 @@ using Microsoft.IdentityModel.Tokens;
 using UCMS.Data;
 using UCMS.Middleware;
 using UCMS.Profile;
+using UCMS.Repositories;
+using UCMS.Repositories.ClassRepository;
+using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Repositories.RoleRepository;
 using UCMS.Repositories.RoleRepository.Abstraction;
 using UCMS.Repositories.UserRepository;
 using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Services.AuthService;
 using UCMS.Services.AuthService.Abstraction;
+using UCMS.Services.ClassService;
+using UCMS.Services.ClassService.Abstraction;
 using UCMS.Services.CookieService;
 using UCMS.Services.CookieService.Abstraction;
 using UCMS.Services.EmailService;
@@ -55,6 +60,10 @@ builder.Services.AddScoped<IOneTimeCodeService, OneTimeCodeService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IClassService, ClassService>();
+builder.Services.AddScoped<IClassRepository, ClassRepository>();
+builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(options =>{
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
