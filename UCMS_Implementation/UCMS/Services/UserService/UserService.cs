@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
+using UCMS.DTOs;
 using UCMS.DTOs.User;
 using UCMS.Models;
 using UCMS.Repositories.UserRepository.Abstraction;

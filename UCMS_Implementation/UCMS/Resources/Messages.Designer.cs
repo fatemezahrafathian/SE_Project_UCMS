@@ -70,11 +70,29 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All roles fetched successfully..
+        /// </summary>
+        public static string AllRolesFetchedSuccessfully {
+            get {
+                return ResourceManager.GetString("AllRolesFetchedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All users..
         /// </summary>
         public static string AllUsers {
             get {
                 return ResourceManager.GetString("AllUsers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to AuthorizedMessage.
+        /// </summary>
+        public static string AuthorizedMessage {
+            get {
+                return ResourceManager.GetString("AuthorizedMessage", resourceCulture);
             }
         }
         
@@ -97,6 +115,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Expired code.
+        /// </summary>
+        public static string ExpiredCode {
+            get {
+                return ResourceManager.GetString("ExpiredCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Internal Server Error.
         /// </summary>
         public static string InternalServerError {
@@ -106,11 +133,47 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to InvalidInputMessage.
+        /// </summary>
+        public static string InvalidInputMessage {
+            get {
+                return ResourceManager.GetString("InvalidInputMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid token.
         /// </summary>
         public static string InvalidToken {
             get {
                 return ResourceManager.GetString("InvalidToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LoginSuccessfulMessage.
+        /// </summary>
+        public static string LoginSuccessfulMessage {
+            get {
+                return ResourceManager.GetString("LoginSuccessfulMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LogoutSuccessfulyMessage.
+        /// </summary>
+        public static string LogoutSuccessfulyMessage {
+            get {
+                return ResourceManager.GetString("LogoutSuccessfulyMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OneTimeCodeSent.
+        /// </summary>
+        public static string OneTimeCodeSent {
+            get {
+                return ResourceManager.GetString("OneTimeCodeSent", resourceCulture);
             }
         }
         
@@ -142,6 +205,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to UnauthorizedMessage.
+        /// </summary>
+        public static string UnauthorizedMessage {
+            get {
+                return ResourceManager.GetString("UnauthorizedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User with id = {0} found..
         /// </summary>
         public static string UserFound {
@@ -165,6 +237,24 @@ namespace UCMS.Resources {
         public static string UserNotFound {
             get {
                 return ResourceManager.GetString("UserNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to UserNotFoundMessage.
+        /// </summary>
+        public static string UserNotFoundMessage {
+            get {
+                return ResourceManager.GetString("UserNotFoundMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WrongPasswordMessage.
+        /// </summary>
+        public static string WrongPasswordMessage {
+            get {
+                return ResourceManager.GetString("WrongPasswordMessage", resourceCulture);
             }
         }
     }
