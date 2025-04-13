@@ -104,11 +104,8 @@ var scope = app.Services.CreateScope();
 var roleService = scope.ServiceProvider.GetRequiredService<IRoleService>();
 await SeedData.Initialize(scope.ServiceProvider, roleService);
 
-using (var scope = app.Services.CreateScope())
-{
     var db = scope.ServiceProvider.GetRequiredService<DataContext>();
     db.Database.Migrate(); // This applies all migrations
-}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
