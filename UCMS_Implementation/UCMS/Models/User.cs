@@ -63,4 +63,7 @@ public class User
     //     PasswordSalt = passwordSalt;
     //     PasswordHash = passwordHash;
     // }
+    public Instructor? Instructor { get; set; }
+    public Student? Student { get; set; }
+
 }

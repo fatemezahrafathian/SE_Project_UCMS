@@ -72,4 +72,25 @@
     <data name="AllRolesFetchedSuccessfully" xml:space="preserve">
         <value>All roles fetched successfully.</value>
     </data>
+    <data name="ClassCreatedSuccessfully" xml:space="preserve">
+        <value>Class was created successfully.</value>
+    </data>
+    <data name="ClassNotFound" xml:space="preserve">
+        <value>Class not found.</value>
+    </data>
+    <data name="ClassCan'tBeAccessed" xml:space="preserve">
+        <value>Class can't be accessed.</value>
+    </data>
+    <data name="ClassFetchedSuccessfully" xml:space="preserve">
+        <value>Class fetched successfully.</value>
+    </data>
+    <data name="ClassesRetrievedSuccessfully" xml:space="preserve">
+        <value>Classes retrieved successfully.</value>
+    </data>
+    <data name="ClassDeletedSuccessfully" xml:space="preserve">
+        <value>Class deleted successfully.</value>
+    </data>
+    <data name="ClassUpdatedSuccessfully" xml:space="preserve">
+        <value>Class updated successfully.</value>
+    </data>
 </root>
