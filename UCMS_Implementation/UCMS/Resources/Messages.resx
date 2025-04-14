@@ -186,4 +186,10 @@
   <data name="UpdateUser" xml:space="preserve">
     <value>user with id = {0} updated successfully.</value>
   </data>
+  <data name="Forbidden" xml:space="preserve">
+    <value>You are not allowed to access this resource</value>
+  </data>
+  <data name="PasswordChange" xml:space="preserve">
+    <value>passwrod changed successfully.</value>
+  </data>
 </root>

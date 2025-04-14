@@ -124,6 +124,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You are not allowed to access this resource.
+        /// </summary>
+        public static string Forbidden {
+            get {
+                return ResourceManager.GetString("Forbidden", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Internal Server Error.
         /// </summary>
         public static string InternalServerError {
@@ -174,6 +183,15 @@ namespace UCMS.Resources {
         public static string OneTimeCodeSent {
             get {
                 return ResourceManager.GetString("OneTimeCodeSent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to passwrod changed successfully..
+        /// </summary>
+        public static string PasswordChange {
+            get {
+                return ResourceManager.GetString("PasswordChange", resourceCulture);
             }
         }
         

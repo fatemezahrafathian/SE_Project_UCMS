@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using UCMS.DTOs;
 using UCMS.DTOs.AuthDto;
 using UCMS.DTOs.User;
 using UCMS.Models;
 using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Resources;
+using UCMS.Services.AuthService;
+using UCMS.Services.AuthService.Abstraction;
 
 namespace UCMS.Services.UserService
 {
@@ -13,12 +16,14 @@ namespace UCMS.Services.UserService
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly IPasswordService _passwordService;
         private readonly ILogger<UserService> _logger;
 
-        public UserService(IUserRepository userRepository, IMapper mapper, ILogger<UserService> logger)
+        public UserService(IUserRepository userRepository, IMapper mapper, IPasswordService passwordService, ILogger<UserService> logger)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _passwordService = passwordService;
             _logger = logger;
         }
 
@@ -46,7 +51,10 @@ namespace UCMS.Services.UserService
 
             return BuildOutputUserDtoResponse(user, string.Format(Messages.UserFound, userId));
         }
-
+        public ServiceResponse<OutputUserDto> GetCurrentUser(User user)
+        {
+            return BuildOutputUserDtoResponse(user, string.Format(Messages.UserFound, user.Id));
+        }
         public async Task<ServiceResponse<bool>> DeleteUserAsync(int userId)
         {
             bool reuslt = await _userRepository.DeleteUserById(userId);
@@ -82,6 +90,30 @@ namespace UCMS.Services.UserService
             _logger.LogInformation("User {userId} updated successfully", userId);
 
             return BuildOutputUserDtoResponse(updatedUser, string.Format(Messages.UpdateUser, userId));
+        }
+
+        public async Task<ServiceResponse<bool>> ChangePassword(User user, ChangePasswordDto changePasswordDto)
+        {
+            if (changePasswordDto.NewPassword != changePasswordDto.ConfirmNewPasswrod)
+            {
+                return new ServiceResponse<bool> { Success = false, Message = Messages.PasswordNotMatch };
+            }
+
+            if (!_passwordService.IsPasswordValid(changePasswordDto.NewPassword))
+            {
+                return new ServiceResponse<bool> { Success = false, Message = Messages.PasswordNotStrong };
+            }
+
+            user.PasswordSalt = _passwordService.CreateSalt();
+            user.PasswordHash = await _passwordService.HashPasswordAsync(changePasswordDto.NewPassword, user.PasswordSalt);
+
+            await _userRepository.UpdateUserAsync(user);
+            return new ServiceResponse<bool>
+            {
+                Data = true,
+                Success = true,
+                Message = Messages.PasswordChange
+            };
         }
 
         private static ServiceResponse<OutputUserDto> BuildNotFoundResponse(int userId)

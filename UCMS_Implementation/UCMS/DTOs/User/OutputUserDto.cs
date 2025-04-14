@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using UCMS.Models;
 
 namespace UCMS.DTOs.User
 {
@@ -12,9 +13,15 @@ namespace UCMS.DTOs.User
 
         public string? LastName { get; set; }
 
+        public Gender? gener { get; set; }
+
+        public Role Role { get; set; }
+
         public string? Address { get; set; }
 
         public string? Bio { get; set; }
+
+        public DateTime DateOfBirth { get; set; }
 
         public string? ProfileImagePath { get; set; }
     }

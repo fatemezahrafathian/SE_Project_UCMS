@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UCMS.Attributes;
 using UCMS.DTOs.User;
 using UCMS.Models;
+using UCMS.Resources;
 using UCMS.Services.UserService;
 
 
@@ -21,21 +23,16 @@ namespace UCMS.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<OutputUserDto>>> GetUsers()
+        public async Task<ActionResult> GetUsers()
         {
             var users = await _userService.GetAllUsersAsync();
             return Ok(users);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<OutputUserDto>> GetUserById(int id)
+        [Authorize]
+        public async Task<ActionResult> GetUserById(int id)
         {
-            var user = HttpContext.Items["User"] as User;
-            if(user.Id != id)
-            {
-                return Forbid("You are not authorized to access this resource.");
-            }
-
             var response = await _userService.GetUserByIdAsync(id);
 
             if (response.Data == null) return NotFound(response.Message);
@@ -45,7 +42,7 @@ namespace UCMS.Controllers
 
         [HttpDelete("{id}")]
         [RoleBasedAuthorization("Instructor")]
-        public async Task<ActionResult<bool>> deleteUserById(int id)
+        public async Task<ActionResult> deleteUserById(int id)
         {
             var response = await _userService.DeleteUserAsync(id);
 
@@ -54,19 +51,46 @@ namespace UCMS.Controllers
             return Ok(response);
         }
 
-        [HttpPut("{id}/edit-profile")]
-        public async Task<ActionResult<OutputUserDto>> EditProfile(int id, [FromBody] EditUserDto editUserDto)
+        [HttpGet("profile")]
+        [Authorize]
+        public async Task<ActionResult> GetCurrentUserProfile()
         {
-            var user = HttpContext.Items["User"] as User;
-            if (user.Id != id)
-            {
-                return Forbid("You are not authorized to access this resource.");
-            }
 
-            var response = await _userService.EditUser(id, editUserDto);
+            var user = HttpContext.Items["User"] as User;
+
+            var response = _userService.GetCurrentUser(user);
+
             if (response.Data == null) return NotFound(response.Message);
 
             return Ok(response);
         }
+
+        //[HttpPost]
+        //public async Task<ActionResult>
+
+        [HttpPut("profile/edit")]
+        public async Task<ActionResult> EditProfile([FromBody] EditUserDto editUserDto)
+        {
+            var user = HttpContext.Items["User"] as User;
+
+            var response = await _userService.EditUser(user.Id, editUserDto);
+            if (response.Data == null) return NotFound(response.Message);
+
+            return Ok(response);
+        }
+
+        [Authorize]
+        [HttpPatch("profile/change-password")]
+        public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
+        {
+            var user = HttpContext.Items["User"] as User;
+
+            var response = await _userService.ChangePassword(user, changePasswordDto);
+
+            if(response.Data == false)
+                return BadRequest(response.Message);
+            return Ok(response);
+        }
+
     }
 }
