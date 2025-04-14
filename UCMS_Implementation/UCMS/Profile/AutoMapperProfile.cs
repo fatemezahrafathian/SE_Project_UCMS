@@ -14,9 +14,12 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.PasswordSalt, opt => opt.Ignore())
             .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
             .ForSourceMember(src => src.ConfirmPassword, opt => opt.DoNotValidate());
-        
+
         CreateMap<Role, GetRoleDto>();
 
         CreateMap<User, OutputUserDto>();
+
+        CreateMap<EditUserDto, User>()
+            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
     }
 }

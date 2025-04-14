@@ -60,11 +60,8 @@ public class UserRepository : IUserRepository
         return false;
     }
 
-    public async Task UpdateUserAsync(User user) // to be implemented
+    public async Task UpdateUserAsync(User user)
     {
-        // if (user == null)
-        //     throw new ArgumentNullException(nameof(user));
-        //
         _context.Users.Update(user);
         await _context.SaveChangesAsync();
     }

@@ -147,81 +147,43 @@
   <data name="UserFound" xml:space="preserve">
     <value>User with id = {0} found.</value>
   </data>
-  <data name="AllUsers" xml:space="preserve">
-    <value>All users.</value>
-  </data>
   <data name="DeleteUser" xml:space="preserve">
     <value>User with id = {0} deleted successfully.</value>
   </data>
-    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-        <xsd:element name="root" msdata:IsDataSet="true">
-            
-        </xsd:element>
-    </xsd:schema>
-    <resheader name="resmimetype">
-        <value>text/microsoft-resx</value>
-    </resheader>
-    <resheader name="version">
-        <value>1.3</value>
-    </resheader>
-    <resheader name="reader">
-        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    </resheader>
-    <resheader name="writer">
-        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-    </resheader>
-    <data name="EmailAlreadyTaken" xml:space="preserve">
-        <value>Email is already taken.</value>
-    </data>
-    <data name="UsernameAlreadyTaken" xml:space="preserve">
-        <value>Username is already taken.</value>
-    </data>
-    <data name="PasswordNotMatch" xml:space="preserve">
-        <value>Passwords do no.t match</value>
-    </data>
-    <data name="PasswordNotStrong" xml:space="preserve">
-        <value>Password is not strong enough.</value>
-    </data>
-    <data name="RegisteredSuccessfully" xml:space="preserve">
-        <value>User registered successfully.</value>
-    </data>
-    <data name="InvalidToken" xml:space="preserve">
-        <value>Invalid token</value>
-    </data>
-    <data name="AccountConfirmedSuccessfully" xml:space="preserve">
-        <value>Account confirmed successfully</value>
-    </data>
-    <data name="InternalServerError" xml:space="preserve">
-        <value>Internal Server Error</value>
-    </data>
-    <data name="InvalidInputMessage" xml:space="preserve">
-        <value>InvalidInputMessage</value>
-    </data>
-    <data name="UserNotFoundMessage" xml:space="preserve">
-        <value>UserNotFoundMessage</value>
-    </data>
-    <data name="WrongPasswordMessage" xml:space="preserve">
-        <value>WrongPasswordMessage</value>
-    </data>
-    <data name="LoginSuccessfulMessage" xml:space="preserve">
-        <value>LoginSuccessfulMessage</value>
-    </data>
-    <data name="LogoutSuccessfulyMessage" xml:space="preserve">
-        <value>LogoutSuccessfulyMessage</value>
-    </data>
-    <data name="UnauthorizedMessage" xml:space="preserve">
-        <value>UnauthorizedMessage</value>
-    </data>
-    <data name="AuthorizedMessage" xml:space="preserve">
-        <value>AuthorizedMessage</value>
-    </data>
-    <data name="OneTimeCodeSent" xml:space="preserve">
-        <value>OneTimeCodeSent</value>
-    </data>
-    <data name="ExpiredCode" xml:space="preserve">
-        <value>Expired code</value>
-    </data>
-    <data name="AllRolesFetchedSuccessfully" xml:space="preserve">
-        <value>All roles fetched successfully.</value>
-    </data>
+  <data name="InvalidInputMessage" xml:space="preserve">
+    <value>InvalidInputMessage</value>
+  </data>
+  <data name="UserNotFoundMessage" xml:space="preserve">
+    <value>UserNotFoundMessage</value>
+  </data>
+  <data name="WrongPasswordMessage" xml:space="preserve">
+    <value>WrongPasswordMessage</value>
+  </data>
+  <data name="LoginSuccessfulMessage" xml:space="preserve">
+    <value>LoginSuccessfulMessage</value>
+  </data>
+  <data name="LogoutSuccessfulyMessage" xml:space="preserve">
+    <value>LogoutSuccessfulyMessage</value>
+  </data>
+  <data name="UnauthorizedMessage" xml:space="preserve">
+    <value>UnauthorizedMessage</value>
+  </data>
+  <data name="AuthorizedMessage" xml:space="preserve">
+    <value>AuthorizedMessage</value>
+  </data>
+  <data name="OneTimeCodeSent" xml:space="preserve">
+    <value>OneTimeCodeSent</value>
+  </data>
+  <data name="ExpiredCode" xml:space="preserve">
+    <value>Expired code</value>
+  </data>
+  <data name="AllRolesFetchedSuccessfully" xml:space="preserve">
+    <value>All roles fetched successfully.</value>
+  </data>
+  <data name="AllUsersFetchedSuccessfully" xml:space="preserve">
+    <value>All users fetched successfully.</value>
+  </data>
+  <data name="UpdateUser" xml:space="preserve">
+    <value>user with id = {0} updated successfully.</value>
+  </data>
 </root>

@@ -79,11 +79,11 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All users..
+        ///   Looks up a localized string similar to All users fetched successfully..
         /// </summary>
-        public static string AllUsers {
+        public static string AllUsersFetchedSuccessfully {
             get {
-                return ResourceManager.GetString("AllUsers", resourceCulture);
+                return ResourceManager.GetString("AllUsersFetchedSuccessfully", resourceCulture);
             }
         }
         
@@ -210,6 +210,15 @@ namespace UCMS.Resources {
         public static string UnauthorizedMessage {
             get {
                 return ResourceManager.GetString("UnauthorizedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to user with id = {0} updated successfully..
+        /// </summary>
+        public static string UpdateUser {
+            get {
+                return ResourceManager.GetString("UpdateUser", resourceCulture);
             }
         }
         
