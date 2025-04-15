@@ -65,9 +65,6 @@ namespace UCMS.Controllers
             return Ok(response);
         }
 
-        //[HttpPost]
-        //public async Task<ActionResult>
-
         [HttpPut("profile/edit")]
         public async Task<ActionResult> EditProfile([FromBody] EditUserDto editUserDto)
         {

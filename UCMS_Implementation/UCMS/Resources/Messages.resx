@@ -138,17 +138,8 @@
   <data name="InternalServerError" xml:space="preserve">
     <value>Internal Server Error</value>
   </data>
-  <data name="UserNotFound" xml:space="preserve">
-    <value>User with id = {0} not found.</value>
-  </data>
   <data name="PasswordNotMatch" xml:space="preserve">
     <value>Passwords do no.t match</value>
-  </data>
-  <data name="UserFound" xml:space="preserve">
-    <value>User with id = {0} found.</value>
-  </data>
-  <data name="DeleteUser" xml:space="preserve">
-    <value>User with id = {0} deleted successfully.</value>
   </data>
   <data name="InvalidInputMessage" xml:space="preserve">
     <value>InvalidInputMessage</value>
@@ -177,11 +168,14 @@
   <data name="ExpiredCode" xml:space="preserve">
     <value>Expired code</value>
   </data>
-  <data name="AllRolesFetchedSuccessfully" xml:space="preserve">
-    <value>All roles fetched successfully.</value>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>User with id = {0} not found.</value>
   </data>
-  <data name="AllUsersFetchedSuccessfully" xml:space="preserve">
-    <value>All users fetched successfully.</value>
+  <data name="UserFound" xml:space="preserve">
+    <value>User with id = {0} found.</value>
+  </data>
+  <data name="DeleteUser" xml:space="preserve">
+    <value>User with id = {0} deleted successfully.</value>
   </data>
   <data name="UpdateUser" xml:space="preserve">
     <value>user with id = {0} updated successfully.</value>
@@ -191,5 +185,32 @@
   </data>
   <data name="PasswordChange" xml:space="preserve">
     <value>passwrod changed successfully.</value>
+  </data>
+  <data name="ClassCreatedSuccessfully" xml:space="preserve">
+    <value>Class was created successfully.</value>
+  </data>
+  <data name="ClassNotFound" xml:space="preserve">
+    <value>Class not found.</value>
+  </data>
+  <data name="ClassCan'tBeAccessed" xml:space="preserve">
+    <value>Class can't be accessed.</value>
+  </data>
+  <data name="ClassFetchedSuccessfully" xml:space="preserve">
+    <value>Class fetched successfully.</value>
+  </data>
+  <data name="ClassesRetrievedSuccessfully" xml:space="preserve">
+    <value>Classes retrieved successfully.</value>
+  </data>
+  <data name="ClassDeletedSuccessfully" xml:space="preserve">
+    <value>Class deleted successfully.</value>
+  </data>
+  <data name="ClassUpdatedSuccessfully" xml:space="preserve">
+    <value>Class updated successfully.</value>
+  </data>
+  <data name="AllUsersFetchedSuccessfully" xml:space="preserve">
+    <value>All users fetched successfully</value>
+  </data>
+  <data name="AllRolesFetchedSuccessfully" xml:space="preserve">
+    <value>All roles fetched successfully</value>
   </data>
 </root>

@@ -70,7 +70,7 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All roles fetched successfully..
+        ///   Looks up a localized string similar to All roles fetched successfully.
         /// </summary>
         public static string AllRolesFetchedSuccessfully {
             get {
@@ -79,7 +79,7 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All users fetched successfully..
+        ///   Looks up a localized string similar to All users fetched successfully.
         /// </summary>
         public static string AllUsersFetchedSuccessfully {
             get {
@@ -93,6 +93,69 @@ namespace UCMS.Resources {
         public static string AuthorizedMessage {
             get {
                 return ResourceManager.GetString("AuthorizedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Class can&apos;t be accessed..
+        /// </summary>
+        public static string ClassCan_tBeAccessed {
+            get {
+                return ResourceManager.GetString("ClassCan\'tBeAccessed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Class was created successfully..
+        /// </summary>
+        public static string ClassCreatedSuccessfully {
+            get {
+                return ResourceManager.GetString("ClassCreatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Class deleted successfully..
+        /// </summary>
+        public static string ClassDeletedSuccessfully {
+            get {
+                return ResourceManager.GetString("ClassDeletedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Classes retrieved successfully..
+        /// </summary>
+        public static string ClassesRetrievedSuccessfully {
+            get {
+                return ResourceManager.GetString("ClassesRetrievedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Class fetched successfully..
+        /// </summary>
+        public static string ClassFetchedSuccessfully {
+            get {
+                return ResourceManager.GetString("ClassFetchedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Class not found..
+        /// </summary>
+        public static string ClassNotFound {
+            get {
+                return ResourceManager.GetString("ClassNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Class updated successfully..
+        /// </summary>
+        public static string ClassUpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("ClassUpdatedSuccessfully", resourceCulture);
             }
         }
         
