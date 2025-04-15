@@ -93,4 +93,10 @@
     <data name="ClassUpdatedSuccessfully" xml:space="preserve">
         <value>Class updated successfully.</value>
     </data>
+    <data name="InvalidFormat" xml:space="preserve">
+        <value>File format is not valid.</value>
+    </data>
+    <data name="InvalidSize" xml:space="preserve">
+        <value>file size is not valid.</value>
+    </data>
 </root>

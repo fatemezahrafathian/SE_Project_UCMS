@@ -178,11 +178,29 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File format is not valid..
+        /// </summary>
+        public static string InvalidFormat {
+            get {
+                return ResourceManager.GetString("InvalidFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to InvalidInputMessage.
         /// </summary>
         public static string InvalidInputMessage {
             get {
                 return ResourceManager.GetString("InvalidInputMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to file size is not valid..
+        /// </summary>
+        public static string InvalidSize {
+            get {
+                return ResourceManager.GetString("InvalidSize", resourceCulture);
             }
         }
         

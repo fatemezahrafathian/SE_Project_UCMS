@@ -26,13 +26,21 @@ public class Class
     [MaxLength(20)]
     public string? ClassCode { get; set; }
     
-    public bool IsActive { get; set; } = true;
-
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    [MaxLength(300)]
+    public string? ProfileImageUrl { get; set; }
+    [NotMapped]
+    public bool IsActive =>
+        (!StartDate.HasValue && !EndDate.HasValue) ||
+        (StartDate.HasValue && !EndDate.HasValue && StartDate.Value <= DateTime.UtcNow) ||
+        (!StartDate.HasValue && EndDate.HasValue && EndDate.Value >= DateTime.UtcNow) ||
+        (StartDate.HasValue && EndDate.HasValue &&
+         StartDate.Value <= DateTime.UtcNow && EndDate.Value >= DateTime.UtcNow);
+
     
-    [Required]
-    public ClassIdentifierType IdentifierType { get; set; }
+    // [Required] // remove this
+    // public ClassIdentifierType IdentifierType { get; set; } = 0;
     
     public ICollection<ClassSchedule> Schedules { get; set; }
 }

@@ -13,7 +13,7 @@ public class ClassRepository: IClassRepository
     {
         _context = context;
     }
-
+    
     public async Task AddClassAsync(Class cls)
     {
         await _context.Classes.AddAsync(cls);
@@ -24,23 +24,38 @@ public class ClassRepository: IClassRepository
     {
         return await _context.Classes.AnyAsync(c => c.ClassCode == code);
     }
-    
+
     public async Task<Class?> GetClassByIdAsync(int id)
+    {
+        return await _context.Classes
+            .Include(c => c.Instructor)
+            .FirstOrDefaultAsync(c => c.Id == id);
+    }
+
+
+    public async Task<Class?> GetClassForInstructorAsync(int id) // sync this
+    {
+        return await _context.Classes
+            .Where(c => c.Id == id)
+            .Include(c => c.Schedules)
+            .FirstOrDefaultAsync(); 
+    }
+
+    public async Task<Class?> GetClassForStudentAsync(int id)
     {
         return await _context.Classes
             .Where(c => c.Id == id)
             .Include(c => c.Instructor)
             .ThenInclude(i => i.User)
             .Include(c => c.Schedules)
-            .FirstOrDefaultAsync(); 
+            .FirstOrDefaultAsync();
     }
 
     public async Task<List<Class>> GetClassesByInstructorAsync(int instructorId)
     {
         return await _context.Classes
             .Where(c => c.InstructorId == instructorId)
-            .Include(c => c.Instructor)
-            .ThenInclude(i => i.User)
+            .Include(c => c.Schedules)
             .ToListAsync();
     }
 

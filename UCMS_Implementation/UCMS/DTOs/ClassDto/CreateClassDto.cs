@@ -14,8 +14,7 @@ public class CreateClassDto
     public DateTime? StartDate { get; set; }
 
     public DateTime? EndDate { get; set; }
-    [Required]
-    public ClassIdentifierType IdentifierType { get; set; }
-    [Required, MinLength(1, ErrorMessage = "At least one schedule is required.")]
-    public List<ClassScheduleDto> Schedules { get; set; }
-}
+    public IFormFile? ProfileImage { get; set; }
+
+    // [Required, MinLength(1, ErrorMessage = "At least one schedule is required.")]
+    public List<ClassScheduleDto> Schedules { get; set; } = new List<ClassScheduleDto>();}

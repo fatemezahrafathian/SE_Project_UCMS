@@ -21,6 +21,7 @@ using UCMS.Services.CookieService;
 using UCMS.Services.CookieService.Abstraction;
 using UCMS.Services.EmailService;
 using UCMS.Services.EmailService.Abstraction;
+using UCMS.Services.ImageService;
 using UCMS.Services.RoleService;
 using UCMS.Services.RoleService.Abstraction;
 using UCMS.Services.TokenService;
@@ -30,6 +31,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.Configure<ImageUploadSettings>(
+    builder.Configuration.GetSection("ImageUploadSettings"));
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 // var mapperConfig = new MapperConfiguration(cfg =>
@@ -44,6 +47,7 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddControllers();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -63,6 +67,8 @@ builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IClassService, ClassService>();
 builder.Services.AddScoped<IClassRepository, ClassRepository>();
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
+builder.Services.AddScoped<IImageService, ImageService>();
+
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(options =>{

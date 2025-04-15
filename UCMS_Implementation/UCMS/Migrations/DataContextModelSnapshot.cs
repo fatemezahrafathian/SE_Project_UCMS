@@ -44,14 +44,12 @@ namespace UCMS.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("IdentifierType")
-                        .HasColumnType("integer");
-
                     b.Property<int>("InstructorId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                    b.Property<string>("ProfileImageUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("timestamp with time zone");
@@ -283,13 +281,11 @@ namespace UCMS.Migrations
 
             modelBuilder.Entity("UCMS.Models.ClassSchedule", b =>
                 {
-                    b.HasOne("UCMS.Models.Class", "Class")
+                    b.HasOne("UCMS.Models.Class", null)
                         .WithMany("Schedules")
                         .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Class");
                 });
 
             modelBuilder.Entity("UCMS.Models.Instructor", b =>
