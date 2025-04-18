@@ -70,7 +70,7 @@ namespace UCMS.Controllers
         {
             var user = HttpContext.Items["User"] as User;
 
-            var response = await _userService.EditUser(user.Id, editUserDto);
+            var response = await _userService.EditUser(user, editUserDto);
             if (response.Data == null) return NotFound(response.Message);
 
             return Ok(response);

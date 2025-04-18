@@ -51,10 +51,12 @@ namespace UCMS.Services.UserService
 
             return BuildOutputUserDtoResponse(user, string.Format(Messages.UserFound, userId));
         }
+
         public ServiceResponse<OutputUserDto> GetCurrentUser(User user)
         {
             return BuildOutputUserDtoResponse(user, string.Format(Messages.UserFound, user.Id));
         }
+
         public async Task<ServiceResponse<bool>> DeleteUserAsync(int userId)
         {
             bool reuslt = await _userRepository.DeleteUserById(userId);
@@ -75,21 +77,14 @@ namespace UCMS.Services.UserService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<OutputUserDto>> EditUser(int userId, EditUserDto dto)
+        public async Task<ServiceResponse<OutputUserDto>> EditUser(User user, EditUserDto dto)
         {
-            User? user = await _userRepository.GetUserByIdAsync(userId);
-
-            if (user == null)
-            {
-                return BuildNotFoundResponse(userId);
-            }
-
             User updatedUser = _mapper.Map(dto, user);
 
             await _userRepository.UpdateUserAsync(updatedUser);
-            _logger.LogInformation("User {userId} updated successfully", userId);
+            _logger.LogInformation("User {userId} updated successfully", user.Id);
 
-            return BuildOutputUserDtoResponse(updatedUser, string.Format(Messages.UpdateUser, userId));
+            return BuildOutputUserDtoResponse(updatedUser, string.Format(Messages.UpdateUser, user.Id));
         }
 
         public async Task<ServiceResponse<bool>> ChangePassword(User user, ChangePasswordDto changePasswordDto)
