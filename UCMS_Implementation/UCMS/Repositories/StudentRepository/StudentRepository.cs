@@ -14,6 +14,12 @@ namespace UCMS.Repositories.StudentRepository
             _context = context;
         }
 
+        public async Task AddStudentAsync(Student studnet)
+        {
+            await _context.Students.AddAsync(studnet);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<Student> GetStudentByUserIdAsync(int userId)
         {
             return await _context.Students.FirstOrDefaultAsync(s => s.UserId == userId);

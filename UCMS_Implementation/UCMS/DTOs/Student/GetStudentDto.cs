@@ -1,14 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace UCMS.DTOs.Student
+﻿namespace UCMS.DTOs.Student
 {
-    public class EditStudentDto
+    public class GetStudentDto
     {
-        [MaxLength(50)]
         public string? StudentNumber { get; set; }
         public string? Major { get; set; }
         public int? EnrollmentYear { get; set; }
         public int? University { get; set; }
-        public int? مقطع { get; set; }
     }
 }

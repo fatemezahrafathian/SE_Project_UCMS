@@ -283,13 +283,11 @@ namespace UCMS.Migrations
 
             modelBuilder.Entity("UCMS.Models.ClassSchedule", b =>
                 {
-                    b.HasOne("UCMS.Models.Class", "Class")
+                    b.HasOne("UCMS.Models.Class", null)
                         .WithMany("Schedules")
                         .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Class");
                 });
 
             modelBuilder.Entity("UCMS.Models.Instructor", b =>

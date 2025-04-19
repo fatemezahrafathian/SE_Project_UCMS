@@ -27,9 +27,16 @@ public class DataContext : DbContext
             .IsUnique();
         modelBuilder.Entity<User>()
             .OwnsOne(u => u.OneTimeCode);
-        
+
         modelBuilder.Entity<Role>()
             .HasIndex(r => r.Name)
             .IsUnique();
+
+        modelBuilder.Entity<Student>()
+            .HasOne(s => s.User)
+            .WithOne(u => u.Student)
+            .HasForeignKey<Student>(s => s.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
     }
 }

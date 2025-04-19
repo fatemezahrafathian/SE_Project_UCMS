@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UCMS.DTOs.Student;
 using UCMS.Models;
@@ -21,14 +22,12 @@ namespace UCMS.Controllers
         [HttpPut("edit")]
         public async Task<IActionResult> EditStudent([FromBody] EditStudentDto editStudentDto)
         {
-            // Get the user's ID from the authenticated user  
-            var userId = int.Parse(User.FindFirst("UserId")?.Value ?? "0");
+            var user = HttpContext.Items["User"] as User;
 
-            // Call service to update the student details  
-            var result = await _studentService.EditStudentAsync(userId, editStudentDto);
+            var result = await _studentService.EditStudentAsync(user.Id, editStudentDto);
             if (!result) return NotFound("Student not found");
 
-            return NoContent(); // Return 204 No Content for success  
+            return Ok();
         }
     }
 

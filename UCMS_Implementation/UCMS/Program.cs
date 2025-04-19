@@ -11,6 +11,8 @@ using UCMS.Repositories.ClassRepository;
 using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Repositories.RoleRepository;
 using UCMS.Repositories.RoleRepository.Abstraction;
+using UCMS.Repositories.StudentRepository;
+using UCMS.Repositories.StudentRepository.Abstraction;
 using UCMS.Repositories.UserRepository;
 using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Services.AuthService;
@@ -23,6 +25,8 @@ using UCMS.Services.EmailService;
 using UCMS.Services.EmailService.Abstraction;
 using UCMS.Services.RoleService;
 using UCMS.Services.RoleService.Abstraction;
+using UCMS.Services.StudentService;
+using UCMS.Services.StudentService.Abstraction;
 using UCMS.Services.TokenService;
 using UCMS.Services.TokenService.Abstraction;
 
@@ -54,6 +58,8 @@ builder.Services.AddSingleton<IUrlHelperFactory, UrlHelperFactory>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<ICookieService,CookieService>();
 builder.Services.AddScoped<ITokenService,TokenService>();
 builder.Services.AddScoped<IOneTimeCodeService, OneTimeCodeService>();
