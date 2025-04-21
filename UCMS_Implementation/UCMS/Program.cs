@@ -22,6 +22,8 @@ using UCMS.Services.CookieService.Abstraction;
 using UCMS.Services.EmailService;
 using UCMS.Services.EmailService.Abstraction;
 using UCMS.Services.ImageService;
+using UCMS.Services.PasswordService;
+using UCMS.Services.PasswordService.Abstraction;
 using UCMS.Services.RoleService;
 using UCMS.Services.RoleService.Abstraction;
 using UCMS.Services.TokenService;

@@ -20,8 +20,8 @@ public class Class
     [ForeignKey("InstructorId")]
     public Instructor Instructor { get; set; }
     
-    public DateTime? StartDate { get; set; }
-    public DateTime? EndDate { get; set; }
+    public DateOnly? StartDate { get; set; }
+    public DateOnly? EndDate { get; set; }
 
     [MaxLength(20)]
     public string? ClassCode { get; set; }
@@ -31,16 +31,25 @@ public class Class
     [MaxLength(300)]
     public string? ProfileImageUrl { get; set; }
     [NotMapped]
-    public bool IsActive =>
-        (!StartDate.HasValue && !EndDate.HasValue) ||
-        (StartDate.HasValue && !EndDate.HasValue && StartDate.Value <= DateTime.UtcNow) ||
-        (!StartDate.HasValue && EndDate.HasValue && EndDate.Value >= DateTime.UtcNow) ||
-        (StartDate.HasValue && EndDate.HasValue &&
-         StartDate.Value <= DateTime.UtcNow && EndDate.Value >= DateTime.UtcNow);
+    public bool IsActive
+    {
+        get
+        {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
+            return (!StartDate.HasValue && !EndDate.HasValue) ||
+                   (StartDate.HasValue && !EndDate.HasValue && StartDate.Value <= today) ||
+                   (!StartDate.HasValue && EndDate.HasValue && EndDate.Value >= today) ||
+                   (StartDate.HasValue && EndDate.HasValue &&
+                    StartDate.Value <= today && EndDate.Value >= today);
+        }
+    }
     
-    // [Required] // remove this
-    // public ClassIdentifierType IdentifierType { get; set; } = 0;
-    
+    [Required, MaxLength(256)]  // only 16 bytes needed, to work better
+    public byte[] PasswordSalt { get; set; }
+
+    [Required, MaxLength(256)] // only 32 bytes needed, to work better
+    public byte[] PasswordHash { get; set; }
+
     public ICollection<ClassSchedule> Schedules { get; set; }
 }

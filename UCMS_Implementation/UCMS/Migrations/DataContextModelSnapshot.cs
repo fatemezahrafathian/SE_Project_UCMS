@@ -41,18 +41,28 @@ namespace UCMS.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
 
                     b.Property<int>("InstructorId")
                         .HasColumnType("integer");
+
+                    b.Property<byte[]>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("bytea");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("bytea");
 
                     b.Property<string>("ProfileImageUrl")
                         .HasMaxLength(300)
                         .HasColumnType("character varying(300)");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateOnly?>("StartDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("Title")
                         .IsRequired()

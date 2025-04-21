@@ -31,5 +31,14 @@ public class DataContext : DbContext
         modelBuilder.Entity<Role>()
             .HasIndex(r => r.Name)
             .IsUnique();
+        
+        modelBuilder.Entity<Class>()
+            .Property(p => p.StartDate)
+            .HasColumnType("date");
+
+        modelBuilder.Entity<Class>()
+            .Property(p => p.EndDate)
+            .HasColumnType("date");
+
     }
 }

@@ -5,8 +5,10 @@ using UCMS.Models;
 using UCMS.Repositories;
 using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Resources;
+using UCMS.Services.AuthService.Abstraction;
 using UCMS.Services.ClassService.Abstraction;
 using UCMS.Services.ImageService;
+using UCMS.Services.PasswordService.Abstraction;
 
 namespace UCMS.Services.ClassService;
 
@@ -17,15 +19,17 @@ public class ClassService: IClassService
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IInstructorRepository _instructorRepository;
     private readonly IImageService _imageService;
+    private readonly IPasswordService _passwordService;
     
 
-    public ClassService(IClassRepository classRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, IInstructorRepository instructorRepository, IImageService imageService)
+    public ClassService(IClassRepository classRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, IInstructorRepository instructorRepository, IImageService imageService, IPasswordService passwordService)
     {
         _classRepository = classRepository;
         _mapper = mapper;
         _httpContextAccessor = httpContextAccessor;
         _instructorRepository = instructorRepository;
         _imageService = imageService;
+        _passwordService = passwordService;
     }
 
     public async Task<ServiceResponse<GetClassForInstructorDto>> CreateClass(CreateClassDto dto) // check dates
@@ -35,8 +39,47 @@ public class ClassService: IClassService
         var newClass = _mapper.Map<Class>(dto);
         newClass.InstructorId = user!.Instructor!.Id;
 
-        newClass.ClassCode = await GenerateUniqueClassCodeAsync();
+        if (dto.StartDate.HasValue || dto.EndDate.HasValue)
+        {
+            if (dto.StartDate.HasValue && dto.EndDate.HasValue)
+            {
+                if (dto.StartDate.Value > dto.EndDate.Value)
+                {
+                    return new ServiceResponse<GetClassForInstructorDto>
+                    {
+                        Success = false,
+                        Message = Messages.StartDateCanNotBeLaterThanEndDatte
+                    };
+                }
+            }
 
+            if (dto.StartDate.HasValue)
+            {
+                if (dto.StartDate.Value < DateOnly.FromDateTime(DateTime.UtcNow))
+                {
+                    return new ServiceResponse<GetClassForInstructorDto>
+                    {
+                        Success = false,
+                        Message = Messages.StartDateCanNotBeInPast
+                    };
+                }
+            }
+
+            if (dto.EndDate.HasValue)
+            {
+                if (dto.EndDate.Value < DateOnly.FromDateTime(DateTime.UtcNow))
+                {
+                    return new ServiceResponse<GetClassForInstructorDto>
+                    {
+                        Success = false,
+                        Message = Messages.EndDateCanNotBeInPast
+                    };
+                }
+            }
+        }
+
+        
+        
         if (dto.ProfileImage != null)
         {
             if (!_imageService.IsValidImageExtension(dto.ProfileImage))
@@ -60,7 +103,17 @@ public class ClassService: IClassService
             var imageUrl = await _imageService.SaveImageAsync(dto.ProfileImage, "images/classes"); // get from appsetting
             newClass.ProfileImageUrl = imageUrl;
         }
+
+        if (!_passwordService.IsPasswordValid(dto.Password))
+        {
+            return new ServiceResponse<GetClassForInstructorDto> {Success = false, Message = Messages.PasswordNotStrong};
+        }
         
+        newClass.ClassCode = await GenerateUniqueClassCodeAsync();
+        
+        newClass.PasswordSalt = _passwordService.CreateSalt();
+        newClass.PasswordHash = await _passwordService.HashPasswordAsync(dto.Password, newClass.PasswordSalt);
+
         await _classRepository.AddClassAsync(newClass);
 
         var responseDto = _mapper.Map<GetClassForInstructorDto>(newClass);
@@ -87,7 +140,7 @@ public class ClassService: IClassService
             };
         }
         
-        var isInstructorOfClass = classEntity.Instructor.UserId == user!.Id;
+        var isInstructorOfClass = classEntity.InstructorId == user!.Instructor!.Id;
         if (!isInstructorOfClass)
         {
             return new ServiceResponse<GetClassForInstructorDto> 
@@ -190,7 +243,7 @@ public class ClassService: IClassService
             };
         }
 
-        var isInstructor = classEntity.Instructor.UserId == user!.Id;
+        var isInstructor = classEntity.InstructorId == user!.Instructor!.Id;
         if (!isInstructor)
         {
             return new ServiceResponse<string> 
@@ -224,7 +277,7 @@ public class ClassService: IClassService
             };
         }
         
-        var isInstructor = classEntity.Instructor.UserId == user!.Id;
+        var isInstructor = classEntity.InstructorId == user!.Instructor!.Id;
         if (!isInstructor)
         {
             return new ServiceResponse<GetClassForInstructorDto> 
@@ -258,7 +311,54 @@ public class ClassService: IClassService
             if (!string.IsNullOrWhiteSpace(classEntity.ProfileImageUrl))
             {
                 _imageService.DeleteImage(classEntity.ProfileImageUrl);
-            }            
+            }
+
+
+
+            if (dto.StartDate.HasValue)
+            {
+                if (dto.StartDate.Value < DateOnly.FromDateTime(classEntity.CreatedAt)) 
+                {
+                    return new ServiceResponse<GetClassForInstructorDto>
+                    {
+                        Success = false,
+                        Message = Messages.StartDateCanNotBeEarlierThanCreationTime
+                    };
+                }
+                // check with class elements
+                if (dto.EndDate.HasValue)
+                {
+                    if (dto.StartDate.Value < dto.EndDate.Value)
+                    {
+                        return new ServiceResponse<GetClassForInstructorDto>
+                        {
+                            Success = false,
+                            Message = Messages.StartDateCanNotBeLaterThanEndDatte
+                        };
+                    }
+                }
+                else
+                {
+                    if (dto.StartDate.Value < classEntity.EndDate.Value)
+                    {
+                        return new ServiceResponse<GetClassForInstructorDto>
+                        {
+                            Success = false,
+                            Message = Messages.StartDateCanNotBeLaterThanEndDatte
+                        };
+                    }
+                }
+            }
+            else
+            {
+                if (dto.EndDate.HasValue)
+                {
+                    // check with class elements
+                }
+            }
+            
+            
+            
             
             // cloud
             var imageUrl = await _imageService.SaveImageAsync(dto.ProfileImage, "images/classes"); // get from appsetting

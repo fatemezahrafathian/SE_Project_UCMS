@@ -99,4 +99,16 @@
     <data name="InvalidSize" xml:space="preserve">
         <value>file size is not valid.</value>
     </data>
+    <data name="StartDateCanNotBeLaterThanEndDatte" xml:space="preserve">
+        <value>Start date cannot be later than end date.</value>
+    </data>
+    <data name="StartDateCanNotBeInPast" xml:space="preserve">
+        <value>Start date cannot be in the past.</value>
+    </data>
+    <data name="EndDateCanNotBeInPast" xml:space="preserve">
+        <value>End date cannot be in the past.</value>
+    </data>
+    <data name="StartDateCanNotBeEarlierThanCreationTime" xml:space="preserve">
+        <value>Start date can not be earlier than creation time.</value>
+    </data>
 </root>

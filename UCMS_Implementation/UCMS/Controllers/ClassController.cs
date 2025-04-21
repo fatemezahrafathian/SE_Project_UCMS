@@ -7,10 +7,11 @@ using UCMS.Services.ClassService.Abstraction;
 
 namespace UCMS.Controllers;
 // determine nullability of dtos properties
-// role back if not completed
 // handle invalid role id
-// uniq class name or not
-// check start time to be less than end time
+// captch
+// cloud
+// confirmation link
+// clean and reuse checks in services
 [Route("api/classes")]
 [ApiController]
 public class ClassController: ControllerBase
@@ -104,7 +105,7 @@ public class ClassController: ControllerBase
         return Ok(1);
     }
     
-    [HttpPost("test1{userId}")]
+    [HttpGet("test1{userId}")]
     public async Task<IActionResult> Createstu(int userId)
     {
         var testStudent = new Student
@@ -133,39 +134,17 @@ public class ClassController: ControllerBase
     
 }
 
-// {
-// "title": "Programming Class",
-// "description": "Introduction to C# programming.",
-// "startDate": "2025-04-11T09:00:00.000Z",
-// "endDate": "2025-04-11T11:00:00.000Z",
-// "identifierType": 1,
-// "schedules": [
-// {
-//     "dayOfWeek": 1,
-//     "startTime": "09:00:00",
-//     "endTime": "11:00:00"
-// }
-// ]
-// }
-
-//
-// {
-// "id": 4,
-// "title": "Advanced Software Engineering",
-// "description": "A comprehensive course on advanced software engineering topics.",
-// "startDate": "2025-04-11T09:00:00.000Z",
-// "endDate": "2025-06-25T09:00:00.000Z",
-// "schedules": [
-// {
-//     "dayOfWeek": 1,
-//     "startTime": "10:00:00",
-//     "endTime": "12:00:00"
-// },
-// {
-// "dayOfWeek": 4,
-// "startTime": "13:00:00",
-// "endTime": "15:00:00"
-// }
-// ]
-// }
-
+// curl -X POST https://localhost:44389/api/classes ^
+//     -H "accept: */*" ^
+//     -H "Content-Type: multipart/form-data" ^
+//     -F "Title=Algorithms" ^
+//     -F "Description=First Year Class" ^
+//     -F "StartDate=2025-04-25" ^
+//     -F "EndDate=2025-07-30" ^
+//     -F "ProfileImage=@C:/Users/Hana.N/Downloads/test.png" ^
+//     -F "Schedules[0].DayOfWeek=1" ^
+//     -F "Schedules[0].StartTime=08:00:00" ^
+//     -F "Schedules[0].EndTime=10:00:00" ^
+//     -F "Schedules[1].DayOfWeek=3" ^
+//     -F "Schedules[1].StartTime=14:00:00" ^
+//     -F "Schedules[1].EndTime=16:00:00" -k
