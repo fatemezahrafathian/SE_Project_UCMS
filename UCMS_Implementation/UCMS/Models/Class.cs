@@ -20,19 +20,36 @@ public class Class
     [ForeignKey("InstructorId")]
     public Instructor Instructor { get; set; }
     
-    public DateTime? StartDate { get; set; }
-    public DateTime? EndDate { get; set; }
+    public DateOnly? StartDate { get; set; }
+    public DateOnly? EndDate { get; set; }
 
     [MaxLength(20)]
     public string? ClassCode { get; set; }
     
-    public bool IsActive { get; set; } = true;
-
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    [MaxLength(300)]
+    public string? ProfileImageUrl { get; set; }
+    [NotMapped]
+    public bool IsActive
+    {
+        get
+        {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+            return (!StartDate.HasValue && !EndDate.HasValue) ||
+                   (StartDate.HasValue && !EndDate.HasValue && StartDate.Value <= today) ||
+                   (!StartDate.HasValue && EndDate.HasValue && EndDate.Value >= today) ||
+                   (StartDate.HasValue && EndDate.HasValue &&
+                    StartDate.Value <= today && EndDate.Value >= today);
+        }
+    }
     
-    [Required]
-    public ClassIdentifierType IdentifierType { get; set; }
-    
+    [Required, MaxLength(256)]  // only 16 bytes needed, to work better
+    public byte[] PasswordSalt { get; set; }
+
+    [Required, MaxLength(256)] // only 32 bytes needed, to work better
+    public byte[] PasswordHash { get; set; }
+
     public ICollection<ClassSchedule> Schedules { get; set; }
 }

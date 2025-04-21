@@ -160,6 +160,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to End date cannot be in the past..
+        /// </summary>
+        public static string EndDateCanNotBeInPast {
+            get {
+                return ResourceManager.GetString("EndDateCanNotBeInPast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Expired code.
         /// </summary>
         public static string ExpiredCode {
@@ -178,11 +187,29 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File format is not valid..
+        /// </summary>
+        public static string InvalidFormat {
+            get {
+                return ResourceManager.GetString("InvalidFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to InvalidInputMessage.
         /// </summary>
         public static string InvalidInputMessage {
             get {
                 return ResourceManager.GetString("InvalidInputMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to file size is not valid..
+        /// </summary>
+        public static string InvalidSize {
+            get {
+                return ResourceManager.GetString("InvalidSize", resourceCulture);
             }
         }
         
@@ -246,6 +273,33 @@ namespace UCMS.Resources {
         public static string RegisteredSuccessfully {
             get {
                 return ResourceManager.GetString("RegisteredSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start date can not be earlier than creation time..
+        /// </summary>
+        public static string StartDateCanNotBeEarlierThanCreationTime {
+            get {
+                return ResourceManager.GetString("StartDateCanNotBeEarlierThanCreationTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start date cannot be in the past..
+        /// </summary>
+        public static string StartDateCanNotBeInPast {
+            get {
+                return ResourceManager.GetString("StartDateCanNotBeInPast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Start date cannot be later than end date..
+        /// </summary>
+        public static string StartDateCanNotBeLaterThanEndDatte {
+            get {
+                return ResourceManager.GetString("StartDateCanNotBeLaterThanEndDatte", resourceCulture);
             }
         }
         

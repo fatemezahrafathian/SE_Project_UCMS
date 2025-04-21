@@ -117,13 +117,14 @@ namespace UCMS.Migrations
                     Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     InstructorId = table.Column<int>(type: "integer", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    StartDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    EndDate = table.Column<DateOnly>(type: "date", nullable: true),
                     ClassCode = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    IdentifierType = table.Column<int>(type: "integer", nullable: false)
+                    ProfileImageUrl = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    PasswordSalt = table.Column<byte[]>(type: "bytea", maxLength: 256, nullable: false),
+                    PasswordHash = table.Column<byte[]>(type: "bytea", maxLength: 256, nullable: false)
                 },
                 constraints: table =>
                 {

@@ -56,5 +56,9 @@
         <DependentUpon>EmailTemplates.resx</DependentUpon>
       </Compile>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot" />
+    </ItemGroup>
     
 </Project>

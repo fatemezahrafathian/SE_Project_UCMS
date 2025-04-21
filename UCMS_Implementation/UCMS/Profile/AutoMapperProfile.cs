@@ -23,25 +23,23 @@ public class AutoMapperProfile : Profile
         CreateMap<CreateClassDto, Class>()
             .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.Schedules));
         
-        // first mapper
-        CreateMap<Class, GetClassDto>()
-            .ForMember(dest => dest.InstructorFullName, opt => opt.Ignore())
+        CreateMap<Class, GetClassForInstructorDto>()
             .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.Schedules));
         
-        // second mapper
-        CreateMap<Class, GetClassDto>()
+        CreateMap<Class, GetClassForStudentDto>()
             .ForMember(dest => dest.InstructorFullName,
                 opt => opt.MapFrom(src => $"{src.Instructor.User.FirstName} {src.Instructor.User.LastName}"))
             .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.Schedules));
-        // .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate?.ToString("yyyy-MM-dd")));
         
-        CreateMap<Class, GetClassPreviewDto>()
-            .ForMember(dest => dest.InstructorFullName,
-                opt => opt.MapFrom(src => $"{src.Instructor.User.FirstName} {src.Instructor.User.LastName}"))
-            .ForMember(dest => dest.Schedules,
-                opt => opt.MapFrom(src => src.Schedules));
+        // CreateMap<Class, GetClassPreviewDto>()
+        //     .ForMember(dest => dest.InstructorFullName,
+        //         opt => opt.MapFrom(src => $"{src.Instructor.User.FirstName} {src.Instructor.User.LastName}"))
+        //     .ForMember(dest => dest.Schedules,
+        //         opt => opt.MapFrom(src => src.Schedules));
         
-        CreateMap<UpdateClassDto, Class>()
+        // see if it works
+        CreateMap<PatchClassDto, Class>()
             .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.Schedules));
+        
     }
 }

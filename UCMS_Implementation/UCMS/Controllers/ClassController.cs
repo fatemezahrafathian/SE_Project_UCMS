@@ -7,11 +7,11 @@ using UCMS.Services.ClassService.Abstraction;
 
 namespace UCMS.Controllers;
 // determine nullability of dtos properties
-// role back if not completed
 // handle invalid role id
-// uniq class name or not
-// change password (prev pass - pass - confirm)
-// check start time to be less than end time
+// captch
+// cloud
+// confirmation link
+// clean and reuse checks in services
 [Route("api/classes")]
 [ApiController]
 public class ClassController: ControllerBase
@@ -25,26 +25,39 @@ public class ClassController: ControllerBase
         _context = context;
     }
 
+    
     [RoleBasedAuthorization("Instructor")] // which comes first
     [HttpPost("")]
-    public async Task<IActionResult> CreateClass([FromBody] CreateClassDto dto)
+    public async Task<IActionResult> CreateClass([FromForm] CreateClassDto dto)
     {
         var response = await _classService.CreateClass(dto);
 
         if (response.Success)
         {
-            return CreatedAtAction(nameof(GetClassById), new { classId = response.Data.Id }, response);
+            return CreatedAtAction(nameof(GetClassForInstructor), new { classId = response.Data.Id }, response);
         }
         
         return BadRequest(new { message = response.Message });
     }
 
 
-    [RoleBasedAuthorization("Instructor", "Student")]
-    [HttpGet("{classId}")]
-    public async Task<IActionResult> GetClassById(int classId)
+    [RoleBasedAuthorization("Instructor")]
+    [HttpGet("instructor/{classId}")]
+    public async Task<IActionResult> GetClassForInstructor(int classId)
     {
-        var response = await _classService.GetClassById(classId);
+        var response = await _classService.GetClassForInstructor(classId);
+
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Data);
+    }
+
+    [RoleBasedAuthorization("Student")]
+    [HttpGet("student/{classId}")]
+    public async Task<IActionResult> GetClassForStudent(int classId)
+    {
+        var response = await _classService.GetClassForStudent(classId);
 
         if (!response.Success)
             return NotFound(response.Message);
@@ -54,9 +67,9 @@ public class ClassController: ControllerBase
 
     [RoleBasedAuthorization("Instructor")]
     [HttpGet("instructor")]
-    public async Task<IActionResult> GetClassesByInstructor()
+    public async Task<IActionResult> FilteredClassesOfInstructor(PaginatedFilterClassForInstructorDto dto)
     {
-        var response = await _classService.GetClassesByInstructor();
+        var response = await _classService.FilterClassesOfInstructor(dto);
 
         if (!response.Success)
             return NotFound(response.Message);
@@ -76,12 +89,12 @@ public class ClassController: ControllerBase
         return Ok(response.Message);
     }
     
-    [HttpPost("test")]
-    public async Task<IActionResult> Createins()
+    [HttpPost("test{userId}")]
+    public async Task<IActionResult> Createins(int userId)
     {
         var testInstructor = new Instructor
         {
-            UserId = 4,
+            UserId = userId,
             EmployeeCode = "EMP-001",
             Department = "مهندسی نرم‌افزار",
             CreatedAt = DateTime.UtcNow,
@@ -92,12 +105,12 @@ public class ClassController: ControllerBase
         return Ok(1);
     }
     
-    [HttpPost("test1")]
-    public async Task<IActionResult> Createstu()
+    [HttpGet("test1{userId}")]
+    public async Task<IActionResult> Createstu(int userId)
     {
         var testStudent = new Student
         {
-            UserId = 2,
+            UserId = userId,
             StudentNumber = "STD123456",
             Major = "Computer Science",
             EnrollmentYear = 2023
@@ -108,10 +121,10 @@ public class ClassController: ControllerBase
     }
 
     [RoleBasedAuthorization("Instructor")]
-    [HttpPut("")]
-    public async Task<IActionResult> UpdateClass([FromBody] UpdateClassDto dto)
+    [HttpPatch("{classId}")]
+    public async Task<IActionResult> PartialUpdateClass(int classId, [FromForm] PatchClassDto dto)
     {
-        var response = await _classService.UpdateClass(dto.Id, dto);
+        var response = await _classService.PartialUpdateClass(classId, dto);
 
         if (!response.Success)
             return NotFound(response.Message);
@@ -121,39 +134,17 @@ public class ClassController: ControllerBase
     
 }
 
-// {
-// "title": "Programming Class",
-// "description": "Introduction to C# programming.",
-// "startDate": "2025-04-11T09:00:00.000Z",
-// "endDate": "2025-04-11T11:00:00.000Z",
-// "identifierType": 1,
-// "schedules": [
-// {
-//     "dayOfWeek": 1,
-//     "startTime": "09:00:00",
-//     "endTime": "11:00:00"
-// }
-// ]
-// }
-
-
-// {
-// "id": 4,
-// "title": "Advanced Software Engineering",
-// "description": "A comprehensive course on advanced software engineering topics.",
-// "startDate": "2025-04-11T09:00:00.000Z",
-// "endDate": "2025-06-25T09:00:00.000Z",
-// "schedules": [
-// {
-//     "dayOfWeek": 1,
-//     "startTime": "10:00:00",
-//     "endTime": "12:00:00"
-// },
-// {
-// "dayOfWeek": 4,
-// "startTime": "13:00:00",
-// "endTime": "15:00:00"
-// }
-// ]
-// }
-
+// curl -X POST https://localhost:44389/api/classes ^
+//     -H "accept: */*" ^
+//     -H "Content-Type: multipart/form-data" ^
+//     -F "Title=Algorithms" ^
+//     -F "Description=First Year Class" ^
+//     -F "StartDate=2025-04-25" ^
+//     -F "EndDate=2025-07-30" ^
+//     -F "ProfileImage=@C:/Users/Hana.N/Downloads/test.png" ^
+//     -F "Schedules[0].DayOfWeek=1" ^
+//     -F "Schedules[0].StartTime=08:00:00" ^
+//     -F "Schedules[0].EndTime=10:00:00" ^
+//     -F "Schedules[1].DayOfWeek=3" ^
+//     -F "Schedules[1].StartTime=14:00:00" ^
+//     -F "Schedules[1].EndTime=16:00:00" -k
