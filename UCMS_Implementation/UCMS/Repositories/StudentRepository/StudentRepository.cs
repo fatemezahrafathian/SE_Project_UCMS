@@ -20,7 +20,12 @@ namespace UCMS.Repositories.StudentRepository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Student> GetStudentByUserIdAsync(int userId)
+        public async Task<Student?> GetStudentByIdAsync(int studentId)
+        {
+            return await _context.Students.FirstOrDefaultAsync(s => s.Id == studentId);
+        }
+
+        public async Task<Student?> GetStudentByUserIdAsync(int userId)
         {
             return await _context.Students.FirstOrDefaultAsync(s => s.UserId == userId);
         }
@@ -34,6 +39,11 @@ namespace UCMS.Repositories.StudentRepository
         public async Task<bool> SaveChangesAsync()
         {
             return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<List<Student>> GetAllStudentsAsync()
+        {
+            return await _context.Students.ToListAsync();
         }
     }
 }

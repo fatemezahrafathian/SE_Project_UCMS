@@ -50,5 +50,16 @@ public class AutoMapperProfile : Profile
 
         CreateMap<Student, GetStudentDto>();
 
+        CreateMap<Student, StudentPreviewDto>()
+            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
+            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))
+            .ForMember(dest => dest.ProfileImagePath, opt => opt.MapFrom(src => src.User.ProfileImagePath));
+
+        CreateMap<Student, StudentProfileDto>()
+            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
+            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))
+            .ForMember(dest => dest.Bio, opt => opt.MapFrom(src => src.User.Bio))
+            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.User.Role));
+
     }
 }
