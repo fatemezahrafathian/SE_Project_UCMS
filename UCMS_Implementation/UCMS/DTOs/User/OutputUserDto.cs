@@ -14,7 +14,7 @@ namespace UCMS.DTOs.User
 
         public string? LastName { get; set; }
 
-        public Gender? geneder { get; set; }
+        public Gender? Gender { get; set; }
 
         public GetRoleDto? Role { get; set; }
 
