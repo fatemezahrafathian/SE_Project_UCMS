@@ -5,7 +5,6 @@ using UCMS.Models;
 using UCMS.Repositories;
 using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Resources;
-using UCMS.Services.AuthService.Abstraction;
 using UCMS.Services.ClassService.Abstraction;
 using UCMS.Services.ImageService;
 using UCMS.Services.PasswordService.Abstraction;
@@ -211,19 +210,18 @@ public class ClassService: IClassService
         return code;
     }
     
-    public async Task<ServiceResponse<List<GetClassPreviewForInstructorDto>>> FilterClassesOfInstructor(PaginatedFilterClassForInstructorDto dto)
+    public async Task<ServiceResponse<GetClassPageDto>> FilterClassesOfInstructor(PaginatedFilterClassForInstructorDto dto)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        // filtering
+        var classEntityList = await _classRepository.FilterAndPaginateClassesAsync(user!.Instructor!.Id, dto.Title, dto.IsActive, dto.Page,
+            dto.PageSize);        
         
-        // paginating
+        var dtoPage = _mapper.Map<GetClassPageDto>(classEntityList);
         
-        // var clsDto = _mapper.Map<List<GetClassPreviewForInstructorDto>>(classList);
-
-        return new ServiceResponse<List<GetClassPreviewForInstructorDto>> // add constructor for null data responses
+        return new ServiceResponse<GetClassPageDto> // add constructor for null data responses
         {
-            Data = null,
+            Data = dtoPage,
             Success = true,
             Message = Messages.ClassesRetrievedSuccessfully
         };

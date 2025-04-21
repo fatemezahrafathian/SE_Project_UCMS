@@ -1,3 +1,4 @@
+using UCMS.DTOs;
 using UCMS.DTOs.AuthDto;
 using UCMS.DTOs.ClassDto;
 using UCMS.DTOs.RoleDto;
@@ -40,6 +41,10 @@ public class AutoMapperProfile : Profile
         // see if it works
         CreateMap<PatchClassDto, Class>()
             .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.Schedules));
-        
+
+        CreateMap<Class, GetClassPreviewForInstructorDto>(); // calculate student count
+
+        CreateMap<Page<Class>, GetClassPageDto>()
+            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));
     }
 }

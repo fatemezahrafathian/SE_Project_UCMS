@@ -66,8 +66,8 @@ public class ClassController: ControllerBase
     }
 
     [RoleBasedAuthorization("Instructor")]
-    [HttpGet("instructor")]
-    public async Task<IActionResult> FilteredClassesOfInstructor(PaginatedFilterClassForInstructorDto dto)
+    [HttpPost("instructor")]
+    public async Task<IActionResult> FilteredClassesOfInstructor([FromBody] PaginatedFilterClassForInstructorDto dto)
     {
         var response = await _classService.FilterClassesOfInstructor(dto);
 

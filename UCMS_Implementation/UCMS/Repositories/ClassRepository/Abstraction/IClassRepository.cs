@@ -1,3 +1,4 @@
+using UCMS.DTOs;
 using UCMS.Models;
 
 namespace UCMS.Repositories.ClassRepository.Abstraction;
@@ -12,4 +13,6 @@ public interface IClassRepository
     Task<List<Class>> GetClassesByInstructorAsync(int instructorId);
     Task DeleteClassAsync(Class cls); 
     Task UpdateClassAsync(Class cls);
+    Task<Page<Class>> FilterAndPaginateClassesAsync(int instructorId, string? title, bool? isActive,
+        int page, int pageSize);
 }
