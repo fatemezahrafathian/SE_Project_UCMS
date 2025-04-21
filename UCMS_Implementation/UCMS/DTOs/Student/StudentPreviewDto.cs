@@ -8,7 +8,6 @@ namespace UCMS.DTOs.Student
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Major { get; set; }
-
         public EducationLevel? EducationLevel { get; set; }
         public string? ProfileImagePath { get; set; }
 

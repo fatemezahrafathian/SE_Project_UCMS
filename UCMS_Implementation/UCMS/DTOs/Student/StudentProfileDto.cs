@@ -13,6 +13,5 @@ namespace UCMS.DTOs.Student
         public EducationLevel? EducationLevel { get; set; }
         public string? Major {  get; set; }
         public int? EnrollmentYear { get; set; }
-
     }
 }
