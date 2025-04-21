@@ -5,6 +5,6 @@ namespace UCMS.Services.StudentService.Abstraction
 {
     public interface IStudentService
     {
-        Task<ServiceResponse<GetStudentDto>> EditStudentAsync(int userId, EditStudentDto editStudentDto);
+        Task<ServiceResponse<GetStudentDto>> EditStudentAsync(EditStudentDto editStudentDto);
     }
 }

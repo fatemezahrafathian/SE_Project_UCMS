@@ -22,7 +22,7 @@ namespace UCMS.Controllers
         [HttpPut("edit")]
         public async Task<IActionResult> EditStudent([FromBody] EditStudentDto editStudentDto)
         {
-            var user = HttpContext.Items["User"] as User;
+            
 
             var result = await _studentService.EditStudentAsync(user.Id, editStudentDto);
             if (!result) return NotFound("Student not found");
