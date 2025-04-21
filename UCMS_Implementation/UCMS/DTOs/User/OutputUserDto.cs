@@ -8,13 +8,13 @@ namespace UCMS.DTOs.User
     {
         public string? Email { get; set; }
 
-        public string? UserName { get; set; }
+        public string? Username { get; set; }
 
         public string? FirstName { get; set; }
 
         public string? LastName { get; set; }
 
-        public Gender? gener { get; set; }
+        public Gender? geneder { get; set; }
 
         public GetRoleDto? Role { get; set; }
 
