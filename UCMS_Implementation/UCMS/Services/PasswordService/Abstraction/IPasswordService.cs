@@ -1,7 +1,7 @@
 using UCMS.DTOs;
 using UCMS.DTOs.AuthDto;
 
-namespace UCMS.Services.AuthService.Abstraction;
+namespace UCMS.Services.PasswordService.Abstraction;
 
 public interface IPasswordService
 {
