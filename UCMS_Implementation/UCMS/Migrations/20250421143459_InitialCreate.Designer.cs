@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using UCMS.Data;
@@ -11,9 +12,11 @@ using UCMS.Data;
 namespace UCMS.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250421143459_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -104,34 +107,6 @@ namespace UCMS.Migrations
                     b.HasIndex("ClassId");
 
                     b.ToTable("ClassSchedule");
-                });
-
-            modelBuilder.Entity("UCMS.Models.ClassStudent", b =>
-                {
-                    b.Property<int>("ClassId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("ClassId1")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("JoinedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("StudentId1")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ClassId", "StudentId");
-
-                    b.HasIndex("ClassId1");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("StudentId1");
-
-                    b.ToTable("ClassStudents");
                 });
 
             modelBuilder.Entity("UCMS.Models.Instructor", b =>
@@ -326,29 +301,6 @@ namespace UCMS.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("UCMS.Models.ClassStudent", b =>
-                {
-                    b.HasOne("UCMS.Models.Class", null)
-                        .WithMany()
-                        .HasForeignKey("ClassId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("UCMS.Models.Class", null)
-                        .WithMany("ClassStudents")
-                        .HasForeignKey("ClassId1");
-
-                    b.HasOne("UCMS.Models.Student", null)
-                        .WithMany()
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("UCMS.Models.Student", null)
-                        .WithMany("ClassStudents")
-                        .HasForeignKey("StudentId1");
-                });
-
             modelBuilder.Entity("UCMS.Models.Instructor", b =>
                 {
                     b.HasOne("UCMS.Models.User", "User")
@@ -406,8 +358,6 @@ namespace UCMS.Migrations
 
             modelBuilder.Entity("UCMS.Models.Class", b =>
                 {
-                    b.Navigation("ClassStudents");
-
                     b.Navigation("Schedules");
                 });
 
@@ -419,11 +369,6 @@ namespace UCMS.Migrations
             modelBuilder.Entity("UCMS.Models.Role", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("UCMS.Models.Student", b =>
-                {
-                    b.Navigation("ClassStudents");
                 });
 
             modelBuilder.Entity("UCMS.Models.User", b =>
