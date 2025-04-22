@@ -18,7 +18,7 @@ namespace UCMS.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Messages {
@@ -69,11 +69,20 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All roles fetched successfully..
+        ///   Looks up a localized string similar to All roles fetched successfully.
         /// </summary>
         public static string AllRolesFetchedSuccessfully {
             get {
                 return ResourceManager.GetString("AllRolesFetchedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All users fetched successfully.
+        /// </summary>
+        public static string AllUsersFetchedSuccessfully {
+            get {
+                return ResourceManager.GetString("AllUsersFetchedSuccessfully", resourceCulture);
             }
         }
         
@@ -186,6 +195,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to User with id = {0} deleted successfully..
+        /// </summary>
+        public static string DeleteUser {
+            get {
+                return ResourceManager.GetString("DeleteUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Email is already taken..
         /// </summary>
         public static string EmailAlreadyTaken {
@@ -209,6 +227,15 @@ namespace UCMS.Resources {
         public static string ExpiredCode {
             get {
                 return ResourceManager.GetString("ExpiredCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are not allowed to access this resource.
+        /// </summary>
+        public static string Forbidden {
+            get {
+                return ResourceManager.GetString("Forbidden", resourceCulture);
             }
         }
         
@@ -308,6 +335,15 @@ namespace UCMS.Resources {
         public static string OneTimeCodeSent {
             get {
                 return ResourceManager.GetString("OneTimeCodeSent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to passwrod changed successfully..
+        /// </summary>
+        public static string PasswordChange {
+            get {
+                return ResourceManager.GetString("PasswordChange", resourceCulture);
             }
         }
         
@@ -420,11 +456,38 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to user with id = {0} updated successfully..
+        /// </summary>
+        public static string UpdateUser {
+            get {
+                return ResourceManager.GetString("UpdateUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User with id = {0} found..
+        /// </summary>
+        public static string UserFound {
+            get {
+                return ResourceManager.GetString("UserFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Username is already taken..
         /// </summary>
         public static string UsernameAlreadyTaken {
             get {
                 return ResourceManager.GetString("UsernameAlreadyTaken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User with id = {0} not found..
+        /// </summary>
+        public static string UserNotFound {
+            get {
+                return ResourceManager.GetString("UserNotFound", resourceCulture);
             }
         }
         

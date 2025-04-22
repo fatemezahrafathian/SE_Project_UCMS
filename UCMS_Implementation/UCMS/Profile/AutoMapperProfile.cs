@@ -6,6 +6,7 @@ using UCMS.Models;
 
 namespace UCMS.Profile;
 using AutoMapper;
+using UCMS.DTOs.User;
 
 public class AutoMapperProfile : Profile
 {
@@ -15,7 +16,7 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.PasswordSalt, opt => opt.Ignore())
             .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
             .ForSourceMember(src => src.ConfirmPassword, opt => opt.DoNotValidate());
-        
+
         CreateMap<Role, GetRoleDto>();
         
         CreateMap<ClassScheduleDto, ClassSchedule>();
@@ -41,6 +42,11 @@ public class AutoMapperProfile : Profile
         // see if it works
         CreateMap<PatchClassDto, Class>()
             .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.Schedules));
+
+        CreateMap<User, OutputUserDto>();
+
+        CreateMap<EditUserDto, User>()
+            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
         CreateMap<Class, GetClassPreviewForInstructorDto>(); // calculate student count
 

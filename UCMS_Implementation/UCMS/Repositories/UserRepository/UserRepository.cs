@@ -5,15 +5,15 @@ using UCMS.Repositories.UserRepository.Abstraction;
 
 namespace UCMS.Repositories.UserRepository;
 
-public class UserRepository: IUserRepository
+public class UserRepository : IUserRepository
 {
     private readonly DataContext _context;
-    
+
     public UserRepository(DataContext context)
     {
         _context = context;
     }
-    
+
     public async Task AddUserAsync(User user)
     {
         await _context.Users.AddAsync(user);
@@ -27,6 +27,11 @@ public class UserRepository: IUserRepository
             .Include(u => u.Student)
             .Include(u => u.Instructor)
             .FirstOrDefaultAsync();
+    }
+
+    public async Task<List<User>> GetAllUsersAsync()
+    {
+        return await _context.Users.ToListAsync();
     }
 
     public async Task<User?> GetUserByEmailAsync(string email)
@@ -44,11 +49,21 @@ public class UserRepository: IUserRepository
         return await _context.Users.FirstOrDefaultAsync(u => u.VerificationToken == verificationToken);
     }
 
-    public async Task UpdateUserAsync(User user) // to be implemented
+    public async Task<bool> DeleteUserById(int id)
     {
-        // if (user == null)
-        //     throw new ArgumentNullException(nameof(user));
-        //
+        var user = await GetUserByIdAsync(id);
+
+        if (user != null)
+        {
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        return false;
+    }
+
+    public async Task UpdateUserAsync(User user)
+    {
         _context.Users.Update(user);
         await _context.SaveChangesAsync();
     }
