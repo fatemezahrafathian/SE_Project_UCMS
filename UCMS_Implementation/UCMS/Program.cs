@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -32,10 +33,16 @@ using UCMS.Services.UserService;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
+                       ?? builder.Configuration.GetConnectionString("DefaultConnection");
+
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
 builder.Services.Configure<ImageUploadSettings>(
     builder.Configuration.GetSection("ImageUploadSettings"));
+
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 // var mapperConfig = new MapperConfiguration(cfg =>
@@ -123,10 +130,14 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Seed data
-var scope = app.Services.CreateScope();
-var roleService = scope.ServiceProvider.GetRequiredService<IRoleService>();
-await SeedData.Initialize(scope.ServiceProvider, roleService);
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+    db.Database.Migrate(); // Ensures schema is created before anything else
+
+    var roleService = scope.ServiceProvider.GetRequiredService<IRoleService>();
+    await SeedData.Initialize(scope.ServiceProvider, roleService); // Seed roles etc.
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
