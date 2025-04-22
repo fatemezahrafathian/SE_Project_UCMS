@@ -93,4 +93,58 @@
     <data name="ClassUpdatedSuccessfully" xml:space="preserve">
         <value>Class updated successfully.</value>
     </data>
+    <data name="InvalidFormat" xml:space="preserve">
+        <value>File format is not valid.</value>
+    </data>
+    <data name="InvalidSize" xml:space="preserve">
+        <value>file size is not valid.</value>
+    </data>
+    <data name="StartDateCanNotBeLaterThanEndDatte" xml:space="preserve">
+        <value>Start date cannot be later than end date.</value>
+    </data>
+    <data name="StartDateCanNotBeInPast" xml:space="preserve">
+        <value>Start date cannot be in the past.</value>
+    </data>
+    <data name="EndDateCanNotBeInPast" xml:space="preserve">
+        <value>End date cannot be in the past.</value>
+    </data>
+    <data name="StartDateCanNotBeEarlierThanCreationTime" xml:space="preserve">
+        <value>Start date can not be earlier than creation time.</value>
+    </data>
+    <data name="AlreadyEnteredThisClass." xml:space="preserve">
+        <value>already entered this class.</value>
+    </data>
+    <data name="AlreadyJoinedClass" xml:space="preserve">
+        <value>AlreadyJoinedClass</value>
+    </data>
+    <data name="ClassCurrentlyNotActive" xml:space="preserve">
+        <value>Class Currently Not Active</value>
+    </data>
+    <data name="ClassJoinedSuccessfully" xml:space="preserve">
+        <value>class joined successfully.</value>
+    </data>
+    <data name="StudentNotInClass" xml:space="preserve">
+        <value>Student Not In Class</value>
+    </data>
+    <data name="LeftClassSuccessfully" xml:space="preserve">
+        <value>Left Class Successfully</value>
+    </data>
+    <data name="LeftClassNotSuccessfully" xml:space="preserve">
+        <value>LeftClassNotSuccessfully</value>
+    </data>
+    <data name="UnauthorizedAccess" xml:space="preserve">
+        <value>UnauthorizedAccess</value>
+    </data>
+    <data name="StudentNotFound" xml:space="preserve">
+        <value>StudentNotFound</value>
+    </data>
+    <data name="RemoveStudentFromClassNotSuccessfully" xml:space="preserve">
+        <value>RemoveStudentFromClassNotSuccessfully</value>
+    </data>
+    <data name="RemoveStudentFromClassSuccessfully" xml:space="preserve">
+        <value>RemoveStudentFromClassSuccessfully</value>
+    </data>
+    <data name="ListOfStudent" xml:space="preserve">
+        
+        <value>ListOfStudent</value></data>
 </root>
