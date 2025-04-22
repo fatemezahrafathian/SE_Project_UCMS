@@ -111,4 +111,16 @@
     <data name="StartDateCanNotBeEarlierThanCreationTime" xml:space="preserve">
         <value>Start date can not be earlier than creation time.</value>
     </data>
+    <data name="AlreadyEnteredThisClass." xml:space="preserve">
+        <value>already entered this class.</value>
+    </data>
+    <data name="AlreadyJoinedClass" xml:space="preserve">
+        <value>AlreadyJoinedClass</value>
+    </data>
+    <data name="ClassCurrentlyNotActive" xml:space="preserve">
+        <value>Class Currently Not Active</value>
+    </data>
+    <data name="ClassJoinedSuccessfully" xml:space="preserve">
+        <value>class joined successfully.</value>
+    </data>
 </root>

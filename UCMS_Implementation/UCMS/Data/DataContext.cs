@@ -12,6 +12,8 @@ public class DataContext : DbContext
     public DbSet<Class> Classes { get; set; }
     public DbSet<Instructor> Instructors { get; set; }
     public DbSet<Student> Students { get; set; }
+    public DbSet<ClassStudent> ClassStudents { get; set; }
+    
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -39,6 +41,21 @@ public class DataContext : DbContext
         modelBuilder.Entity<Class>()
             .Property(p => p.EndDate)
             .HasColumnType("date");
+        
+        modelBuilder.Entity<ClassStudent>()
+            .HasKey(cs => new { cs.ClassId, cs.StudentId });
+
+        modelBuilder.Entity<ClassStudent>()
+            .HasOne<Class>()
+            .WithMany()
+            .HasForeignKey(cs => cs.ClassId);
+
+        modelBuilder.Entity<ClassStudent>()
+            .HasOne<Student>()
+            .WithMany()
+            .HasForeignKey(cs => cs.StudentId);
+
 
     }
+    
 }

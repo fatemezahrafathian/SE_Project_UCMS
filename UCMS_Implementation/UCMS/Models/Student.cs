@@ -21,5 +21,7 @@ public class Student
     public string? Major { get; set; }
 
     public int? EnrollmentYear { get; set; }
+    
+    public ICollection<ClassStudent> ClassStudents { get; set; }
 
 }

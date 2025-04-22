@@ -12,4 +12,6 @@ public interface IClassService
     Task<ServiceResponse<List<GetClassPreviewForInstructorDto>>> FilterClassesOfInstructor(PaginatedFilterClassForInstructorDto dto);
     Task<ServiceResponse<string>> DeleteClass(int classId); // return strinig is not good
     Task<ServiceResponse<GetClassForInstructorDto>> PartialUpdateClass(int classId, PatchClassDto dto);
+    Task<ServiceResponse<JoinClassResponseDto>> JoinClassAsync(JoinClassRequestDto request);
+
 }

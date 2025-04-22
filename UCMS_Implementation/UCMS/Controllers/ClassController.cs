@@ -131,6 +131,15 @@ public class ClassController: ControllerBase
 
         return Ok(response.Message);
     }
+    [RoleBasedAuthorization("Student")] // which comes first
+    [HttpPost("join")]
+    public async Task<IActionResult> JoinClass([FromBody] JoinClassRequestDto request)
+    {
+        var response = await _classService.JoinClassAsync(request);
+        if (response.Success)
+            return Ok(response);
+        return BadRequest(response.Message);
+    }
     
 }
 

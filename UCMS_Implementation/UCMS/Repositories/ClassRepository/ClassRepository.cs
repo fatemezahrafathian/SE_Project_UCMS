@@ -14,7 +14,7 @@ public class ClassRepository: IClassRepository
         _context = context;
     }
     
-    public async Task AddClassAsync(Class cls)
+    public async Task AddClassAsync(Class? cls)
     {
         await _context.Classes.AddAsync(cls);
         await _context.SaveChangesAsync();
@@ -59,15 +59,38 @@ public class ClassRepository: IClassRepository
             .ToListAsync();
     }
 
-    public async Task DeleteClassAsync(Class cls)
+    public async Task DeleteClassAsync(Class? cls)
     {
         _context.Classes.Remove(cls);
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateClassAsync(Class cls)
+    public async Task UpdateClassAsync(Class? cls)
     {
         _context.Classes.Update(cls);
         await _context.SaveChangesAsync();
     }
+    public async Task<Class?> GetClassByTokenAsync(string classCode)
+    {
+        return await _context.Classes
+            .Where(c => c.ClassCode == classCode)
+            .FirstOrDefaultAsync();
+    }
+    public async Task<bool> HasStudentJoinedAsync(int classId, int studentId)
+    {
+        return await _context.ClassStudents
+            .AnyAsync(cs => cs.ClassId == classId && cs.StudentId == studentId);
+    }
+    public async Task AddStudentToClassAsync(int classId, int studentId)
+    {
+        var cs = new ClassStudent
+        {
+            ClassId = classId,
+            StudentId = studentId,
+            JoinedAt = DateTime.UtcNow 
+        };
+        await _context.ClassStudents.AddAsync(cs);
+        await _context.SaveChangesAsync();
+    }
+
 }

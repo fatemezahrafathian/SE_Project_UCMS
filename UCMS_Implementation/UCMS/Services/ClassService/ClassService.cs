@@ -5,7 +5,6 @@ using UCMS.Models;
 using UCMS.Repositories;
 using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Resources;
-using UCMS.Services.AuthService.Abstraction;
 using UCMS.Services.ClassService.Abstraction;
 using UCMS.Services.ImageService;
 using UCMS.Services.PasswordService.Abstraction;
@@ -262,7 +261,6 @@ public class ClassService: IClassService
         };
 
     }
-
     public async Task<ServiceResponse<GetClassForInstructorDto>> PartialUpdateClass(int classId, PatchClassDto dto)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
@@ -376,4 +374,64 @@ public class ClassService: IClassService
             Message = Messages.ClassUpdatedSuccessfully
         };
     }
+    public async Task<ServiceResponse<JoinClassResponseDto>> JoinClassAsync(JoinClassRequestDto request)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+        var classEntity = await _classRepository.GetClassByTokenAsync(request.ClassCode);
+        
+        if (classEntity == null)
+        {
+            return new ServiceResponse<JoinClassResponseDto>
+            {
+                Success = false,
+                Message = Messages.ClassNotFound
+            };
+        }
+        if (!await _passwordService.VerifyPasswordAsync(request.Password, classEntity.PasswordSalt, classEntity.PasswordHash))
+            return new ServiceResponse<JoinClassResponseDto> { Success = false, Message = Messages.WrongPasswordMessage };
+        var alreadyJoined = await _classRepository.HasStudentJoinedAsync(classEntity.Id, user.Student.Id);
+        if (alreadyJoined)
+        {
+            return new ServiceResponse<JoinClassResponseDto>
+            {
+                Success = false,
+                Message = Messages.AlreadyJoinedClass
+            };
+        }
+        
+        var now = DateOnly.FromDateTime(DateTime.Now);
+        if (classEntity.StartDate.HasValue)
+        {
+            if (now < classEntity.StartDate)
+            {
+                return new ServiceResponse<JoinClassResponseDto>
+                {
+                    Success = false,
+                    Message = Messages.ClassCurrentlyNotActive
+                };
+            }
+        }
+        if (classEntity.EndDate.HasValue)
+        {
+            if (now > classEntity.EndDate)
+            {
+                return new ServiceResponse<JoinClassResponseDto>
+                {
+                    Success = false,
+                    Message = Messages.ClassCurrentlyNotActive
+                };
+            }
+        }
+        
+
+        await _classRepository.AddStudentToClassAsync(classEntity.Id, user.Student.Id);
+        
+        return new ServiceResponse<JoinClassResponseDto>
+        {
+            Success = true,
+            Message = Messages.ClassJoinedSuccessfully,
+            Data = new JoinClassResponseDto(){classId = classEntity.Id}
+        };
+    }
+
 }

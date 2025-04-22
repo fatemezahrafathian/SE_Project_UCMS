@@ -52,4 +52,5 @@ public class Class
     public byte[] PasswordHash { get; set; }
 
     public ICollection<ClassSchedule> Schedules { get; set; }
+    public ICollection<ClassStudent> ClassStudents { get; set; }
 }
