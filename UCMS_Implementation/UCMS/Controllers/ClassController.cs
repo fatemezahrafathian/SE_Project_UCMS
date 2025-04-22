@@ -131,6 +131,53 @@ public class ClassController: ControllerBase
 
         return Ok(response.Message);
     }
+    [RoleBasedAuthorization("Student")] // which comes first
+    [HttpPost("join")]
+    public async Task<IActionResult> JoinClass([FromBody] JoinClassRequestDto request)
+    {
+        var response = await _classService.JoinClassAsync(request);
+        if (response.Success)
+            return Ok(response);
+        return BadRequest(response.Message);
+    }
+    [RoleBasedAuthorization("Student")]
+    [HttpDelete("left/{classId}")]
+    public async Task<IActionResult> LeaveClass([FromBody] LeaveClassRequestDto request)
+    {
+        var response = await _classService.LeaveClassAsync(request.ClassId);
+        if (!response.Success)
+            return BadRequest(response.Message);
+        return Ok(response.Message);
+    }
+    [RoleBasedAuthorization("Instructor")]
+    [HttpDelete("/{classId}/removeStudent")]
+    public async Task<IActionResult> RemoveStudentFromClass([FromBody] RemoveStudentFromClassDto request)
+    {
+        var response = await _classService.RemoveStudentFromClassAsync(request.ClassId, request.StudentId);
+        
+        if (!response.Success)
+            return NotFound(response.Message);
+        return Ok(response.Message);
+    }
+    [RoleBasedAuthorization("Instructor")]
+    [HttpGet("{classId}/students")]
+    public async Task<IActionResult> GetStudentsOfClassByInstructor(int classId)
+    {
+        var response = await _classService.GetStudentsOfClassByInstructorAsync(classId);
+        if (!response.Success)
+            return NotFound(response.Message);
+        return Ok(response.Data);
+    }
+    [RoleBasedAuthorization("Student")]
+    [HttpGet("classStudent/{classId}/students")]
+    public async Task<IActionResult> GetStudentsOfClassByStudent(int classId)
+    {
+        var response = await _classService.GetStudentsOfClassByStudentAsync(classId);
+        if (!response.Success)
+            return NotFound(response.Message);
+        return Ok(response.Data);
+    }
+
     
 }
 
