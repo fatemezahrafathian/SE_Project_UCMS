@@ -13,6 +13,7 @@ public interface IClassRepository
     Task DeleteClassAsync(Class? cls); 
     Task UpdateClassAsync(Class? cls);
     Task<Class?> GetClassByTokenAsync(string classCode);
-    Task<bool> HasStudentJoinedAsync(int classId, int studentId);
+    Task<bool> IsStudentOfClassAsync(int classId, int studentId);
     Task AddStudentToClassAsync(int classId, int studentId);
+    Task<bool> RemoveStudentFromClassAsync(int classId, int studentId);
 }

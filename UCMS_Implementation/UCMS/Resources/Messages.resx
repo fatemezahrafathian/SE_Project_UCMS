@@ -123,4 +123,25 @@
     <data name="ClassJoinedSuccessfully" xml:space="preserve">
         <value>class joined successfully.</value>
     </data>
+    <data name="StudentNotInClass" xml:space="preserve">
+        <value>Student Not In Class</value>
+    </data>
+    <data name="LeftClassSuccessfully" xml:space="preserve">
+        <value>Left Class Successfully</value>
+    </data>
+    <data name="LeftClassNotSuccessfully" xml:space="preserve">
+        <value>LeftClassNotSuccessfully</value>
+    </data>
+    <data name="UnauthorizedAccess" xml:space="preserve">
+        <value>UnauthorizedAccess</value>
+    </data>
+    <data name="StudentNotFound" xml:space="preserve">
+        <value>StudentNotFound</value>
+    </data>
+    <data name="RemoveStudentFromClassNotSuccessfully" xml:space="preserve">
+        <value>RemoveStudentFromClassNotSuccessfully</value>
+    </data>
+    <data name="RemoveStudentFromClassSuccessfully" xml:space="preserve">
+        <value>RemoveStudentFromClassSuccessfully</value>
+    </data>
 </root>

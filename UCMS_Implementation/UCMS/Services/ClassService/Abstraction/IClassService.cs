@@ -13,5 +13,8 @@ public interface IClassService
     Task<ServiceResponse<string>> DeleteClass(int classId); // return strinig is not good
     Task<ServiceResponse<GetClassForInstructorDto>> PartialUpdateClass(int classId, PatchClassDto dto);
     Task<ServiceResponse<JoinClassResponseDto>> JoinClassAsync(JoinClassRequestDto request);
+    Task<bool> IsStudentOfClass(int classId, int studentId);
+    Task<ServiceResponse<bool>> LeaveClassAsync(int classId);
+    Task<ServiceResponse<bool>> RemoveStudentFromClassAsync(int classId, int studentId);
 
 }

@@ -76,7 +76,7 @@ public class ClassRepository: IClassRepository
             .Where(c => c.ClassCode == classCode)
             .FirstOrDefaultAsync();
     }
-    public async Task<bool> HasStudentJoinedAsync(int classId, int studentId)
+    public async Task<bool> IsStudentOfClassAsync(int classId, int studentId)
     {
         return await _context.ClassStudents
             .AnyAsync(cs => cs.ClassId == classId && cs.StudentId == studentId);
@@ -91,6 +91,18 @@ public class ClassRepository: IClassRepository
         };
         await _context.ClassStudents.AddAsync(cs);
         await _context.SaveChangesAsync();
+    }
+    public async Task<bool> RemoveStudentFromClassAsync(int classId, int studentId)
+    {
+        var classStudent = await _context.ClassStudents
+            .FirstOrDefaultAsync(cs => cs.ClassId == classId && cs.StudentId == studentId);
+
+        if (classStudent == null)
+            return false;
+
+        _context.ClassStudents.Remove(classStudent);
+        await _context.SaveChangesAsync();
+        return true;
     }
 
 }

@@ -4,6 +4,7 @@ using UCMS.DTOs.ClassDto;
 using UCMS.Models;
 using UCMS.Repositories;
 using UCMS.Repositories.ClassRepository.Abstraction;
+using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.ClassService.Abstraction;
 using UCMS.Services.ImageService;
@@ -19,9 +20,10 @@ public class ClassService: IClassService
     private readonly IInstructorRepository _instructorRepository;
     private readonly IImageService _imageService;
     private readonly IPasswordService _passwordService;
+    private readonly IUserRepository _userRepository;
     
 
-    public ClassService(IClassRepository classRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, IInstructorRepository instructorRepository, IImageService imageService, IPasswordService passwordService)
+    public ClassService(IClassRepository classRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, IInstructorRepository instructorRepository, IImageService imageService, IPasswordService passwordService, IUserRepository userRepository)
     {
         _classRepository = classRepository;
         _mapper = mapper;
@@ -29,6 +31,7 @@ public class ClassService: IClassService
         _instructorRepository = instructorRepository;
         _imageService = imageService;
         _passwordService = passwordService;
+        _userRepository = userRepository;
     }
 
     public async Task<ServiceResponse<GetClassForInstructorDto>> CreateClass(CreateClassDto dto) // check dates
@@ -374,6 +377,10 @@ public class ClassService: IClassService
             Message = Messages.ClassUpdatedSuccessfully
         };
     }
+    public async Task<bool> IsStudentOfClass(int classId, int studentId)
+    {
+        return await _classRepository.IsStudentOfClassAsync(classId, studentId);
+    }
     public async Task<ServiceResponse<JoinClassResponseDto>> JoinClassAsync(JoinClassRequestDto request)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
@@ -389,7 +396,7 @@ public class ClassService: IClassService
         }
         if (!await _passwordService.VerifyPasswordAsync(request.Password, classEntity.PasswordSalt, classEntity.PasswordHash))
             return new ServiceResponse<JoinClassResponseDto> { Success = false, Message = Messages.WrongPasswordMessage };
-        var alreadyJoined = await _classRepository.HasStudentJoinedAsync(classEntity.Id, user.Student.Id);
+        var alreadyJoined = await IsStudentOfClass(classEntity.Id, user.Student.Id);
         if (alreadyJoined)
         {
             return new ServiceResponse<JoinClassResponseDto>
@@ -433,5 +440,73 @@ public class ClassService: IClassService
             Data = new JoinClassResponseDto(){classId = classEntity.Id}
         };
     }
+    
+    public async Task<ServiceResponse<bool>> LeaveClassAsync(int classId)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+        var classEntity = await _classRepository.GetClassByIdAsync(classId);
+        if (classEntity == null)
+            return new ServiceResponse<bool> { Success = false, Message = Messages.ClassNotFound };
+        
+        var isStudentOfClass = await IsStudentOfClass(classEntity.Id, user.Student.Id);
+        if (!isStudentOfClass)
+        {
+            return new ServiceResponse<bool>
+            {
+                Success = false,
+                Message = Messages.StudentNotInClass
+            };
+        }
 
+        var success = await _classRepository.RemoveStudentFromClassAsync(classId, user.Student.Id);
+        if (!success)
+            return new ServiceResponse<bool> { Success = false, Message = Messages.LeftClassNotSuccessfully };
+
+        return new ServiceResponse<bool> { Success = true, Message = Messages.LeftClassSuccessfully };
+    }
+
+    public async Task<ServiceResponse<bool>> RemoveStudentFromClassAsync(int classId, int userId)
+    {
+        var instructor = _httpContextAccessor.HttpContext?.Items["User"] as User;
+
+        var classEntity = await _classRepository.GetClassByIdAsync(classId);
+        if (classEntity == null)
+            return new ServiceResponse<bool> { Success = false, Message = Messages.ClassNotFound };
+
+        if (instructor.Id != classEntity.InstructorId)
+        {
+            return new ServiceResponse<bool>
+            {
+                Success = false,
+                Message = Messages.UnauthorizedAccess
+            };
+        }
+
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null)
+        {
+            return new ServiceResponse<bool>
+            {
+                Success = false,
+                Message = Messages.UserNotFoundMessage
+            };
+        }
+
+        var isStudentOfClass = await IsStudentOfClass(classEntity.Id, user.Student.Id);
+        if (!isStudentOfClass)
+        {
+            return new ServiceResponse<bool>
+            {
+                Success = false,
+                Message = Messages.StudentNotInClass
+            };
+        }
+
+        var success = await _classRepository.RemoveStudentFromClassAsync(classId, user.Student.Id);
+        if (!success)
+            return new ServiceResponse<bool>
+                { Success = false, Message = Messages.RemoveStudentFromClassNotSuccessfully };
+
+        return new ServiceResponse<bool> { Success = true, Message = Messages.RemoveStudentFromClassSuccessfully };
+    }
 }

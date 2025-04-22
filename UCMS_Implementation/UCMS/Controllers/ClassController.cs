@@ -140,6 +140,27 @@ public class ClassController: ControllerBase
             return Ok(response);
         return BadRequest(response.Message);
     }
+    [RoleBasedAuthorization("Student")]
+    [HttpDelete("left/{classId}")]
+    public async Task<IActionResult> LeaveClass([FromBody] LeaveClassRequestDto request)
+    {
+        var response = await _classService.LeaveClassAsync(request.ClassId);
+        if (!response.Success)
+            return BadRequest(response.Message);
+        return Ok(response.Message);
+    }
+    [RoleBasedAuthorization("Instructor")]
+    [HttpDelete("/{classId}/removeStudent")]
+    public async Task<IActionResult> RemoveStudentFromClass(int classId, int userId)
+    {
+        var response = await _classService.RemoveStudentFromClassAsync(classId, userId);
+        
+        if (!response.Success)
+            return NotFound(response.Message);
+        return Ok(response.Message);
+    }
+
+
     
 }
 
