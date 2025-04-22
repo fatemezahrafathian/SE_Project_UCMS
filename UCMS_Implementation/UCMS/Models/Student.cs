@@ -23,5 +23,7 @@ public class Student
     public EducationLevel? EducationLevel { get; set; }
 
     public int? EnrollmentYear { get; set; }
+    
+    public ICollection<ClassStudent> ClassStudents { get; set; }
 
 }

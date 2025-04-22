@@ -12,7 +12,7 @@ using UCMS.Data;
 namespace UCMS.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250411172241_InitialCreate")]
+    [Migration("20250421143459_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -44,20 +44,28 @@ namespace UCMS.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("IdentifierType")
-                        .HasColumnType("integer");
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
 
                     b.Property<int>("InstructorId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                    b.Property<byte[]>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("bytea");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("ProfileImageUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<DateOnly?>("StartDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -286,13 +294,11 @@ namespace UCMS.Migrations
 
             modelBuilder.Entity("UCMS.Models.ClassSchedule", b =>
                 {
-                    b.HasOne("UCMS.Models.Class", "Class")
+                    b.HasOne("UCMS.Models.Class", null)
                         .WithMany("Schedules")
                         .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Class");
                 });
 
             modelBuilder.Entity("UCMS.Models.Instructor", b =>

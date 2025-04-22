@@ -10,9 +10,10 @@ using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Services.AuthService.Abstraction;
 using UCMS.Services.CookieService.Abstraction;
 using UCMS.Services.EmailService.Abstraction;
+using UCMS.Services.PasswordService.Abstraction;
 using UCMS.Services.TokenService.Abstraction;
 
-namespace UCMS.Services.AuthService;
+namespace UCMS.Services.PasswordService;
 
 public class PasswordService: IPasswordService
 {

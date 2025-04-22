@@ -4,6 +4,7 @@ using UCMS.DTOs.AuthDto;
 using UCMS.Models;
 using UCMS.Resources;
 using UCMS.Services.AuthService.Abstraction;
+using UCMS.Services.PasswordService.Abstraction;
 
 namespace UCMS.Controllers;
 [Route("api/auth")]
