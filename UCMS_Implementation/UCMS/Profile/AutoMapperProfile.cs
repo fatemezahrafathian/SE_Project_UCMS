@@ -1,3 +1,4 @@
+using UCMS.DTOs;
 using UCMS.DTOs.AuthDto;
 using UCMS.DTOs.ClassDto;
 using UCMS.DTOs.RoleDto;
@@ -24,30 +25,42 @@ public class AutoMapperProfile : Profile
         CreateMap<CreateClassDto, Class>()
             .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.Schedules));
         
-        // first mapper
-        CreateMap<Class, GetClassDto>()
-            .ForMember(dest => dest.InstructorFullName, opt => opt.Ignore())
+        CreateMap<Class, GetClassForInstructorDto>()
             .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.Schedules));
         
-        // second mapper
-        CreateMap<Class, GetClassDto>()
+        CreateMap<Class, GetClassForStudentDto>()
             .ForMember(dest => dest.InstructorFullName,
                 opt => opt.MapFrom(src => $"{src.Instructor.User.FirstName} {src.Instructor.User.LastName}"))
             .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.Schedules));
-        // .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate?.ToString("yyyy-MM-dd")));
         
-        CreateMap<Class, GetClassPreviewDto>()
-            .ForMember(dest => dest.InstructorFullName,
-                opt => opt.MapFrom(src => $"{src.Instructor.User.FirstName} {src.Instructor.User.LastName}"))
-            .ForMember(dest => dest.Schedules,
-                opt => opt.MapFrom(src => src.Schedules));
+        // CreateMap<Class, GetClassPreviewDto>()
+        //     .ForMember(dest => dest.InstructorFullName,
+        //         opt => opt.MapFrom(src => $"{src.Instructor.User.FirstName} {src.Instructor.User.LastName}"))
+        //     .ForMember(dest => dest.Schedules,
+        //         opt => opt.MapFrom(src => src.Schedules));
         
-        CreateMap<UpdateClassDto, Class>()
+        // see if it works
+        CreateMap<PatchClassDto, Class>()
             .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.Schedules));
 
         CreateMap<User, OutputUserDto>();
 
         CreateMap<EditUserDto, User>()
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+        CreateMap<Class, GetClassPreviewForInstructorDto>(); // calculate student count
+
+        CreateMap<Page<Class>, GetClassPageDto>()
+            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));
+        CreateMap<Student, GetStudentsOfClassforInstructorDto>()
+            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
+            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))
+            .ForMember(dest => dest.ProfileImagePath, opt => opt.MapFrom(src => src.User.ProfileImagePath))
+            .ForMember(dest => dest.StudentNumber, opt => opt.MapFrom(src => src.StudentNumber));
+
+        CreateMap<Student, GetStudentsOfClassforStudentDto>()
+            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
+            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))
+            .ForMember(dest => dest.ProfileImagePath, opt => opt.MapFrom(src => src.User.ProfileImagePath));
     }
 }

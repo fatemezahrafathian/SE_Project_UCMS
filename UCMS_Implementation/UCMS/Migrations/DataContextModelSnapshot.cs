@@ -41,20 +41,28 @@ namespace UCMS.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("IdentifierType")
-                        .HasColumnType("integer");
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
 
                     b.Property<int>("InstructorId")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("boolean");
+                    b.Property<byte[]>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("bytea");
 
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("ProfileImageUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<DateOnly?>("StartDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -96,6 +104,34 @@ namespace UCMS.Migrations
                     b.HasIndex("ClassId");
 
                     b.ToTable("ClassSchedule");
+                });
+
+            modelBuilder.Entity("UCMS.Models.ClassStudent", b =>
+                {
+                    b.Property<int>("ClassId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ClassId1")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("StudentId1")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ClassId", "StudentId");
+
+                    b.HasIndex("ClassId1");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("StudentId1");
+
+                    b.ToTable("ClassStudents");
                 });
 
             modelBuilder.Entity("UCMS.Models.Instructor", b =>
@@ -283,13 +319,34 @@ namespace UCMS.Migrations
 
             modelBuilder.Entity("UCMS.Models.ClassSchedule", b =>
                 {
-                    b.HasOne("UCMS.Models.Class", "Class")
+                    b.HasOne("UCMS.Models.Class", null)
                         .WithMany("Schedules")
                         .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.Navigation("Class");
+            modelBuilder.Entity("UCMS.Models.ClassStudent", b =>
+                {
+                    b.HasOne("UCMS.Models.Class", null)
+                        .WithMany()
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UCMS.Models.Class", null)
+                        .WithMany("ClassStudents")
+                        .HasForeignKey("ClassId1");
+
+                    b.HasOne("UCMS.Models.Student", null)
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UCMS.Models.Student", null)
+                        .WithMany("ClassStudents")
+                        .HasForeignKey("StudentId1");
                 });
 
             modelBuilder.Entity("UCMS.Models.Instructor", b =>
@@ -349,6 +406,8 @@ namespace UCMS.Migrations
 
             modelBuilder.Entity("UCMS.Models.Class", b =>
                 {
+                    b.Navigation("ClassStudents");
+
                     b.Navigation("Schedules");
                 });
 
@@ -360,6 +419,11 @@ namespace UCMS.Migrations
             modelBuilder.Entity("UCMS.Models.Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("UCMS.Models.Student", b =>
+                {
+                    b.Navigation("ClassStudents");
                 });
 
             modelBuilder.Entity("UCMS.Models.User", b =>

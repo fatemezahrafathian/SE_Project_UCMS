@@ -24,6 +24,8 @@ public class UserRepository : IUserRepository
         return await _context.Users
             .Where(u => u.Id == id)
             .Include(u => u.Role)
+            .Include(u => u.Student)
+            .Include(u => u.Instructor)
             .FirstOrDefaultAsync();
     }
 
