@@ -9,6 +9,7 @@ using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.AuthService;
 using UCMS.Services.AuthService.Abstraction;
+using UCMS.Services.PasswordService.Abstraction;
 
 namespace UCMS.Services.UserService
 {
