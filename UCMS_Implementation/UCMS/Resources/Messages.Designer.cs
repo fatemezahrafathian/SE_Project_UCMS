@@ -276,6 +276,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ListOfStudent.
+        /// </summary>
+        public static string ListOfStudent {
+            get {
+                return ResourceManager.GetString("ListOfStudent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to LoginSuccessfulMessage.
         /// </summary>
         public static string LoginSuccessfulMessage {

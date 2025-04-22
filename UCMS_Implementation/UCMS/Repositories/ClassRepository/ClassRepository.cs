@@ -104,5 +104,16 @@ public class ClassRepository: IClassRepository
         await _context.SaveChangesAsync();
         return true;
     }
+    public async Task<List<Student>> GetStudentsInClassAsync(int classId)
+    {
+        return await _context.ClassStudents
+            .Where(cs => cs.ClassId == classId)
+            .Include(cs => cs.Student)
+            .ThenInclude(s => s.User)
+            .Select(cs => cs.Student)
+            .ToListAsync();
+    }
+
+
 
 }

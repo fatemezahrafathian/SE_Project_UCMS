@@ -46,16 +46,14 @@ public class DataContext : DbContext
             .HasKey(cs => new { cs.ClassId, cs.StudentId });
 
         modelBuilder.Entity<ClassStudent>()
-            .HasOne<Class>()
-            .WithMany()
+            .HasOne(cs => cs.Class)
+            .WithMany(c => c.ClassStudents)
             .HasForeignKey(cs => cs.ClassId);
 
         modelBuilder.Entity<ClassStudent>()
-            .HasOne<Student>()
-            .WithMany()
+            .HasOne(cs => cs.Student)
+            .WithMany(s => s.ClassStudents)
             .HasForeignKey(cs => cs.StudentId);
-
-
     }
     
 }

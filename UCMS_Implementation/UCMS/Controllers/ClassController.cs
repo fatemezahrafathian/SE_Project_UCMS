@@ -151,15 +151,32 @@ public class ClassController: ControllerBase
     }
     [RoleBasedAuthorization("Instructor")]
     [HttpDelete("/{classId}/removeStudent")]
-    public async Task<IActionResult> RemoveStudentFromClass(int classId, int userId)
+    public async Task<IActionResult> RemoveStudentFromClass([FromBody] RemoveStudentFromClassDto request)
     {
-        var response = await _classService.RemoveStudentFromClassAsync(classId, userId);
+        var response = await _classService.RemoveStudentFromClassAsync(request.ClassId, request.StudentId);
         
         if (!response.Success)
             return NotFound(response.Message);
         return Ok(response.Message);
     }
-
+    [RoleBasedAuthorization("Instructor")]
+    [HttpGet("{classId}/students")]
+    public async Task<IActionResult> GetStudentsOfClassByInstructor(int classId)
+    {
+        var response = await _classService.GetStudentsOfClassByInstructorAsync(classId);
+        if (!response.Success)
+            return NotFound(response.Message);
+        return Ok(response.Data);
+    }
+    [RoleBasedAuthorization("Student")]
+    [HttpGet("classStudent/{classId}/students")]
+    public async Task<IActionResult> GetStudentsOfClassByStudent(int classId)
+    {
+        var response = await _classService.GetStudentsOfClassByStudentAsync(classId);
+        if (!response.Success)
+            return NotFound(response.Message);
+        return Ok(response.Data);
+    }
 
     
 }

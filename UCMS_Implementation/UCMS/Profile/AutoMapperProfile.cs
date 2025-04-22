@@ -40,6 +40,16 @@ public class AutoMapperProfile : Profile
         // see if it works
         CreateMap<PatchClassDto, Class>()
             .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.Schedules));
-        
+        CreateMap<Student, GetStudentsOfClassforInstructorDto>()
+            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
+            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))
+            .ForMember(dest => dest.ProfileImagePath, opt => opt.MapFrom(src => src.User.ProfileImagePath))
+            .ForMember(dest => dest.StudentNumber, opt => opt.MapFrom(src => src.StudentNumber));
+
+        CreateMap<Student, GetStudentsOfClassforStudentDto>()
+            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
+            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))
+            .ForMember(dest => dest.ProfileImagePath, opt => opt.MapFrom(src => src.User.ProfileImagePath));
+
     }
 }

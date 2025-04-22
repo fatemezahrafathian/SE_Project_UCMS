@@ -144,4 +144,7 @@
     <data name="RemoveStudentFromClassSuccessfully" xml:space="preserve">
         <value>RemoveStudentFromClassSuccessfully</value>
     </data>
+    <data name="ListOfStudent" xml:space="preserve">
+        
+        <value>ListOfStudent</value></data>
 </root>

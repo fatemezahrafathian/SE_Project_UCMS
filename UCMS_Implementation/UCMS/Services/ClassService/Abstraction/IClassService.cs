@@ -16,5 +16,7 @@ public interface IClassService
     Task<bool> IsStudentOfClass(int classId, int studentId);
     Task<ServiceResponse<bool>> LeaveClassAsync(int classId);
     Task<ServiceResponse<bool>> RemoveStudentFromClassAsync(int classId, int studentId);
+    Task<ServiceResponse<List<GetStudentsOfClassforInstructorDto>>> GetStudentsOfClassByInstructorAsync(int classId);
+    Task<ServiceResponse<List<GetStudentsOfClassforStudentDto>>> GetStudentsOfClassByStudentAsync(int classId);
 
 }

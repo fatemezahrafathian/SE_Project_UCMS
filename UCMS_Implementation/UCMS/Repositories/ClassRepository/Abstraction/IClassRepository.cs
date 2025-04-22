@@ -16,4 +16,6 @@ public interface IClassRepository
     Task<bool> IsStudentOfClassAsync(int classId, int studentId);
     Task AddStudentToClassAsync(int classId, int studentId);
     Task<bool> RemoveStudentFromClassAsync(int classId, int studentId);
+    Task<List<Student>> GetStudentsInClassAsync(int classId);
+    
 }
