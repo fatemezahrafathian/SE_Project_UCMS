@@ -71,7 +71,7 @@ namespace UCMS.Services.InstructorService
         public async Task<ServiceResponse<InstructorProfileDto>> GetCurrentInstructor()
         {
             var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
-            Instructor? instructor = user.Instructor;
+            Instructor? instructor = await _instructorRepository.GetInstructorByUserIdAsync(user.Id);
 
             if (instructor == null)
             {
