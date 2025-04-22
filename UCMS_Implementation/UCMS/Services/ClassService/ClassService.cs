@@ -4,6 +4,7 @@ using UCMS.DTOs.ClassDto;
 using UCMS.Models;
 using UCMS.Repositories;
 using UCMS.Repositories.ClassRepository.Abstraction;
+using UCMS.Repositories.InstructorRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.ClassService.Abstraction;
 

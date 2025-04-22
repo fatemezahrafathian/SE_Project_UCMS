@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using UCMS.DTOs;
 using UCMS.DTOs.AuthDto;
 using UCMS.Models;
+using UCMS.Repositories.InstructorRepository.Abstraction;
 using UCMS.Repositories.StudentRepository.Abstraction;
 using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Resources;
@@ -21,6 +22,7 @@ public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
     private readonly IStudentRepository _studentRepository;
+    private readonly IInstructorRepository _instructorRepository;
     private readonly IPasswordService _passwordService;
     private readonly ICookieService _cookieService;
     private readonly ITokenService _tokenService;
@@ -29,12 +31,13 @@ public class AuthService : IAuthService
     private readonly IUrlHelperFactory _urlHelperFactory;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AuthService(IUserRepository userRepository, IStudentRepository studentRepository, IPasswordService passwordService, IMapper mapper,
+    public AuthService(IUserRepository userRepository, IStudentRepository studentRepository, IInstructorRepository instructorRepository, IPasswordService passwordService, IMapper mapper,
         IEmailService emailService, IUrlHelperFactory urlHelperFactory, IHttpContextAccessor httpContextAccessor,
         ITokenService tokenService, ICookieService cookieService)
     {
         _userRepository = userRepository;
         _studentRepository = studentRepository;
+        _instructorRepository = instructorRepository;
         _passwordService = passwordService;
         _cookieService = cookieService;
         _tokenService = tokenService;
@@ -80,6 +83,8 @@ public class AuthService : IAuthService
 
         if (newUser.RoleId == 2)
             await CreateStudentAsync(newUser.Id);
+        else if (newUser.RoleId == 1)
+            await CreateInstructor(newUser.Id);
 
         var confirmationLink = GenerateConfirmationLink(newUser.VerificationToken);
         await _emailService.SendVerificationEmail(newUser.Email, confirmationLink);
@@ -100,6 +105,16 @@ public class AuthService : IAuthService
         };
 
         await _studentRepository.AddStudentAsync(newStudent);
+    }
+
+    private async Task CreateInstructor(int userId)
+    {
+        var newInstructor = new Instructor
+        {
+            UserId = userId
+        };
+
+        await _instructorRepository.AddInstructorAsync(newInstructor);
     }
 
     private string GenerateVerificationToken()

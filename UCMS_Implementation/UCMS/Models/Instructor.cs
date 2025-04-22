@@ -19,6 +19,8 @@ public class Instructor
 
     [MaxLength(100)]
     public string? Department { get; set; }
+
+    public InstructorRank Rank { get; set; }
     
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

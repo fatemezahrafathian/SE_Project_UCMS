@@ -5,6 +5,7 @@ using UCMS.Models;
 
 namespace UCMS.Profile;
 using AutoMapper;
+using UCMS.DTOs.Instructor;
 using UCMS.DTOs.Student;
 
 public class AutoMapperProfile : Profile
@@ -56,6 +57,17 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.ProfileImagePath, opt => opt.MapFrom(src => src.User.ProfileImagePath));
 
         CreateMap<Student, StudentProfileDto>()
+            .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
+            .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))
+            .ForMember(dest => dest.Bio, opt => opt.MapFrom(src => src.User.Bio))
+            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.User.Role));
+
+        CreateMap<EditInstructorDto, Instructor>()
+            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+        CreateMap<Instructor, GetInstructorDto>();
+
+        CreateMap<Instructor, InstructorProfileDto>()
             .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))
             .ForMember(dest => dest.Bio, opt => opt.MapFrom(src => src.User.Bio))
