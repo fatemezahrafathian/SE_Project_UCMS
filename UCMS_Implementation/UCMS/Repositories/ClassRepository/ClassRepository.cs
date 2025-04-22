@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using UCMS.Data;
+using UCMS.DTOs;
 using UCMS.Models;
 using UCMS.Repositories.ClassRepository.Abstraction;
 
@@ -70,6 +71,58 @@ public class ClassRepository: IClassRepository
         _context.Classes.Update(cls);
         await _context.SaveChangesAsync();
     }
+    
+    
+    public async Task<Page<Class>> FilterAndPaginateClassesAsync(int instructorId, string? title, bool? isActive, int page, int pageSize)
+    {
+        var query = _context.Classes
+            .Where(c => c.InstructorId == instructorId)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+            query = query.Where(c => c.Title.Contains(title));
+        }
+
+        if (isActive.HasValue)
+        {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+    
+            if (isActive.Value)
+            {
+                query = query.Where(c =>
+                    (!c.StartDate.HasValue && !c.EndDate.HasValue) ||
+                    (c.StartDate.HasValue && !c.EndDate.HasValue && c.StartDate.Value <= today) ||
+                    (!c.StartDate.HasValue && c.EndDate.HasValue && c.EndDate.Value >= today) ||
+                    (c.StartDate.HasValue && c.EndDate.HasValue && c.StartDate.Value <= today && c.EndDate.Value >= today));
+            }
+            else
+            {
+                query = query.Where(c =>
+                    (c.StartDate.HasValue && c.StartDate.Value > today) ||
+                    (c.EndDate.HasValue && c.EndDate.Value < today));
+            }
+        }
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderByDescending(c => c.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            // .Include(c => c.Instructor)
+            // .ThenInclude(i => i.User)
+            .ToListAsync();
+
+        return new Page<Class>()
+        {
+            Items = items,
+            TotalCount = totalCount,
+            PageNumber = page,
+            PageSize = pageSize
+        };
+    }
+
     public async Task<Class?> GetClassByTokenAsync(string classCode)
     {
         return await _context.Classes

@@ -1,3 +1,4 @@
+using UCMS.DTOs;
 using UCMS.Models;
 
 namespace UCMS.Repositories.ClassRepository.Abstraction;
@@ -10,6 +11,8 @@ public interface IClassRepository
     Task<Class?> GetClassForInstructorAsync(int id);
     Task<Class?> GetClassForStudentAsync(int id);
     Task<List<Class>> GetClassesByInstructorAsync(int instructorId);
+    Task<Page<Class>> FilterAndPaginateClassesAsync(int instructorId, string? title, bool? isActive,
+        int page, int pageSize);
     Task DeleteClassAsync(Class? cls); 
     Task UpdateClassAsync(Class? cls);
     Task<Class?> GetClassByTokenAsync(string classCode);
@@ -17,5 +20,4 @@ public interface IClassRepository
     Task AddStudentToClassAsync(int classId, int studentId);
     Task<bool> RemoveStudentFromClassAsync(int classId, int studentId);
     Task<List<Student>> GetStudentsInClassAsync(int classId);
-    
 }
