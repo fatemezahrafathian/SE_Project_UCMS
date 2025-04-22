@@ -89,7 +89,7 @@ namespace UCMS.Services.UserService
 
         public async Task<ServiceResponse<bool>> ChangePassword(User user, ChangePasswordDto changePasswordDto)
         {
-            if (changePasswordDto.NewPassword != changePasswordDto.ConfirmNewPasswrod)
+            if (changePasswordDto.NewPassword != changePasswordDto.ConfirmNewPassword)
             {
                 return new ServiceResponse<bool> { Success = false, Message = Messages.PasswordNotMatch };
             }
