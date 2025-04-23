@@ -38,7 +38,7 @@ namespace UCMS.Controllers
         }
 
         [HttpGet("profile")]
-        [Authorize]
+        [RoleBasedAuthorization("Student")]
         public async Task<ActionResult> GetCurrentStudentProfile()
         {
             var response = await _studentService.GetCurrentStudent();

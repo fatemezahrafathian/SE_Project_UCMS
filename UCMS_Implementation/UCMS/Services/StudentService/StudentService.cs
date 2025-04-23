@@ -14,12 +14,14 @@ namespace UCMS.Services.StudentService
         private readonly IStudentRepository _studentRepository;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger<StudentService> _logger;
 
-        public StudentService(IStudentRepository studentRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public StudentService(IStudentRepository studentRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<StudentService> logger)
         {
             _studentRepository = studentRepository;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _logger = logger;
         }
 
 
@@ -33,7 +35,7 @@ namespace UCMS.Services.StudentService
                 return new ServiceResponse<StudentProfileDto>
                 {
                     Success = false,
-                    //Message = String.Format(Messages.UserNotFound, userId) FIXME
+                    Message = String.Format(Messages.UserNotFound, user.Id)
                 };
             }
 
@@ -42,7 +44,7 @@ namespace UCMS.Services.StudentService
             {
                 Data = responseStudent,
                 Success = true,
-                Message = "Found"
+                Message = Messages.UserFound
             };
         }
 
@@ -55,7 +57,7 @@ namespace UCMS.Services.StudentService
                 return new ServiceResponse<GetStudentDto>
                 {
                     Success = false,
-                    //Message = String.Format(Messages.UserNotFound, userId) FIXME
+                    Message = String.Format(Messages.UserNotFound, student.UserId)
                 };
             }
 
@@ -64,7 +66,7 @@ namespace UCMS.Services.StudentService
             {
                 Data = responseStudent,
                 Success = true,
-                Message = "Found"
+                Message = Messages.UserFound
             };
         }
 
@@ -77,18 +79,19 @@ namespace UCMS.Services.StudentService
                 return new ServiceResponse<GetStudentDto>
                 {
                     Success = false,
-                    //Message = String.Format(Messages.UserNotFound, userId) FIXME
+                    Message = String.Format(Messages.UserNotFound, user.Id)
                 };
 
             Student updatedStudent = _mapper.Map(editStudentDto, student);
             await _studentRepository.UpdateStudentAsync(updatedStudent);
+            _logger.LogInformation("Student {} updated successfully", user.Id);
 
             GetStudentDto responseStudent = _mapper.Map<GetStudentDto>(updatedStudent);
             return new ServiceResponse<GetStudentDto>
             {
                 Data = responseStudent,
                 Success = true,
-                //Message = message FIXME
+                Message = Messages.UpdateUser
             };
         }
 
@@ -101,7 +104,7 @@ namespace UCMS.Services.StudentService
             {
                 Data = response,
                 Success = true,
-                //Message = message FIXME
+                Message = Messages.AllUsersFetchedSuccessfully
             };
         }
     }

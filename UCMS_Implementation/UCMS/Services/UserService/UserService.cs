@@ -19,13 +19,15 @@ namespace UCMS.Services.UserService
         private readonly IMapper _mapper;
         private readonly IPasswordService _passwordService;
         private readonly ILogger<UserService> _logger;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(IUserRepository userRepository, IMapper mapper, IPasswordService passwordService, ILogger<UserService> logger)
+        public UserService(IUserRepository userRepository, IMapper mapper, IPasswordService passwordService, ILogger<UserService> logger, IHttpContextAccessor httpContextAccessor)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _passwordService = passwordService;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ServiceResponse<List<OutputUserDto>>> GetAllUsersAsync()
@@ -53,8 +55,9 @@ namespace UCMS.Services.UserService
             return BuildOutputUserDtoResponse(user, string.Format(Messages.UserFound, userId));
         }
 
-        public ServiceResponse<OutputUserDto> GetCurrentUser(User user)
+        public ServiceResponse<OutputUserDto> GetCurrentUser()
         {
+            var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
             return BuildOutputUserDtoResponse(user, string.Format(Messages.UserFound, user.Id));
         }
 
@@ -78,8 +81,9 @@ namespace UCMS.Services.UserService
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<OutputUserDto>> EditUser(User user, EditUserDto dto)
+        public async Task<ServiceResponse<OutputUserDto>> EditUser(EditUserDto dto)
         {
+            var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
             User updatedUser = _mapper.Map(dto, user);
 
             await _userRepository.UpdateUserAsync(updatedUser);
@@ -88,8 +92,15 @@ namespace UCMS.Services.UserService
             return BuildOutputUserDtoResponse(updatedUser, string.Format(Messages.UpdateUser, user.Id));
         }
 
-        public async Task<ServiceResponse<bool>> ChangePassword(User user, ChangePasswordDto changePasswordDto)
+        public async Task<ServiceResponse<bool>> ChangePassword(ChangePasswordDto changePasswordDto)
         {
+            var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+
+            if (!await _passwordService.VerifyPasswordAsync(changePasswordDto.OldPassword, user.PasswordSalt, user.PasswordHash))
+            {
+                return new ServiceResponse<bool> { Success = false, Message = Messages.WrongPasswordMessage };
+            }
+
             if (changePasswordDto.NewPassword != changePasswordDto.ConfirmNewPassword)
             {
                 return new ServiceResponse<bool> { Success = false, Message = Messages.PasswordNotMatch };

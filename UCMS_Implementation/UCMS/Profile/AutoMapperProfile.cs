@@ -29,12 +29,12 @@ public class AutoMapperProfile : Profile
 
         // first mapper
         CreateMap<Class, GetClassDto>()
-            .ForMember(dest => dest.InstructorFullName, opt => opt.Ignore())
+            .ForMember(dest => dest.InstructorFullName, opt => opt.Ignore());
         
         CreateMap<Class, GetClassForInstructorDto>()
             .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.Schedules));
-        
-        CreateMap<Class, GetClassForStudentDto>()
+
+        CreateMap<Class, GetClassForStudentDto>();
 
         // second mapper
         CreateMap<Class, GetClassDto>()
@@ -43,13 +43,13 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.Schedules));
         // .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate?.ToString("yyyy-MM-dd")));
 
-        CreateMap<Class, GetClassPreviewDto>()
-            .ForMember(dest => dest.InstructorFullName,
-                opt => opt.MapFrom(src => $"{src.Instructor.User.FirstName} {src.Instructor.User.LastName}"))
-            .ForMember(dest => dest.Schedules,
-                opt => opt.MapFrom(src => src.Schedules));
+        //CreateMap<Class, GetClassPreviewDto>()
+            //.ForMember(dest => dest.InstructorFullName,
+                //opt => opt.MapFrom(src => $"{src.Instructor.User.FirstName} {src.Instructor.User.LastName}"))
+            //.ForMember(dest => dest.Schedules,
+                //opt => opt.MapFrom(src => src.Schedules));
 
-        CreateMap<UpdateClassDto, Class>()
+        //CreateMap<UpdateClassDto, Class>();
         
         // CreateMap<Class, GetClassPreviewDto>()
         //     .ForMember(dest => dest.InstructorFullName,
@@ -98,6 +98,7 @@ public class AutoMapperProfile : Profile
 
         CreateMap<Page<Class>, GetClassPageDto>()
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));
+
         CreateMap<Student, GetStudentsOfClassforInstructorDto>()
             .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))

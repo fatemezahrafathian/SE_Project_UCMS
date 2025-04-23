@@ -55,10 +55,7 @@ namespace UCMS.Controllers
         [Authorize]
         public async Task<ActionResult> GetCurrentUserProfile()
         {
-
-            var user = HttpContext.Items["User"] as User;
-
-            var response = _userService.GetCurrentUser(user);
+            var response = _userService.GetCurrentUser();
 
             if (response.Data == null) return NotFound(response.Message);
 
@@ -68,9 +65,7 @@ namespace UCMS.Controllers
         [HttpPut("profile/edit")]
         public async Task<ActionResult> EditProfile([FromBody] EditUserDto editUserDto)
         {
-            var user = HttpContext.Items["User"] as User;
-
-            var response = await _userService.EditUser(user, editUserDto);
+            var response = await _userService.EditUser(editUserDto);
             if (response.Data == null) return NotFound(response.Message);
 
             return Ok(response);
@@ -80,9 +75,7 @@ namespace UCMS.Controllers
         [HttpPatch("profile/change-password")]
         public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordDto changePasswordDto)
         {
-            var user = HttpContext.Items["User"] as User;
-
-            var response = await _userService.ChangePassword(user, changePasswordDto);
+            var response = await _userService.ChangePassword(changePasswordDto);
 
             if(response.Data == false)
                 return BadRequest(response.Message);

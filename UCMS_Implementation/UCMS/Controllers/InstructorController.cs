@@ -34,7 +34,7 @@ namespace UCMS.Controllers
         }
 
         [HttpGet("profile")]
-        [Authorize]
+        [RoleBasedAuthorization("Instructor")]
         public async Task<ActionResult> GetCurrentInstructorProfile()
         {
             var response = await _isntrutorService.GetCurrentInstructor();

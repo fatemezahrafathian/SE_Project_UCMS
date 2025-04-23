@@ -144,7 +144,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-    db.Database.Migrate(); // Ensures schema is created before anything else
+    //db.Database.Migrate(); // Ensures schema is created before anything else
 
     var roleService = scope.ServiceProvider.GetRequiredService<IRoleService>();
     await SeedData.Initialize(scope.ServiceProvider, roleService); // Seed roles etc.
