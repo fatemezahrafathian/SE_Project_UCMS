@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using UCMS.Data;
@@ -11,9 +12,11 @@ using UCMS.Data;
 namespace UCMS.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250421165412_AddEducationFieldToStudent")]
+    partial class AddEducationFieldToStudent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,28 +44,20 @@ namespace UCMS.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
-                    b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("IdentifierType")
+                        .HasColumnType("integer");
 
                     b.Property<int>("InstructorId")
                         .HasColumnType("integer");
 
-                    b.Property<byte[]>("PasswordHash")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("bytea");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
 
-                    b.Property<byte[]>("PasswordSalt")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("bytea");
-
-                    b.Property<string>("ProfileImageUrl")
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)");
-
-                    b.Property<DateOnly?>("StartDate")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -106,34 +101,6 @@ namespace UCMS.Migrations
                     b.ToTable("ClassSchedule");
                 });
 
-            modelBuilder.Entity("UCMS.Models.ClassStudent", b =>
-                {
-                    b.Property<int>("ClassId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("ClassId1")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("JoinedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("StudentId1")
-                        .HasColumnType("integer");
-
-                    b.HasKey("ClassId", "StudentId");
-
-                    b.HasIndex("ClassId1");
-
-                    b.HasIndex("StudentId");
-
-                    b.HasIndex("StudentId1");
-
-                    b.ToTable("ClassStudents");
-                });
-
             modelBuilder.Entity("UCMS.Models.Instructor", b =>
                 {
                     b.Property<int>("Id")
@@ -152,9 +119,6 @@ namespace UCMS.Migrations
                     b.Property<string>("EmployeeCode")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
-
-                    b.Property<int>("Rank")
-                        .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -287,9 +251,6 @@ namespace UCMS.Migrations
                     b.Property<int>("RoleId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("University")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -392,8 +353,6 @@ namespace UCMS.Migrations
 
             modelBuilder.Entity("UCMS.Models.Class", b =>
                 {
-                    b.Navigation("ClassStudents");
-
                     b.Navigation("Schedules");
                 });
 
@@ -405,11 +364,6 @@ namespace UCMS.Migrations
             modelBuilder.Entity("UCMS.Models.Role", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("UCMS.Models.Student", b =>
-                {
-                    b.Navigation("ClassStudents");
                 });
 
             modelBuilder.Entity("UCMS.Models.User", b =>

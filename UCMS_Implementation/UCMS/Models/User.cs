@@ -6,7 +6,7 @@ public class User
 {
     [Key]
     public int Id { get; set; }
-    
+
     [Required, MaxLength(100), EmailAddress] // automated email validation, to be tested
     public string Email { get; set; }
 
@@ -18,9 +18,9 @@ public class User
 
     [Required, MaxLength(256)] // only 32 bytes needed, to work better
     public byte[] PasswordHash { get; set; }
-    
+
     // public bool EmailConfirmed { get; set; } = false;
-    
+
     [MaxLength(50)]
     public string? FirstName { get; set; }
 
@@ -33,13 +33,15 @@ public class User
     public Role Role { get; set; }
 
     public Gender? Gender { get; set; }
-   
+
     [MaxLength(250)]
     public string? Address { get; set; }
-    
+
     [MaxLength(500)]
     public string? Bio { get; set; }
-    
+
+    public University? University { get; set; }
+
     [MaxLength(200)]
     public string? ProfileImagePath { get; set; }
 
@@ -49,7 +51,7 @@ public class User
     public DateTime LastLogin { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-    
+
     [MaxLength((32 / 3 + (32 % 3 == 0 ? 0 : 1)) * 4)]  // conf file
     public string? VerificationToken { get; set; }
     public bool IsConfirmed { get; set; }

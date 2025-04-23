@@ -20,6 +20,8 @@ public class Student
     [MaxLength(100)]
     public string? Major { get; set; }
 
+    public EducationLevel? EducationLevel { get; set; }
+
     public int? EnrollmentYear { get; set; }
     
     public ICollection<ClassStudent> ClassStudents { get; set; }

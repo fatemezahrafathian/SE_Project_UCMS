@@ -7,11 +7,14 @@ using Microsoft.IdentityModel.Tokens;
 using UCMS.Data;
 using UCMS.Middleware;
 using UCMS.Profile;
-using UCMS.Repositories;
 using UCMS.Repositories.ClassRepository;
 using UCMS.Repositories.ClassRepository.Abstraction;
+using UCMS.Repositories.InstructorRepository;
+using UCMS.Repositories.InstructorRepository.Abstraction;
 using UCMS.Repositories.RoleRepository;
 using UCMS.Repositories.RoleRepository.Abstraction;
+using UCMS.Repositories.StudentRepository;
+using UCMS.Repositories.StudentRepository.Abstraction;
 using UCMS.Repositories.UserRepository;
 using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Services.AuthService;
@@ -25,8 +28,12 @@ using UCMS.Services.EmailService.Abstraction;
 using UCMS.Services.ImageService;
 using UCMS.Services.PasswordService;
 using UCMS.Services.PasswordService.Abstraction;
+using UCMS.Services.InstructorService;
+using UCMS.Services.InstructorService.Abstraction;
 using UCMS.Services.RoleService;
 using UCMS.Services.RoleService.Abstraction;
+using UCMS.Services.StudentService;
+using UCMS.Services.StudentService.Abstraction;
 using UCMS.Services.TokenService;
 using UCMS.Services.TokenService.Abstraction;
 using UCMS.Services.UserService;
@@ -69,6 +76,10 @@ builder.Services.AddSingleton<IUrlHelperFactory, UrlHelperFactory>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+builder.Services.AddScoped<IStudentService, StudentService>();
+builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
+builder.Services.AddScoped<IInstructorService, InstructorService>();
 builder.Services.AddScoped<ICookieService,CookieService>();
 builder.Services.AddScoped<ITokenService,TokenService>();
 builder.Services.AddScoped<IOneTimeCodeService, OneTimeCodeService>();
@@ -133,7 +144,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-    db.Database.Migrate(); // Ensures schema is created before anything else
+    //db.Database.Migrate(); // Ensures schema is created before anything else
 
     var roleService = scope.ServiceProvider.GetRequiredService<IRoleService>();
     await SeedData.Initialize(scope.ServiceProvider, roleService); // Seed roles etc.
