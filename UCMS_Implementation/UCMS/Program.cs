@@ -161,6 +161,7 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // app.UseRouting();
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseCors("AllowLocalhost5173");
 app.UseAuthentication();
 app.UseMiddleware<AuthenticationMiddleware>();

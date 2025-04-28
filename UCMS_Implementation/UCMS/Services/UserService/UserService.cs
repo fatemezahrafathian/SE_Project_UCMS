@@ -2,13 +2,12 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using UCMS.DTOs;
-using UCMS.DTOs.AuthDto;
+using UCMS.DTOs.ClassDto;
 using UCMS.DTOs.User;
 using UCMS.Models;
 using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Resources;
-using UCMS.Services.AuthService;
-using UCMS.Services.AuthService.Abstraction;
+using UCMS.Services.ImageService;
 using UCMS.Services.PasswordService.Abstraction;
 
 namespace UCMS.Services.UserService
@@ -20,14 +19,16 @@ namespace UCMS.Services.UserService
         private readonly IPasswordService _passwordService;
         private readonly ILogger<UserService> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IImageService _imageService;
 
-        public UserService(IUserRepository userRepository, IMapper mapper, IPasswordService passwordService, ILogger<UserService> logger, IHttpContextAccessor httpContextAccessor)
+        public UserService(IUserRepository userRepository, IMapper mapper, IPasswordService passwordService, ILogger<UserService> logger, IHttpContextAccessor httpContextAccessor, IImageService imageService)
         {
             _userRepository = userRepository;
             _mapper = mapper;
             _passwordService = passwordService;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
+            _imageService = imageService;
         }
 
         public async Task<ServiceResponse<List<OutputUserDto>>> GetAllUsersAsync()
@@ -58,7 +59,6 @@ namespace UCMS.Services.UserService
         public ServiceResponse<OutputUserDto> GetCurrentUser()
         {
             var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
-            Console.WriteLine(user.University.ToString());
             return BuildOutputUserDtoResponse(user, string.Format(Messages.UserFound, user.Id));
         }
 
@@ -124,6 +124,70 @@ namespace UCMS.Services.UserService
             };
         }
 
+        public async Task<ServiceResponse<bool>> UploadProfileImageAsync(UploadProfileImageDto uploadProfileImageDto)
+        {
+            var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+
+            if (uploadProfileImageDto == null || uploadProfileImageDto.ProfileImage == null)
+                return new ServiceResponse<bool>
+                {
+                    Success = false,
+                    Message = Messages.ImageNotFound
+                };
+
+            if (!_imageService.IsValidImageExtension(uploadProfileImageDto.ProfileImage))
+            {
+                return new ServiceResponse<bool>
+                {
+                    Success = false,
+                    Message = Messages.InvalidFormat
+                };
+            }
+
+            if (!_imageService.IsValidImageSize(uploadProfileImageDto.ProfileImage))
+            {
+                return new ServiceResponse<bool>
+                {
+                    Success = false,
+                    Message = Messages.InvalidSize
+                };
+            }
+
+            string imagePath = await _imageService.SaveImageAsync(uploadProfileImageDto.ProfileImage, "images/users");
+
+            user.ProfileImagePath = imagePath;
+            await _userRepository.UpdateUserAsync(user);
+            _logger.LogInformation("User {userId} updated profile image successfully", user.Id);
+
+            return new ServiceResponse<bool>
+            {
+                Data = true,
+                Success = true,
+                Message = Messages.UploadImage
+            };
+        }
+
+        public async Task<ServiceResponse<bool>> RemoveProfileImage()
+        {
+            var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+
+            if (user.ProfileImagePath == null)
+                throw new ArgumentException("This user has no image profile");
+
+            _imageService.DeleteImage(user.ProfileImagePath);
+
+            user.ProfileImagePath = null;
+            await _userRepository.UpdateUserAsync(user);
+            _logger.LogInformation("User {userId} removed profile image successfully", user.Id);
+
+            return new ServiceResponse<bool>
+            {
+                Data = true,
+                Success = true,
+                Message = Messages.RemoveImage
+            };
+        }
+
         private static ServiceResponse<OutputUserDto> BuildNotFoundResponse(int userId)
         {
             return new ServiceResponse<OutputUserDto>
@@ -136,6 +200,9 @@ namespace UCMS.Services.UserService
         private ServiceResponse<OutputUserDto> BuildOutputUserDtoResponse(User user, string message)
         {
             OutputUserDto responseUser = _mapper.Map<OutputUserDto>(user);
+
+            if (user.ProfileImagePath != null)
+                responseUser.ProfileImagePath = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}/{responseUser.ProfileImagePath}";
             return new ServiceResponse<OutputUserDto>
             {
                 Data = responseUser,

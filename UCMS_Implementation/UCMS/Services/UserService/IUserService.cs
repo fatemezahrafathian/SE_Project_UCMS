@@ -13,4 +13,6 @@ public interface IUserService
     ServiceResponse<OutputUserDto> GetCurrentUser();
     Task<ServiceResponse<bool>> ChangePassword(ChangePasswordDto dto);
     Task<ServiceResponse<bool>> DeleteUserAsync(int userId);
+    Task<ServiceResponse<bool>> UploadProfileImageAsync(UploadProfileImageDto uploadProfileImageDto);
+    Task<ServiceResponse<bool>> RemoveProfileImage();
 }
