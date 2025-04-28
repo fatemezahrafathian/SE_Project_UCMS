@@ -4,6 +4,7 @@ using UCMS.DTOs.Instructor;
 using UCMS.DTOs.Student;
 using UCMS.Models;
 using UCMS.Repositories.InstructorRepository.Abstraction;
+using UCMS.Resources;
 using UCMS.Services.InstructorService.Abstraction;
 
 namespace UCMS.Services.InstructorService
@@ -13,6 +14,7 @@ namespace UCMS.Services.InstructorService
         private readonly IInstructorRepository _instructorRepository;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger<InstructorService> _logger;
 
         public InstructorService(IInstructorRepository instructorRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
@@ -21,16 +23,17 @@ namespace UCMS.Services.InstructorService
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<ServiceResponse<GetInstructorDto>> GetInstructorById(int instructorId)
+        public async Task<ServiceResponse<GetInstructorDto>> GetSpecializedInfo()
         {
-            Instructor? instructor = await _instructorRepository.GetInstructorById(instructorId);
+            var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+            var instructor = await _instructorRepository.GetInstructorByUserIdAsync(user.Id);
 
             if (instructor == null)
             {
                 return new ServiceResponse<GetInstructorDto>
                 {
                     Success = false,
-                    //Message = String.Format(Messages.UserNotFound, userId) FIXME
+                    Message = String.Format(Messages.UserNotFound, user.Id) 
                 };
             }
 
@@ -39,7 +42,7 @@ namespace UCMS.Services.InstructorService
             {
                 Data = responseInstructor,
                 Success = true,
-                Message = "Found"
+                Message = string.Format(Messages.UserFound, user.Id)
             };
         }
 
@@ -53,18 +56,19 @@ namespace UCMS.Services.InstructorService
                 return new ServiceResponse<GetInstructorDto>
                 {
                     Success = false,
-                    //Message = String.Format(Messages.UserNotFound, userId) FIXME
+                    Message = String.Format(Messages.UserNotFound, user.Id)
                 };
 
             Instructor updatedInstructor = _mapper.Map(editInstructorDto, instructor);
             await _instructorRepository.UpdateInstructorAsync(updatedInstructor);
+            _logger.LogInformation("Instructor {userId} updated successfully", user.Id);
 
             GetInstructorDto responseStudent = _mapper.Map<GetInstructorDto>(updatedInstructor);
             return new ServiceResponse<GetInstructorDto>
             {
                 Data = responseStudent,
                 Success = true,
-                //Message = message FIXME
+                Message = string.Format(Messages.UpdateUser, user.Id)
             };
         }
 
@@ -78,7 +82,7 @@ namespace UCMS.Services.InstructorService
                 return new ServiceResponse<InstructorProfileDto>
                 {
                     Success = false,
-                    //Message = String.Format(Messages.UserNotFound, userId) FIXME
+                    Message = String.Format(Messages.UserNotFound, user.Id)
                 };
             }
 
@@ -87,7 +91,7 @@ namespace UCMS.Services.InstructorService
             {
                 Data = responseInstructor,
                 Success = true,
-                Message = "Found"
+                Message = string.Format(Messages.UserFound, user.Id)
             };
         }
     }

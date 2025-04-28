@@ -44,13 +44,14 @@ namespace UCMS.Services.StudentService
             {
                 Data = responseStudent,
                 Success = true,
-                Message = Messages.UserFound
+                Message = string.Format(Messages.UserFound, user.Id)
             };
         }
 
-        public async Task<ServiceResponse<GetStudentDto>> GetStudentById(int studentId)
+        public async Task<ServiceResponse<GetStudentDto>> GetSpecializedInfo()
         {
-            Student? student = await _studentRepository.GetStudentByIdAsync(studentId);
+            var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+            var student = await _studentRepository.GetStudentByUserIdAsync(user.Id);
 
             if (student == null)
             {
@@ -66,7 +67,7 @@ namespace UCMS.Services.StudentService
             {
                 Data = responseStudent,
                 Success = true,
-                Message = Messages.UserFound
+                Message = string.Format(Messages.UserFound, user.Id)
             };
         }
 
@@ -84,14 +85,14 @@ namespace UCMS.Services.StudentService
 
             Student updatedStudent = _mapper.Map(editStudentDto, student);
             await _studentRepository.UpdateStudentAsync(updatedStudent);
-            _logger.LogInformation("Student {} updated successfully", user.Id);
+            _logger.LogInformation("Student {userId} updated successfully", user.Id);
 
             GetStudentDto responseStudent = _mapper.Map<GetStudentDto>(updatedStudent);
             return new ServiceResponse<GetStudentDto>
             {
                 Data = responseStudent,
                 Success = true,
-                Message = Messages.UpdateUser
+                Message = string.Format(Messages.UpdateUser, user.Id)
             };
         }
 

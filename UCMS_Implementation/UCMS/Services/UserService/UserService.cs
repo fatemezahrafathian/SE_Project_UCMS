@@ -58,6 +58,7 @@ namespace UCMS.Services.UserService
         public ServiceResponse<OutputUserDto> GetCurrentUser()
         {
             var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+            Console.WriteLine(user.University.ToString());
             return BuildOutputUserDtoResponse(user, string.Format(Messages.UserFound, user.Id));
         }
 

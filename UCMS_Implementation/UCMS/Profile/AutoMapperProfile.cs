@@ -30,7 +30,7 @@ public class AutoMapperProfile : Profile
         // first mapper
         CreateMap<Class, GetClassDto>()
             .ForMember(dest => dest.InstructorFullName, opt => opt.Ignore());
-        
+
         CreateMap<Class, GetClassForInstructorDto>()
             .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.Schedules));
 
@@ -44,19 +44,19 @@ public class AutoMapperProfile : Profile
         // .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate?.ToString("yyyy-MM-dd")));
 
         //CreateMap<Class, GetClassPreviewDto>()
-            //.ForMember(dest => dest.InstructorFullName,
-                //opt => opt.MapFrom(src => $"{src.Instructor.User.FirstName} {src.Instructor.User.LastName}"))
-            //.ForMember(dest => dest.Schedules,
-                //opt => opt.MapFrom(src => src.Schedules));
+        //.ForMember(dest => dest.InstructorFullName,
+        //opt => opt.MapFrom(src => $"{src.Instructor.User.FirstName} {src.Instructor.User.LastName}"))
+        //.ForMember(dest => dest.Schedules,
+        //opt => opt.MapFrom(src => src.Schedules));
 
         //CreateMap<UpdateClassDto, Class>();
-        
+
         // CreateMap<Class, GetClassPreviewDto>()
         //     .ForMember(dest => dest.InstructorFullName,
         //         opt => opt.MapFrom(src => $"{src.Instructor.User.FirstName} {src.Instructor.User.LastName}"))
         //     .ForMember(dest => dest.Schedules,
         //         opt => opt.MapFrom(src => src.Schedules));
-        
+
         // see if it works
         CreateMap<PatchClassDto, Class>()
             .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.Schedules));
@@ -64,32 +64,45 @@ public class AutoMapperProfile : Profile
         CreateMap<EditStudentDto, Student>()
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
-        CreateMap<Student, GetStudentDto>();
+        CreateMap<Student, GetStudentDto>()
+            .ForMember(dest => dest.EducationLevel, opt => opt.MapFrom(src => src.EducationLevel.ToString()))
+            .ForMember(dest => dest.University, opt => opt.MapFrom(src => src.User.University.ToString()));
 
         CreateMap<Student, StudentPreviewDto>()
+            .ForMember(dest => dest.EducationLevel, opt => opt.MapFrom(src => src.EducationLevel.ToString()))
             .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))
             .ForMember(dest => dest.ProfileImagePath, opt => opt.MapFrom(src => src.User.ProfileImagePath));
 
         CreateMap<Student, StudentProfileDto>()
+            .ForMember(dest => dest.EducationLevel, opt => opt.MapFrom(src => src.EducationLevel.ToString()))
+            .ForMember(dest => dest.University, opt => opt.MapFrom(src => src.User.University.ToString()))
             .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
             .ForMember(dest => dest.Bio, opt => opt.MapFrom(src => src.User.Bio))
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.User.Role));
 
         CreateMap<EditInstructorDto, Instructor>()
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
-        CreateMap<Instructor, GetInstructorDto>();
+        CreateMap<Instructor, GetInstructorDto>()
+            .ForMember(dest => dest.Rank, opt => opt.MapFrom(src => src.Rank.ToString()))
+            .ForMember(dest => dest.University, opt => opt.MapFrom(src => src.User.University.ToString()));
 
         CreateMap<Instructor, InstructorProfileDto>()
+            .ForMember(dest => dest.Rank, opt => opt.MapFrom(src => src.Rank.ToString()))
+            .ForMember(dest => dest.University, opt => opt.MapFrom(src => src.User.University.ToString()))
             .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
             .ForMember(dest => dest.Bio, opt => opt.MapFrom(src => src.User.Bio))
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.User.Role));
 
 
-        CreateMap<User, OutputUserDto>();
+        CreateMap<User, OutputUserDto>()
+            .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender.ToString()))
+            .ForMember(dest => dest.University, opt => opt.MapFrom(src => src.University.ToString()));
 
         CreateMap<EditUserDto, User>()
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));

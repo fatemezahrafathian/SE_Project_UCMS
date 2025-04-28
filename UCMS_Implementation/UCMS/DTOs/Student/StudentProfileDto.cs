@@ -10,8 +10,11 @@ namespace UCMS.DTOs.Student
         public string? Username { get; set; }
         public string? Bio { get; set; }
         public GetRoleDto? Role { get; set; }
-        public EducationLevel? EducationLevel { get; set; }
+        public string? EducationLevel { get; set; }
         public string? Major {  get; set; }
         public int? EnrollmentYear { get; set; }
+
+        public string? University {  get; set; }
+        public string? ProfileImagePath { get; set; }
     }
 }

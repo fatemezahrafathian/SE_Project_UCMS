@@ -22,11 +22,11 @@ namespace UCMS.Controllers
             _isntrutorService = instructorService;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("profile/Specialized-info")]
         [Authorize]
-        public async Task<ActionResult> GetInstructorById(int id)
+        public async Task<ActionResult> GetInstructorById()
         {
-            var response = await _isntrutorService.GetInstructorById(id);
+            var response = await _isntrutorService.GetSpecializedInfo();
 
             if (response.Data == null) return NotFound(response.Message);
 
@@ -50,9 +50,9 @@ namespace UCMS.Controllers
         {
             var result = await _isntrutorService.EditInstructor(editInstructorDto);
 
-            if (!result.Success) return NotFound();
+            if (!result.Success) return NotFound(result.Message);
 
-            return Ok();
+            return Ok(result.Message);
         }
     }
 }
