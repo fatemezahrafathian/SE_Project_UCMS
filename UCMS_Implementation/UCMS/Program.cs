@@ -95,6 +95,7 @@ builder.Services.AddScoped<IClassRepository, ClassRepository>();
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IStudentClassService, StudentClassService>();
+builder.Services.AddScoped<IStudentClassRepository, StudentClassRepository>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(options =>{
