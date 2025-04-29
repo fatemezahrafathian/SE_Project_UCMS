@@ -12,7 +12,7 @@ using UCMS.Data;
 namespace UCMS.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250421143459_InitialCreate")]
+    [Migration("20250428062700_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -109,6 +109,24 @@ namespace UCMS.Migrations
                     b.ToTable("ClassSchedule");
                 });
 
+            modelBuilder.Entity("UCMS.Models.ClassStudent", b =>
+                {
+                    b.Property<int>("ClassId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("ClassId", "StudentId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("ClassStudents");
+                });
+
             modelBuilder.Entity("UCMS.Models.Instructor", b =>
                 {
                     b.Property<int>("Id")
@@ -127,6 +145,9 @@ namespace UCMS.Migrations
                     b.Property<string>("EmployeeCode")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
+
+                    b.Property<int>("Rank")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -169,6 +190,9 @@ namespace UCMS.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("EducationLevel")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("EnrollmentYear")
                         .HasColumnType("integer");
@@ -256,6 +280,9 @@ namespace UCMS.Migrations
                     b.Property<int>("RoleId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("University")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -299,6 +326,25 @@ namespace UCMS.Migrations
                         .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("UCMS.Models.ClassStudent", b =>
+                {
+                    b.HasOne("UCMS.Models.Class", "Class")
+                        .WithMany("ClassStudents")
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UCMS.Models.Student", "Student")
+                        .WithMany("ClassStudents")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Class");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("UCMS.Models.Instructor", b =>
@@ -358,6 +404,8 @@ namespace UCMS.Migrations
 
             modelBuilder.Entity("UCMS.Models.Class", b =>
                 {
+                    b.Navigation("ClassStudents");
+
                     b.Navigation("Schedules");
                 });
 
@@ -369,6 +417,11 @@ namespace UCMS.Migrations
             modelBuilder.Entity("UCMS.Models.Role", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("UCMS.Models.Student", b =>
+                {
+                    b.Navigation("ClassStudents");
                 });
 
             modelBuilder.Entity("UCMS.Models.User", b =>

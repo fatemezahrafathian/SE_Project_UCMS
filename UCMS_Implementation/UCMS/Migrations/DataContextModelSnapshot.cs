@@ -114,22 +114,12 @@ namespace UCMS.Migrations
                     b.Property<int>("StudentId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("ClassId1")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("JoinedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("StudentId1")
-                        .HasColumnType("integer");
-
                     b.HasKey("ClassId", "StudentId");
 
-                    b.HasIndex("ClassId1");
-
                     b.HasIndex("StudentId");
-
-                    b.HasIndex("StudentId1");
 
                     b.ToTable("ClassStudents");
                 });
@@ -333,6 +323,25 @@ namespace UCMS.Migrations
                         .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("UCMS.Models.ClassStudent", b =>
+                {
+                    b.HasOne("UCMS.Models.Class", "Class")
+                        .WithMany("ClassStudents")
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UCMS.Models.Student", "Student")
+                        .WithMany("ClassStudents")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Class");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("UCMS.Models.Instructor", b =>

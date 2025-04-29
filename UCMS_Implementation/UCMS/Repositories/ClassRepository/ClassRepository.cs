@@ -15,7 +15,7 @@ public class ClassRepository: IClassRepository
         _context = context;
     }
     
-    public async Task AddClassAsync(Class? cls)
+    public async Task AddClassAsync(Class cls)
     {
         await _context.Classes.AddAsync(cls);
         await _context.SaveChangesAsync();

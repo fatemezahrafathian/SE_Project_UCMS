@@ -359,4 +359,34 @@
     <data name="ListOfStudent" xml:space="preserve">
         
         <value>ListOfStudent</value></data>
+  <data name="TitleIsRequired" xml:space="preserve">
+      <value>Title is required.</value>
+  </data>
+  <data name="TitleMaxLength" xml:space="preserve">
+      <value>Title must be at most 100 chars.</value>
+  </data>
+  <data name="DescriptionMaxLength" xml:space="preserve">
+      <value>Description must be at most 500 chars.</value>
+  </data>
+  <data name="PasswordIsRequired" xml:space="preserve">
+      <value>Password is requires.</value>
+  </data>
+  <data name="ConfirmPasswordIsRequired" xml:space="preserve">
+      <value>password confirmation is required.</value>
+  </data>
+  <data name="PasswordsDoNotMatch" xml:space="preserve">
+      <value>Password and confirmation not match.</value>
+  </data>
+  <data name="SchedulesRequired" xml:space="preserve">
+      <value>schedules is required.</value>
+  </data>
+  <data name="PageMustBeGreaterThanZero" xml:space="preserve">
+      <value>Page number must be greater then zero.</value>
+  </data>
+  <data name="PageSizeMustBeBetween1And100" xml:space="preserve">
+      <value>Page size must be between 1 and 100.</value>
+  </data>
+  <data name="EndDateCanNotBeEarlierThanUpdateTime" xml:space="preserve">
+      <value>End date can not be earlier than update time.</value>
+  </data>
 </root>

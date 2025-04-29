@@ -5,7 +5,7 @@ namespace UCMS.Repositories.ClassRepository.Abstraction;
 
 public interface IClassRepository
 {
-    Task AddClassAsync(Class? cls);
+    Task AddClassAsync(Class cls);
     Task<bool> IsClassCodeExistAsync(string code);
     Task<Class?> GetClassByIdAsync(int id);
     Task<Class?> GetClassForInstructorAsync(int id);
