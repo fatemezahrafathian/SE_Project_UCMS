@@ -389,4 +389,7 @@
   <data name="EndDateCanNotBeEarlierThanUpdateTime" xml:space="preserve">
       <value>End date can not be earlier than update time.</value>
   </data>
+  <data name="AccountNotConfirmed" xml:space="preserve">
+      <value>AccountNotConfirmed</value>
+  </data>
 </root>
