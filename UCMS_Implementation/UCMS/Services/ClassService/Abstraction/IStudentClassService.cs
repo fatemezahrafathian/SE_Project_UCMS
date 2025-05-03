@@ -11,4 +11,7 @@ public interface IStudentClassService
     Task<ServiceResponse<List<GetStudentsOfClassforInstructorDto>>> GetStudentsOfClassByInstructorAsync(int classId);
     Task<ServiceResponse<List<GetStudentsOfClassforStudentDto>>> GetStudentsOfClassByStudentAsync(int classId);
     Task<int> GetStudentClassCount(int classId);
+    Task<ServiceResponse<GetClassForStudentDto>> GetClassForStudent(int classId);
+    Task<ServiceResponse<GetClassPageForStudentDto>> GetClassesForStudent(PaginatedFilterClassForStudentDto dto);
+
 }

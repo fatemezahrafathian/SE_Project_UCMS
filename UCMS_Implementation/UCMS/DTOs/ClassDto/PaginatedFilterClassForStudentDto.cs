@@ -1,6 +1,6 @@
 namespace UCMS.DTOs.ClassDto;
 
-public class PaginateFilterClassForStudentDto
+public class PaginatedFilterClassForStudentDto
 {
     public string Title { get; set; }
     public string? InstructorName { get; set; }

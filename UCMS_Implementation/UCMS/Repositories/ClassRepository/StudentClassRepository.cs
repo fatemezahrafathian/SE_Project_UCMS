@@ -51,5 +51,50 @@ public class StudentClassRepository: IStudentClassRepository
             .Select(cs => cs.Student)
             .ToListAsync();
     }
+    public IQueryable<Class> FilterStudentClassesByStudentIdAsync(int studentId, string? title, bool? isActive,string? instructorName)
+    {
+        var query = GetClassesByStudentId(studentId);
+        if (!string.IsNullOrWhiteSpace(title))
+            query = FilterClassesByTitle(query, title);
+        if (!string.IsNullOrWhiteSpace(instructorName))
+            query = FilterClassesByInstructorName(query, instructorName);
+        if (isActive.HasValue)
+            query = FilterClassesByIsActive(query, isActive.Value);
+
+        return query;
+    }
+
+    private IQueryable<Class> GetClassesByStudentId(int studentId)
+    {
+        return _context.Classes
+            .Include(c => c.ClassStudents)
+            .Where(c => c.ClassStudents.Any(cs => cs.StudentId == studentId));
+        
+    }
+
+    private IQueryable<Class> FilterClassesByInstructorName(IQueryable<Class> query, string instructorName)
+    {
+        return query.Where(c => c.Instructor.User.FirstName == instructorName || c.Instructor.User.LastName == instructorName || c.Instructor.User.FirstName+" "+ c.Instructor.User.LastName == instructorName);
+    }
+    private IQueryable<Class> FilterClassesByTitle(IQueryable<Class> query, string title)
+    {
+        return query.Where(c => c.Title.Contains(title));
+    }
+
+    private IQueryable<Class> FilterClassesByIsActive(IQueryable<Class> query, bool isActive)
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        return isActive
+            ? query.Where(c =>
+                (!c.StartDate.HasValue && !c.EndDate.HasValue) ||
+                (c.StartDate.HasValue && !c.EndDate.HasValue && c.StartDate.Value <= today) ||
+                (!c.StartDate.HasValue && c.EndDate.HasValue && c.EndDate.Value >= today) ||
+                (c.StartDate.HasValue && c.EndDate.HasValue && c.StartDate.Value <= today && c.EndDate.Value >= today))
+            : query.Where(c =>
+                (c.StartDate.HasValue && c.StartDate.Value > today) ||
+                (c.EndDate.HasValue && c.EndDate.Value < today));
+    }
+    
 
 }

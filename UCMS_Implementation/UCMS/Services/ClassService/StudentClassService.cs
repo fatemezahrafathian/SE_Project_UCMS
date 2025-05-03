@@ -1,6 +1,8 @@
 using AutoMapper;
 using UCMS.DTOs;
 using UCMS.DTOs.ClassDto;
+using UCMS.Extensions;
+using UCMS.Factories;
 using UCMS.Models;
 using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Resources;
@@ -205,6 +207,42 @@ public class StudentClassService: IStudentClassService
     {
         var classEntity = await _classRepository.GetClassByIdAsync(classId);
         return classEntity.ClassStudents.Count;
+    }
+    public async Task<ServiceResponse<GetClassForStudentDto>> GetClassForStudent(int classId)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+        
+        var classEntity = await _classRepository.GetStudentClassByClassIdAsync(classId);
+        if (classEntity == null)
+        {
+            return ServiceResponseFactory.Failure<GetClassForStudentDto>(
+                Messages.ClassNotFound);
+        }
+
+        // var isStudentOfClass = await _studentClassService.IsStudentOfClass(classId, user!.Student!.Id);
+        // if (!isStudentOfClass)
+        // {
+        //     return new ServiceResponse<GetClassForStudentDto> 
+        //     {
+        //         Success = false,
+        //         Message = Messages.ClassCan_tBeAccessed
+        //     };
+        // }
+
+        var responseDto = _mapper.Map<GetClassForStudentDto>(classEntity);
+        // responseDto.StudentCount = await GetStudentClassCount(classEntity.Id);
+        return ServiceResponseFactory.Success(responseDto, Messages.ClassFetchedSuccessfully);
+    }
+    public async Task<ServiceResponse<GetClassPageForStudentDto>> GetClassesForStudent(PaginatedFilterClassForStudentDto dto)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+
+        var classEntityQueryable = _studentClassRepository.FilterStudentClassesByStudentIdAsync(user!.Student!.Id, dto.Title, dto.IsActive, dto.InstructorName);        
+        var classEntityList = await classEntityQueryable.PaginateAsync(dto.Page, dto.PageSize);
+
+        var responseDto = _mapper.Map<GetClassPageForStudentDto>(classEntityList);
+        
+        return ServiceResponseFactory.Success(responseDto, Messages.ClassesRetrievedSuccessfully); // ClassesFetchedSuccessfully
     }
 
 }
