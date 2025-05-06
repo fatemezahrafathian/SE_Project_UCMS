@@ -13,6 +13,7 @@ public class DataContext : DbContext
     public DbSet<Instructor> Instructors { get; set; }
     public DbSet<Student> Students { get; set; }
     public DbSet<ClassStudent> ClassStudents { get; set; }
+    public DbSet<Project> Projects { get; set; }
     
 
 
@@ -60,6 +61,48 @@ public class DataContext : DbContext
             .WithOne(u => u.Student)
             .HasForeignKey<Student>(s => s.UserId)
             .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<Project>(entity =>
+        {
+            entity.Property(p => p.Title)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(p => p.Description)
+                .HasMaxLength(500);
+
+            entity.Property(p => p.TotalScore)
+                .IsRequired();
+
+            entity.Property(p => p.ProjectType)
+                // .HasConversion<string>()  // ذخیره enum به صورت string
+                .IsRequired();
+
+            entity.Property(p => p.GroupSize)
+                .IsRequired(false);
+
+            entity.Property(p => p.StartDate)
+                .IsRequired();
+
+            entity.Property(p => p.EndDate)
+                .IsRequired();
+
+            entity.Property(p => p.ProjectFilePath)
+                .HasMaxLength(300);
+
+            entity.Property(p => p.CreatedAt)
+                .HasDefaultValueSql("GETUTCDATE()");
+
+            entity.Property(p => p.UpdatedAt)
+                .HasDefaultValueSql("GETUTCDATE()");
+
+            entity.HasOne(p => p.Class)
+                .WithMany(c => c.Projects)
+                .HasForeignKey(p => p.ClassId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(p => p.ClassId);
+            entity.HasIndex(p => p.ProjectType);
+        });
 
     }
     

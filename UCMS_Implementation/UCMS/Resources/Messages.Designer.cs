@@ -294,11 +294,38 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to InvalidGroupSize.
+        /// </summary>
+        public static string InvalidGroupSize {
+            get {
+                return ResourceManager.GetString("InvalidGroupSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to InvalidInputMessage.
         /// </summary>
         public static string InvalidInputMessage {
             get {
                 return ResourceManager.GetString("InvalidInputMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to InvalidnIstructorForThisClass.
+        /// </summary>
+        public static string InvalidnIstructorForThisClass {
+            get {
+                return ResourceManager.GetString("InvalidnIstructorForThisClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to InvalidProjectTypeSelected.
+        /// </summary>
+        public static string InvalidProjectTypeSelected {
+            get {
+                return ResourceManager.GetString("InvalidProjectTypeSelected", resourceCulture);
             }
         }
         
@@ -533,6 +560,15 @@ namespace UCMS.Resources {
         public static string TitleMaxLength {
             get {
                 return ResourceManager.GetString("TitleMaxLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TotalScoreMustBePositive.
+        /// </summary>
+        public static string TotalScoreMustBePositive {
+            get {
+                return ResourceManager.GetString("TotalScoreMustBePositive", resourceCulture);
             }
         }
         
