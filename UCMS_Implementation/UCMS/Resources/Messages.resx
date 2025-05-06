@@ -410,4 +410,10 @@
   <data name="ProjectUpdatedSuccessfully" xml:space="preserve">
       <value>ProjectUpdatedSuccessfully</value>
   </data>
+  <data name="ProjectCantBeAccessed" xml:space="preserve">
+      <value>ProjectCantBeAccessed</value>
+  </data>
+  <data name="ProjectDeletedSuccessfully" xml:space="preserve">
+      <value>ProjectDeletedSuccessfully</value>
+  </data>
 </root>

@@ -8,4 +8,6 @@ public interface IProjectService
 {
     Task<ServiceResponse<GetProjectForInstructorDto>> CreateProjectAsync(int classId,CreateProjectDto dto);
     Task<ServiceResponse<GetProjectForInstructorDto>> UpdateProjectAsync(int classId, int projectId, PatchProjectDto dto);
+    Task<ServiceResponse<string>> DeleteProjectAsync(int classId, int projectId);
+
 }

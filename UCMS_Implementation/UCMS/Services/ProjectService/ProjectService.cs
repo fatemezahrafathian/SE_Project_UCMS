@@ -104,6 +104,21 @@ public class ProjectService: IProjectService
         var projectDto = _mapper.Map<GetProjectForInstructorDto>(existingProject);
         return ServiceResponseFactory.Success(projectDto, Messages.ProjectUpdatedSuccessfully);
     }
+    public async Task<ServiceResponse<string>> DeleteProjectAsync(int classId, int projectId)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+    
+        var project = await _repository.GetProjectByIdAsync(projectId);
+        if (project == null || project.ClassId != classId)
+            return ServiceResponseFactory.Failure<string>(Messages.ProjectNotFound);
+
+        if (project.Class.InstructorId != user!.Instructor!.Id)
+            return ServiceResponseFactory.Failure<string>(Messages.ProjectCantBeAccessed);
+        _fileService.DeleteFile(project.ProjectFilePath);
+        await _repository.DeleteAsync(project);
+        return ServiceResponseFactory.Success("Project deleted successfully", Messages.ProjectDeletedSuccessfully);
+    }
+
 
 }
 

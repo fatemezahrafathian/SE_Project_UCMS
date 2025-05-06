@@ -465,6 +465,24 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ProjectCantBeAccessed.
+        /// </summary>
+        public static string ProjectCantBeAccessed {
+            get {
+                return ResourceManager.GetString("ProjectCantBeAccessed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ProjectDeletedSuccessfully.
+        /// </summary>
+        public static string ProjectDeletedSuccessfully {
+            get {
+                return ResourceManager.GetString("ProjectDeletedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ProjectNotFound.
         /// </summary>
         public static string ProjectNotFound {
