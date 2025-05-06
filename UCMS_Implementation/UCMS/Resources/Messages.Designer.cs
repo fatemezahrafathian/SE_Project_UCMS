@@ -465,6 +465,24 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ProjectNotFound.
+        /// </summary>
+        public static string ProjectNotFound {
+            get {
+                return ResourceManager.GetString("ProjectNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ProjectUpdatedSuccessfully.
+        /// </summary>
+        public static string ProjectUpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("ProjectUpdatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User registered successfully..
         /// </summary>
         public static string RegisteredSuccessfully {

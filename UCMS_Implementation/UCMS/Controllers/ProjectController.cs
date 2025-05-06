@@ -34,4 +34,15 @@ public class ProjectController: ControllerBase
 
         return BadRequest(new {message = response.Message});
     }
+    [RoleBasedAuthorization("Instructor")]
+    [HttpPatch("{projectId}")]
+    public async Task<IActionResult> UpdateProject(int classId, int projectId, [FromForm] PatchProjectDto dto)
+    {
+        var response = await _projectService.UpdateProjectAsync(classId, projectId, dto);
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Message);
+    }
+
 }

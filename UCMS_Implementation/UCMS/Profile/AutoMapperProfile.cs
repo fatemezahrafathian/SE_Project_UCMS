@@ -118,5 +118,15 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.ProjectFilePath, opt => opt.Ignore()) 
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
             .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
+        CreateMap<PatchProjectDto, Project>()
+            .ForMember(dest => dest.ProjectFilePath, opt => opt.Ignore())
+            // .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) =>
+                srcMember != null &&
+                !(srcMember is string s && string.IsNullOrWhiteSpace(s)) &&
+                !(srcMember is int i && i == 0) &&
+                !(srcMember is DateTime dt && dt == default)
+            ));
+
     }
 }

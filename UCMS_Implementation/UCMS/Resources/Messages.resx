@@ -404,4 +404,10 @@
   <data name="InvalidnIstructorForThisClass" xml:space="preserve">
       <value>InvalidnIstructorForThisClass</value>
   </data>
+  <data name="ProjectNotFound" xml:space="preserve">
+      <value>ProjectNotFound</value>
+  </data>
+  <data name="ProjectUpdatedSuccessfully" xml:space="preserve">
+      <value>ProjectUpdatedSuccessfully</value>
+  </data>
 </root>

@@ -69,5 +69,41 @@ public class ProjectService: IProjectService
 
         return ServiceResponseFactory.Success(projectDto, Messages.ClassCreatedSuccessfully); 
     }
+    public async Task<ServiceResponse<GetProjectForInstructorDto>> UpdateProjectAsync(int classId, int projectId, PatchProjectDto dto)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+        var currentClass = await _classRepository.GetClassByIdAsync(classId);
+
+        if (currentClass == null)
+            return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.ClassNotFound);
+    
+        if (currentClass.InstructorId != user.Instructor.Id)
+            return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.InvalidnIstructorForThisClass);
+    
+        var existingProject = await _repository.GetProjectByIdAsync(projectId);
+        if (existingProject == null || existingProject.ClassId != classId)
+            return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.ProjectNotFound);
+
+        var validator = new UpdateProjectDtoValidator(_fileService);
+        var result = await validator.ValidateAsync(dto);
+        if (!result.IsValid)
+            return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(result.Errors.First().ErrorMessage);
+
+        _mapper.Map(dto, existingProject); // map changes
+        if (dto.ProjectFile != null)
+        {
+            _fileService.DeleteFile(existingProject.ProjectFilePath); 
+            existingProject.ProjectFilePath = await _fileService.SaveFileAsync(dto.ProjectFile, "projects"); 
+        }
+           
+
+        existingProject.UpdatedAt = DateTime.UtcNow;
+
+        await _repository.UpdateAsync(existingProject);
+
+        var projectDto = _mapper.Map<GetProjectForInstructorDto>(existingProject);
+        return ServiceResponseFactory.Success(projectDto, Messages.ProjectUpdatedSuccessfully);
+    }
+
 }
 
