@@ -1,3 +1,5 @@
+using UCMS.DTOs;
+
 namespace UCMS.Services.FileService;
 
 public interface IFileService
@@ -6,4 +8,5 @@ public interface IFileService
     bool IsValidExtension(IFormFile file);
     bool IsValidFileSize(IFormFile file);
     void DeleteFile(string relativePath);
+    Task<FileDownloadDto?> DownloadFile(string relativePath);
 }

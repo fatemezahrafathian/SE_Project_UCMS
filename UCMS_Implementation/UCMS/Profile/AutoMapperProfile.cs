@@ -127,6 +127,13 @@ public class AutoMapperProfile : Profile
                 !(srcMember is int i && i == 0) &&
                 !(srcMember is DateTime dt && dt == default)
             ));
-
+        CreateMap<Project, GetProjectForStudentDto>()
+            .ForMember(dest => dest.ProjectFileContentType, opt => opt.Ignore())
+            .ForMember(dest => dest.ProjectStatus, opt => opt.Ignore())
+            .ForMember(dest => dest.ProjectFilePath, opt => opt.MapFrom(src => src.ProjectFilePath));
+        CreateMap<Project, GetProjectForInstructorDto>()
+            .ForMember(dest => dest.ProjectFileContentType, opt => opt.Ignore())
+            .ForMember(dest => dest.ProjectStatus, opt => opt.Ignore())
+            .ForMember(dest => dest.ProjectFilePath, opt => opt.MapFrom(src => src.ProjectFilePath));
     }
 }

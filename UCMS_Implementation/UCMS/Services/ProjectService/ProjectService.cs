@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.Extensions.Options;
 using UCMS.DTOs;
 using UCMS.DTOs.ClassDto;
 using UCMS.DTOs.ProjectDto;
@@ -23,14 +24,17 @@ public class ProjectService: IProjectService
     private readonly IMapper _mapper;
     private readonly IClassRepository _classRepository;
     private readonly IFileService _fileService;
+    private readonly IWebHostEnvironment _env;
+    
 
-    public ProjectService(IProjectRepository repository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IClassRepository classRepository, IFileService fileService)
+    public ProjectService(IProjectRepository repository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IClassRepository classRepository, IFileService fileService, IWebHostEnvironment env)
     {
         _repository = repository;
         _httpContextAccessor = httpContextAccessor;
         _mapper = mapper;
         _classRepository = classRepository;
         _fileService = fileService;
+        _env = env;
     }
 
     public async Task<ServiceResponse<GetProjectForInstructorDto>> CreateProjectAsync(int classId, CreateProjectDto dto)
@@ -118,7 +122,68 @@ public class ProjectService: IProjectService
         await _repository.DeleteAsync(project);
         return ServiceResponseFactory.Success("Project deleted successfully", Messages.ProjectDeletedSuccessfully);
     }
+    public async Task<ServiceResponse<GetProjectForInstructorDto>> GetProjectByIdForInstructorAsync(int projectId)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+        var project = await _repository.GetProjectByIdAsync(projectId);
 
+        if (project == null || project.Class.InstructorId != user?.Instructor?.Id)
+        {
+            return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.ProjectCantBeAccessed);
+        }
+
+        var dto = _mapper.Map<GetProjectForInstructorDto>(project);
+        dto.ProjectStatus = CalculateProjectStatus(dto.StartDate,dto.EndDate);
+        dto.ProjectFileContentType = GetContentTypeFromPath(dto.ProjectFilePath);
+        return ServiceResponseFactory.Success(dto,Messages.ProjectRetrievedSuccessfully);
+    }
+    public async Task<ServiceResponse<GetProjectForStudentDto>> GetProjectByIdForStudentAsync(int projectId)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+        var project = await _repository.GetProjectByIdAsync(projectId);
+
+        if (project == null || await _classRepository.IsStudentOfClassAsync(project.ClassId,user.Student.Id))
+        {
+            return ServiceResponseFactory.Failure<GetProjectForStudentDto>(Messages.ProjectCantBeAccessed);
+        }
+
+        var dto = _mapper.Map<GetProjectForStudentDto>(project);
+        dto.ProjectStatus = CalculateProjectStatus(dto.StartDate,dto.EndDate);
+        dto.ProjectFileContentType = GetContentTypeFromPath(dto.ProjectFilePath);
+        return ServiceResponseFactory.Success(dto,Messages.ProjectRetrievedSuccessfully);
+    }
+    private static string? GetContentTypeFromPath(string? filePath)
+    {
+        if (string.IsNullOrEmpty(filePath)) return null;
+        var extension = Path.GetExtension(filePath).ToLowerInvariant();
+        return extension switch
+        {
+            ".pdf" => "application/pdf",
+            ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            ".doc" => "application/msword",
+            _ => "application/octet-stream"
+        };
+    }
+
+    private static ProjectStatus CalculateProjectStatus(DateTime start, DateTime end)
+    {
+        var now = DateTime.UtcNow;
+        if (now < start) return ProjectStatus.NotStarted;
+        if (now >= start && now <= end) return ProjectStatus.InProgress;
+        return ProjectStatus.Completed;
+    }
+    public async Task<ServiceResponse<FileDownloadDto>> HandleDownloadProjectFileAsync(int projectId)
+    {
+        //check access for instructor and student
+        var project = await _repository.GetProjectByIdAsync(projectId);
+        if (project == null || string.IsNullOrWhiteSpace(project.ProjectFilePath))
+            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.ProjectOrFileNotFound);
+        var dto =await _fileService.DownloadFile(project.ProjectFilePath);
+        if (dto==null)
+            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileDoesNotExist);
+        dto.ContentType = GetContentTypeFromPath(project.ProjectFilePath);
+        return ServiceResponseFactory.Success(dto,Messages.ProjectFileDownloadedSuccessfully);
+    }
 
 }
 

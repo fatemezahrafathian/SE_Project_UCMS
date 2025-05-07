@@ -8,7 +8,7 @@ using UCMS.Services.ClassService.Abstraction;
 using UCMS.Services.ProjectService;
 
 namespace UCMS.Controllers;
-[Route("api/projects")]
+[Route("api/[controller]")]
 [ApiController]
 public class ProjectController: ControllerBase
 {
@@ -54,5 +54,44 @@ public class ProjectController: ControllerBase
 
         return Ok(response.Message);
     }
+    [RoleBasedAuthorization("Instructor")]
+    [HttpGet("Instructor/{projectId}")]
+    public async Task<IActionResult> GetProjectForInstructor(int projectId)
+    {
+        var response = await _projectService.GetProjectByIdForInstructorAsync(projectId);
+        if (!response.Success)
+            return NotFound(response.Message);
 
+        return Ok(response.Data);
+    }
+    [RoleBasedAuthorization("Student")]
+    [HttpGet("Student/{projectId}")]
+    public async Task<IActionResult> GetProjectForStudent(int projectId)
+    {
+        var response = await _projectService.GetProjectByIdForStudentAsync(projectId);
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Data);
+    }
+    [RoleBasedAuthorization("Student")]
+    [HttpGet("{projectId}/downloadForStudent")]
+    public async Task<IActionResult> DownloadProjectFileForStudent(int projectId)
+    {
+        var response = await _projectService.HandleDownloadProjectFileAsync(projectId);
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Data);
+    }
+    [RoleBasedAuthorization("Instructor")]
+    [HttpGet("{projectId}/downloadForInstructor")]
+    public async Task<IActionResult> DownloadProjectFileForInstructor(int projectId)
+    {
+        var response = await _projectService.HandleDownloadProjectFileAsync(projectId);
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return File(response.Data.FileBytes, response.Data.ContentType, response.Data.FileName);
+    }
 }

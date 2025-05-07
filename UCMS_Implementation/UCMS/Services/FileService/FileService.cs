@@ -1,3 +1,7 @@
+using UCMS.DTOs;
+using UCMS.Factories;
+using UCMS.Resources;
+
 namespace UCMS.Services.FileService;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -58,6 +62,22 @@ public class FileService: IFileService
     {
         var extension = Path.GetExtension(originalFileName);
         return $"{Guid.NewGuid()}{extension}";
+    }
+    public async Task<FileDownloadDto?> DownloadFile(string relativePath)
+    {
+        
+        var fullPath = Path.Combine(_env.WebRootPath, relativePath.TrimStart('/'));
+        if (!File.Exists(fullPath))
+            return null;
+        var fileBytes = await File.ReadAllBytesAsync(fullPath);
+        var fileName = Path.GetFileName(relativePath);
+
+        var dto = new FileDownloadDto
+        {
+            FileBytes = fileBytes,
+            FileName = fileName
+        };
+        return dto;
     }
 }
 

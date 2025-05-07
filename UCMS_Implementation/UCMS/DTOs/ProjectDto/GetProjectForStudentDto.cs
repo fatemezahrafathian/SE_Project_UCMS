@@ -2,7 +2,7 @@ using UCMS.Models;
 
 namespace UCMS.DTOs.ProjectDto;
 
-public class GetProjectForInstructorDto
+public class GetProjectForStudentDto
 {
     public int Id { get; set; }
     public string Title { get; set; } = null!;
@@ -12,5 +12,4 @@ public class GetProjectForInstructorDto
     public string? ProjectFilePath { get; set; }
     public string? ProjectFileContentType { get; set; }
     public ProjectStatus ProjectStatus { get; set; }
-
 }

@@ -416,4 +416,16 @@
   <data name="ProjectDeletedSuccessfully" xml:space="preserve">
       <value>ProjectDeletedSuccessfully</value>
   </data>
+  <data name="ProjectRetrievedSuccessfully" xml:space="preserve">
+      <value>ProjectRetrievedSuccessfully</value>
+  </data>
+  <data name="ProjectOrFileNotFound" xml:space="preserve">
+      <value>ProjectOrFileNotFound</value>
+  </data>
+  <data name="FileDoesNotExist" xml:space="preserve">
+      <value>FileDoesNotExist</value>
+  </data>
+  <data name="ProjectFileDownloadedSuccessfully" xml:space="preserve">
+      <value>ProjectFileDownloadedSuccessfully</value>
+  </data>
 </root>

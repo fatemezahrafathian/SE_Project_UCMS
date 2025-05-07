@@ -267,6 +267,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FileDoesNotExist.
+        /// </summary>
+        public static string FileDoesNotExist {
+            get {
+                return ResourceManager.GetString("FileDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You are not allowed to access this resource.
         /// </summary>
         public static string Forbidden {
@@ -483,11 +492,38 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ProjectFileDownloadedSuccessfully.
+        /// </summary>
+        public static string ProjectFileDownloadedSuccessfully {
+            get {
+                return ResourceManager.GetString("ProjectFileDownloadedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ProjectNotFound.
         /// </summary>
         public static string ProjectNotFound {
             get {
                 return ResourceManager.GetString("ProjectNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ProjectOrFileNotFound.
+        /// </summary>
+        public static string ProjectOrFileNotFound {
+            get {
+                return ResourceManager.GetString("ProjectOrFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ProjectRetrievedSuccessfully.
+        /// </summary>
+        public static string ProjectRetrievedSuccessfully {
+            get {
+                return ResourceManager.GetString("ProjectRetrievedSuccessfully", resourceCulture);
             }
         }
         
