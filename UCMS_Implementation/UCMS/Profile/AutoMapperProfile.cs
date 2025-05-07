@@ -62,6 +62,7 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.Schedules));
 
         CreateMap<EditStudentDto, Student>()
+            .ForPath(dest => dest.User.University, opt => opt.MapFrom(src => src.University))
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
         CreateMap<Student, GetStudentDto>()
@@ -77,6 +78,7 @@ public class AutoMapperProfile : Profile
         CreateMap<Student, StudentProfileDto>()
             .ForMember(dest => dest.EducationLevel, opt => opt.MapFrom(src => src.EducationLevel.ToString()))
             .ForMember(dest => dest.University, opt => opt.MapFrom(src => src.User.University.ToString()))
+            .ForMember(dest => dest.ProfileImagePath, opt => opt.MapFrom(src => src.User.ProfileImagePath))
             .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))
             .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
@@ -84,6 +86,7 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.User.Role));
 
         CreateMap<EditInstructorDto, Instructor>()
+            .ForPath(dest => dest.User.University, opt => opt.MapFrom(src => src.University))
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
         CreateMap<Instructor, GetInstructorDto>()
@@ -94,6 +97,7 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.Rank, opt => opt.MapFrom(src => src.Rank.ToString()))
             .ForMember(dest => dest.University, opt => opt.MapFrom(src => src.User.University.ToString()))
             .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
+            .ForMember(dest => dest.ProfileImagePath, opt => opt.MapFrom(src => src.User.ProfileImagePath))
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))
             .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.Username))
             .ForMember(dest => dest.Bio, opt => opt.MapFrom(src => src.User.Bio))

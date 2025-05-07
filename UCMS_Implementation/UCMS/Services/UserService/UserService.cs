@@ -9,6 +9,7 @@ using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.ImageService;
 using UCMS.Services.PasswordService.Abstraction;
+using UCMS.Services.Utils;
 
 namespace UCMS.Services.UserService
 {
@@ -20,8 +21,11 @@ namespace UCMS.Services.UserService
         private readonly ILogger<UserService> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IImageService _imageService;
+        private readonly UrlBuilder _urlBuilder;
 
-        public UserService(IUserRepository userRepository, IMapper mapper, IPasswordService passwordService, ILogger<UserService> logger, IHttpContextAccessor httpContextAccessor, IImageService imageService)
+        public UserService(IUserRepository userRepository, IMapper mapper, IPasswordService passwordService,
+            ILogger<UserService> logger, IHttpContextAccessor httpContextAccessor, IImageService imageService,
+            UrlBuilder urlBuilder )
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -29,6 +33,7 @@ namespace UCMS.Services.UserService
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
             _imageService = imageService;
+            _urlBuilder = urlBuilder;
         }
 
         public async Task<ServiceResponse<List<OutputUserDto>>> GetAllUsersAsync()
@@ -155,6 +160,9 @@ namespace UCMS.Services.UserService
 
             string imagePath = await _imageService.SaveImageAsync(uploadProfileImageDto.ProfileImage, "images/users");
 
+            if (user.ProfileImagePath != null)
+                await RemoveProfileImage();
+
             user.ProfileImagePath = imagePath;
             await _userRepository.UpdateUserAsync(user);
             _logger.LogInformation("User {userId} updated profile image successfully", user.Id);
@@ -201,8 +209,7 @@ namespace UCMS.Services.UserService
         {
             OutputUserDto responseUser = _mapper.Map<OutputUserDto>(user);
 
-            if (user.ProfileImagePath != null)
-                responseUser.ProfileImagePath = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}/{responseUser.ProfileImagePath}";
+            responseUser.ProfileImagePath = _urlBuilder.BuildUrl(_httpContextAccessor, responseUser.ProfileImagePath);
             return new ServiceResponse<OutputUserDto>
             {
                 Data = responseUser,

@@ -6,6 +6,7 @@ using UCMS.Models;
 using UCMS.Repositories.InstructorRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.InstructorService.Abstraction;
+using UCMS.Services.Utils;
 
 namespace UCMS.Services.InstructorService
 {
@@ -15,12 +16,15 @@ namespace UCMS.Services.InstructorService
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<InstructorService> _logger;
+        private readonly UrlBuilder _urlBuilder;
 
-        public InstructorService(IInstructorRepository instructorRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+        public InstructorService(IInstructorRepository instructorRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<InstructorService> logger, UrlBuilder urlBuilder)
         {
             _instructorRepository = instructorRepository;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
+            _urlBuilder = urlBuilder;
+            _logger = logger;
         }
 
         public async Task<ServiceResponse<GetInstructorDto>> GetSpecializedInfo()
@@ -33,7 +37,7 @@ namespace UCMS.Services.InstructorService
                 return new ServiceResponse<GetInstructorDto>
                 {
                     Success = false,
-                    Message = String.Format(Messages.UserNotFound, user.Id) 
+                    Message = String.Format(Messages.UserNotFound, user.Id)
                 };
             }
 
@@ -87,6 +91,7 @@ namespace UCMS.Services.InstructorService
             }
 
             InstructorProfileDto responseInstructor = _mapper.Map<InstructorProfileDto>(instructor);
+            responseInstructor.ProfileImagePath = _urlBuilder.BuildUrl(_httpContextAccessor, responseInstructor.ProfileImagePath);
             return new ServiceResponse<InstructorProfileDto>
             {
                 Data = responseInstructor,
