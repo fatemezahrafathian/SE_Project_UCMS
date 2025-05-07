@@ -59,8 +59,9 @@ public class AutoMapperProfile : Profile
 
         // see if it works
         CreateMap<PatchClassDto, Class>()
-            .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.Schedules));
-
+            .ForMember(dest => dest.Schedules, opt => opt.MapFrom(src => src.Schedules))
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+        
         CreateMap<EditStudentDto, Student>()
             .ForPath(dest => dest.User.University, opt => opt.MapFrom(src => src.University))
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
