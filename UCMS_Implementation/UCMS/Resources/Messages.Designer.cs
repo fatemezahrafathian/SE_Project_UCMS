@@ -80,7 +80,6 @@ namespace UCMS.Resources {
         
         /// <summary>
         ///   Looks up a localized string similar to All roles fetched successfully..
-        ///   Looks up a localized string similar to All roles fetched successfully..
         /// </summary>
         public static string AllRolesFetchedSuccessfully {
             get {
@@ -278,7 +277,7 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to عکسی برای پروفایل انتخاب نشده است..
+        ///   Looks up a localized string similar to عکس مورد نظر یافت نشد..
         /// </summary>
         public static string ImageNotFound {
             get {
