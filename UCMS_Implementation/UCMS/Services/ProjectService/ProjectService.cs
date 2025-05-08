@@ -23,18 +23,18 @@ public class ProjectService: IProjectService
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IMapper _mapper;
     private readonly IClassRepository _classRepository;
+    private readonly IStudentClassRepository _studentClassRepository;
     private readonly IFileService _fileService;
-    private readonly IWebHostEnvironment _env;
     
 
-    public ProjectService(IProjectRepository repository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IClassRepository classRepository, IFileService fileService, IWebHostEnvironment env)
+    public ProjectService(IProjectRepository repository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IClassRepository classRepository, IFileService fileService,IStudentClassRepository studentClassRepository)
     {
         _repository = repository;
         _httpContextAccessor = httpContextAccessor;
         _mapper = mapper;
         _classRepository = classRepository;
+        _studentClassRepository = studentClassRepository;
         _fileService = fileService;
-        _env = env;
     }
 
     public async Task<ServiceResponse<GetProjectForInstructorDto>> CreateProjectAsync(int classId, CreateProjectDto dto)
@@ -142,7 +142,7 @@ public class ProjectService: IProjectService
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var project = await _repository.GetProjectByIdAsync(projectId);
 
-        if (project == null || await _classRepository.IsStudentOfClassAsync(project.ClassId,user.Student.Id))
+        if (project == null || await _studentClassRepository.IsStudentOfClassAsync(project.ClassId,user.Student.Id))
         {
             return ServiceResponseFactory.Failure<GetProjectForStudentDto>(Messages.ProjectCantBeAccessed);
         }
