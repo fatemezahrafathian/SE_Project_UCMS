@@ -72,5 +72,15 @@ public class StudentClassController: ControllerBase
 
         return Ok(response.Data);
     }
+    [RoleBasedAuthorization("Student")]
+    [HttpGet("Student")]
+    public async Task<IActionResult> GetClassesForStudent([FromQuery] PaginatedFilterClassForStudentDto dto)
+    {
+        var response = await _studentClassService.GetClassesForStudent(dto);
 
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Data);
+    }
 }

@@ -1,6 +1,7 @@
 using AutoMapper;
 using UCMS.DTOs;
 using UCMS.DTOs.ClassDto;
+using UCMS.Extensions;
 using UCMS.Factories;
 using UCMS.Models;
 using UCMS.Repositories.ClassRepository.Abstraction;
@@ -62,7 +63,7 @@ public class ClassService: IClassService
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         
-        var classEntity = await _classRepository.GetClassForInstructorAsync(classId);
+        var classEntity = await _classRepository.GetInstructorClassByClassIdAsync(classId);
         if (classEntity == null)
         {
             return ServiceResponseFactory.Failure<GetClassForInstructorDto>(
@@ -79,7 +80,7 @@ public class ClassService: IClassService
         // responseDto.StudentCount = await _studentClassService.GetStudentClassCount(classId);
         return ServiceResponseFactory.Success(responseDto, Messages.ClassFetchedSuccessfully);
     }
-
+    
     private async Task<string> GenerateUniqueClassCodeAsync()
     {
         const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -91,7 +92,7 @@ public class ClassService: IClassService
             code = new string(Enumerable.Repeat(chars, 6)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
-        while (await _classRepository.IsClassCodeExistAsync(code));
+        while (await _classRepository.ClassCodeExistsAsync(code));
 
         return code;
     }
@@ -100,9 +101,9 @@ public class ClassService: IClassService
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        var classEntityList = await _classRepository.FilterAndPaginateClassesAsync(user!.Instructor!.Id, dto.Title, dto.IsActive, dto.Page,
-            dto.PageSize);        
-        
+        var classEntityQueryable = _classRepository.FilterInstructorClassesByInstructorIdAsync(user!.Instructor!.Id, dto.Title, dto.IsActive);        
+        var classEntityList = await classEntityQueryable.PaginateAsync(dto.Page, dto.PageSize);
+
         var responseDto = _mapper.Map<GetClassPageDto>(classEntityList);
         
         return ServiceResponseFactory.Success(responseDto, Messages.ClassesRetrievedSuccessfully); // ClassesFetchedSuccessfully
@@ -134,7 +135,7 @@ public class ClassService: IClassService
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         
-        var classEntity = await _classRepository.GetClassForInstructorAsync(classId); // change the name of repository functions
+        var classEntity = await _classRepository.GetInstructorClassByClassIdAsync(classId); // change the name of repository functions
         if (classEntity == null)
         {
             return ServiceResponseFactory.Failure<GetClassForInstructorDto>(
