@@ -389,4 +389,46 @@
   <data name="EndDateCanNotBeEarlierThanUpdateTime" xml:space="preserve">
       <value>End date can not be earlier than update time.</value>
   </data>
+  <data name="AccountNotConfirmed" xml:space="preserve">
+      <value>AccountNotConfirmed</value>
+  </data>
+  <data name="TotalScoreMustBePositive" xml:space="preserve">
+      <value>TotalScoreMustBePositive</value>
+  </data>
+  <data name="InvalidProjectTypeSelected" xml:space="preserve">
+      <value>InvalidProjectTypeSelected</value>
+  </data>
+  <data name="InvalidGroupSize" xml:space="preserve">
+      <value>InvalidGroupSize</value>
+  </data>
+  <data name="InvalidnIstructorForThisClass" xml:space="preserve">
+      <value>InvalidnIstructorForThisClass</value>
+  </data>
+  <data name="ProjectNotFound" xml:space="preserve">
+      <value>ProjectNotFound</value>
+  </data>
+  <data name="ProjectUpdatedSuccessfully" xml:space="preserve">
+      <value>ProjectUpdatedSuccessfully</value>
+  </data>
+  <data name="ProjectCantBeAccessed" xml:space="preserve">
+      <value>ProjectCantBeAccessed</value>
+  </data>
+  <data name="ProjectDeletedSuccessfully" xml:space="preserve">
+      <value>ProjectDeletedSuccessfully</value>
+  </data>
+  <data name="ProjectRetrievedSuccessfully" xml:space="preserve">
+      <value>ProjectRetrievedSuccessfully</value>
+  </data>
+  <data name="ProjectOrFileNotFound" xml:space="preserve">
+      <value>ProjectOrFileNotFound</value>
+  </data>
+  <data name="FileDoesNotExist" xml:space="preserve">
+      <value>FileDoesNotExist</value>
+  </data>
+  <data name="ProjectFileDownloadedSuccessfully" xml:space="preserve">
+      <value>ProjectFileDownloadedSuccessfully</value>
+  </data>
+  <data name="ProjectsRetrievedSuccessfully" xml:space="preserve">
+      <value>ProjectsRetrievedSuccessfully</value>
+  </data>
 </root>
