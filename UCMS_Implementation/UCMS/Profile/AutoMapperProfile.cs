@@ -135,5 +135,15 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.ProjectFileContentType, opt => opt.Ignore())
             .ForMember(dest => dest.ProjectStatus, opt => opt.Ignore())
             .ForMember(dest => dest.ProjectFilePath, opt => opt.MapFrom(src => src.ProjectFilePath));
+        CreateMap<Project, GetProjectListForStudentDto>()
+            .ForMember(dest => dest.DueDate, opt => opt.MapFrom(src => src.EndDate.Date))  
+            .ForMember(dest => dest.DueTime, opt => opt.MapFrom(src => src.EndDate.TimeOfDay)) 
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.EndDate < DateTime.UtcNow ? ProjectStatus.Completed : (src.StartDate > DateTime.UtcNow ? ProjectStatus.NotStarted : ProjectStatus.InProgress))) 
+            .ForMember(dest => dest.ClassTitle, opt => opt.MapFrom(src => src.Class.Title)); 
+        CreateMap<Project, GetProjectListForInstructorDto>()
+            .ForMember(dest => dest.DueDate, opt => opt.MapFrom(src => src.EndDate.Date))  
+            .ForMember(dest => dest.DueTime, opt => opt.MapFrom(src => src.EndDate.TimeOfDay))  
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.EndDate < DateTime.UtcNow ? ProjectStatus.Completed : (src.StartDate > DateTime.UtcNow ? ProjectStatus.NotStarted : ProjectStatus.InProgress)))
+            .ForMember(dest => dest.ClassTitle, opt => opt.MapFrom(src => src.Class.Title)); 
     }
 }

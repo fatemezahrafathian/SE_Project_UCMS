@@ -12,5 +12,7 @@ public interface IProjectService
     Task<ServiceResponse<GetProjectForInstructorDto>> GetProjectByIdForInstructorAsync(int projectId);
     Task<ServiceResponse<GetProjectForStudentDto>> GetProjectByIdForStudentAsync(int projectId);
     Task<ServiceResponse<FileDownloadDto>> HandleDownloadProjectFileAsync(int projectId);
+    Task<ServiceResponse<List<GetProjectListForInstructorDto>>> GetProjectsForInstructor(FilterProjectsForInstructorDto dto);
+    Task<ServiceResponse<List<GetProjectListForStudentDto>>> GetProjectsForStudent(FilterProjectsForStudentDto dto);
 
 }

@@ -94,4 +94,26 @@ public class ProjectController: ControllerBase
 
         return File(response.Data.FileBytes, response.Data.ContentType, response.Data.FileName);
     }
+    [RoleBasedAuthorization("Instructor")]
+    [HttpGet("instructor")]
+    public async Task<IActionResult> GetProjectsForInstructor([FromQuery] FilterProjectsForInstructorDto dto)
+    {
+        var response = await _projectService.GetProjectsForInstructor(dto);
+
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Data);
+    }
+    [RoleBasedAuthorization("Student")]
+    [HttpGet("Student")]
+    public async Task<IActionResult> GetProjectsForStudent([FromQuery] FilterProjectsForStudentDto dto)
+    {
+        var response = await _projectService.GetProjectsForStudent(dto);
+
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Data);
+    }
 }

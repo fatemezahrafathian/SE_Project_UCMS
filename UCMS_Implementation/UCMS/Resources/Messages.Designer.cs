@@ -528,6 +528,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ProjectsRetrievedSuccessfully.
+        /// </summary>
+        public static string ProjectsRetrievedSuccessfully {
+            get {
+                return ResourceManager.GetString("ProjectsRetrievedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ProjectUpdatedSuccessfully.
         /// </summary>
         public static string ProjectUpdatedSuccessfully {

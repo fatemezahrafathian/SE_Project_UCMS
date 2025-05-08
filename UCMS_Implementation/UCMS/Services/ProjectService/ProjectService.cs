@@ -184,6 +184,26 @@ public class ProjectService: IProjectService
         dto.ContentType = GetContentTypeFromPath(project.ProjectFilePath);
         return ServiceResponseFactory.Success(dto,Messages.ProjectFileDownloadedSuccessfully);
     }
+    public async Task<ServiceResponse<List<GetProjectListForInstructorDto>>> GetProjectsForInstructor(FilterProjectsForInstructorDto dto)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+
+        var projectEntityList = await _repository.FilterProjectsForInstructorAsync(user!.Instructor!.Id, dto.Title, dto.ClassTitle, dto.ProjectStatus,dto.OrderBy,dto.Descending);        
+        
+        var responseDto = _mapper.Map<List<GetProjectListForInstructorDto>>(projectEntityList);
+        
+        return ServiceResponseFactory.Success(responseDto, Messages.ProjectsRetrievedSuccessfully); // ClassesFetchedSuccessfully
+    }
+    public async Task<ServiceResponse<List<GetProjectListForStudentDto>>> GetProjectsForStudent(FilterProjectsForStudentDto dto)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+
+        var projectEntityList = await _repository.FilterProjectsForStudentAsync(user!.Student!.Id, dto.Title, dto.ClassTitle, dto.ProjectStatus,dto.OrderBy,dto.Descending);        
+        
+        var responseDto = _mapper.Map<List<GetProjectListForStudentDto>>(projectEntityList);
+        
+        return ServiceResponseFactory.Success(responseDto, Messages.ProjectsRetrievedSuccessfully); // ClassesFetchedSuccessfully
+    }
 
 }
 

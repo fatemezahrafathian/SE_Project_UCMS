@@ -8,4 +8,10 @@ public interface IProjectRepository
     Task<Project?> GetProjectByIdAsync(int projectId);
     Task UpdateAsync(Project project);
     Task DeleteAsync(Project project);
+
+    Task<List<Project>> FilterProjectsForInstructorAsync(int instructorId, string? title, string? classTitle,
+        int? projectStatus, string orderBy, bool descending);
+
+    Task<List<Project>> FilterProjectsForStudentAsync(int instructorId, string? title, string? classTitle,
+        int? projectStatus, string orderBy, bool descending);
 }

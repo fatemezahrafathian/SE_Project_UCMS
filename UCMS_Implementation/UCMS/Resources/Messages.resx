@@ -428,4 +428,7 @@
   <data name="ProjectFileDownloadedSuccessfully" xml:space="preserve">
       <value>ProjectFileDownloadedSuccessfully</value>
   </data>
+  <data name="ProjectsRetrievedSuccessfully" xml:space="preserve">
+      <value>ProjectsRetrievedSuccessfully</value>
+  </data>
 </root>
