@@ -1,6 +1,7 @@
 using UCMS.DTOs;
 using UCMS.DTOs.AuthDto;
 using UCMS.DTOs.ClassDto;
+using UCMS.DTOs.ProjectDto;
 using UCMS.DTOs.RoleDto;
 using UCMS.Models;
 
@@ -110,5 +111,39 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))
             .ForMember(dest => dest.ProfileImagePath, opt => opt.MapFrom(src => src.User.ProfileImagePath));
+        CreateMap<CreateProjectDto, Project>()
+            .ForMember(dest => dest.ProjectType, opt => opt.MapFrom(src => (ProjectType)src.ProjectType))
+            .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.ToUniversalTime()))
+            .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.ToUniversalTime()))
+            .ForMember(dest => dest.ProjectFilePath, opt => opt.Ignore()) 
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
+        CreateMap<PatchProjectDto, Project>()
+            .ForMember(dest => dest.ProjectFilePath, opt => opt.Ignore())
+            // .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) =>
+                srcMember != null &&
+                !(srcMember is string s && string.IsNullOrWhiteSpace(s)) &&
+                !(srcMember is int i && i == 0) &&
+                !(srcMember is DateTime dt && dt == default)
+            ));
+        CreateMap<Project, GetProjectForStudentDto>()
+            .ForMember(dest => dest.ProjectFileContentType, opt => opt.Ignore())
+            .ForMember(dest => dest.ProjectStatus, opt => opt.Ignore())
+            .ForMember(dest => dest.ProjectFilePath, opt => opt.MapFrom(src => src.ProjectFilePath));
+        CreateMap<Project, GetProjectForInstructorDto>()
+            .ForMember(dest => dest.ProjectFileContentType, opt => opt.Ignore())
+            .ForMember(dest => dest.ProjectStatus, opt => opt.Ignore())
+            .ForMember(dest => dest.ProjectFilePath, opt => opt.MapFrom(src => src.ProjectFilePath));
+        CreateMap<Project, GetProjectListForStudentDto>()
+            .ForMember(dest => dest.DueDate, opt => opt.MapFrom(src => src.EndDate.Date))  
+            .ForMember(dest => dest.DueTime, opt => opt.MapFrom(src => src.EndDate.TimeOfDay)) 
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.EndDate < DateTime.UtcNow ? ProjectStatus.Completed : (src.StartDate > DateTime.UtcNow ? ProjectStatus.NotStarted : ProjectStatus.InProgress))) 
+            .ForMember(dest => dest.ClassTitle, opt => opt.MapFrom(src => src.Class.Title)); 
+        CreateMap<Project, GetProjectListForInstructorDto>()
+            .ForMember(dest => dest.DueDate, opt => opt.MapFrom(src => src.EndDate.Date))  
+            .ForMember(dest => dest.DueTime, opt => opt.MapFrom(src => src.EndDate.TimeOfDay))  
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.EndDate < DateTime.UtcNow ? ProjectStatus.Completed : (src.StartDate > DateTime.UtcNow ? ProjectStatus.NotStarted : ProjectStatus.InProgress)))
+            .ForMember(dest => dest.ClassTitle, opt => opt.MapFrom(src => src.Class.Title)); 
     }
 }
