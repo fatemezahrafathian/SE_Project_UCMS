@@ -23,6 +23,7 @@ public class ClassRepository: IClassRepository
     public async Task<Class?> GetClassByIdAsync(int id)
     {
         return await _context.Classes
+            .Include(c=>c.ClassStudents)
             .Include(c => c.Instructor)
             .FirstOrDefaultAsync(c => c.Id == id);
     }
@@ -71,6 +72,7 @@ public class ClassRepository: IClassRepository
     private IQueryable<Class> GetClassesByInstructorId(int instructorId)
     {
         return _context.Classes
+            .Include(c => c.ClassStudents)
             .Where(c => c.InstructorId == instructorId);
     }
 

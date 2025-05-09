@@ -44,7 +44,7 @@ public class ProjectService: IProjectService
         var currentClass = await _classRepository.GetClassByIdAsync(classId);
         if (currentClass == null)
         {
-            return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.ClassNotFound);
+            return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.ProjectNotFound);
         }
         if (currentClass.InstructorId != user.Instructor.Id)
         {
@@ -71,7 +71,7 @@ public class ProjectService: IProjectService
         await _repository.AddAsync(newProject);
         var projectDto = _mapper.Map<GetProjectForInstructorDto>(newProject);
 
-        return ServiceResponseFactory.Success(projectDto, Messages.ClassCreatedSuccessfully); 
+        return ServiceResponseFactory.Success(projectDto, Messages.ProjectCreatedSuccessfully); 
     }
     public async Task<ServiceResponse<GetProjectForInstructorDto>> UpdateProjectAsync(int classId, int projectId, PatchProjectDto dto)
     {
@@ -79,7 +79,7 @@ public class ProjectService: IProjectService
         var currentClass = await _classRepository.GetClassByIdAsync(classId);
 
         if (currentClass == null)
-            return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.ClassNotFound);
+            return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.ProjectNotFound);
     
         if (currentClass.InstructorId != user.Instructor.Id)
             return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.InvalidnIstructorForThisClass);

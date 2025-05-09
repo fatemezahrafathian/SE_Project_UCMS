@@ -67,6 +67,8 @@ public class StudentClassRepository: IStudentClassRepository
     private IQueryable<Class> GetClassesByStudentId(int studentId)
     {
         return _context.Classes
+            .Include(c=>c.Instructor)
+            .Include(c=>c.Instructor.User)
             .Include(c => c.ClassStudents)
             .Where(c => c.ClassStudents.Any(cs => cs.StudentId == studentId));
         

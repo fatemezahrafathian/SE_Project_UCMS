@@ -96,7 +96,8 @@ public class AutoMapperProfile : Profile
         CreateMap<EditUserDto, User>()
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
-        CreateMap<Class, GetClassPreviewForInstructorDto>(); // calculate student count
+        CreateMap<Class, GetClassPreviewForInstructorDto>() // calculate student count
+            .ForMember(dest => dest.StudentCount, opt => opt.MapFrom(src => src.ClassStudents.Count));
 
         CreateMap<Page<Class>, GetClassPageDto>()
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));

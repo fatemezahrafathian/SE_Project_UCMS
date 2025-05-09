@@ -46,7 +46,8 @@ public class ClassService: IClassService
             var errorMessage = result.Errors.First().ErrorMessage;
             return ServiceResponseFactory.Failure<GetClassForInstructorDto>(errorMessage);
         }
-
+        var imageUrl = await _imageService.SaveImageAsync(dto.ProfileImage, "images/classes"); // get from appsetting
+        newClass.ProfileImageUrl = imageUrl;
         newClass.ClassCode = await GenerateUniqueClassCodeAsync();
         
         newClass.PasswordSalt = _passwordService.CreateSalt();
@@ -160,6 +161,13 @@ public class ClassService: IClassService
             return ServiceResponseFactory.Failure<GetClassForInstructorDto>(errorMessage);
         }
 
+        if (dto.ProfileImage != null)
+        {
+            _imageService.DeleteImage(classEntity.ProfileImageUrl);
+          var imageUrl = await _imageService.SaveImageAsync(dto.ProfileImage, "images/classes"); // get from appsetting
+          classEntity.ProfileImageUrl = imageUrl;  
+        }
+        
 
         _mapper.Map(dto, classEntity);
             

@@ -431,4 +431,7 @@
   <data name="ProjectsRetrievedSuccessfully" xml:space="preserve">
       <value>ProjectsRetrievedSuccessfully</value>
   </data>
+  <data name="ProjectCreatedSuccessfully" xml:space="preserve">
+      <value>ProjectCreatedSuccessfully</value>
+  </data>
 </root>

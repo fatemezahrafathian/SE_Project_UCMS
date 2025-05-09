@@ -483,6 +483,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ProjectCreatedSuccessfully.
+        /// </summary>
+        public static string ProjectCreatedSuccessfully {
+            get {
+                return ResourceManager.GetString("ProjectCreatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ProjectDeletedSuccessfully.
         /// </summary>
         public static string ProjectDeletedSuccessfully {
