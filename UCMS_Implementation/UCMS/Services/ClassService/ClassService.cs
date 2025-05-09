@@ -46,8 +46,13 @@ public class ClassService: IClassService
             var errorMessage = result.Errors.First().ErrorMessage;
             return ServiceResponseFactory.Failure<GetClassForInstructorDto>(errorMessage);
         }
-        var imageUrl = await _imageService.SaveImageAsync(dto.ProfileImage, "images/classes"); // get from appsetting
-        newClass.ProfileImageUrl = imageUrl;
+        if (dto.ProfileImage != null)
+        {
+            
+            var imageUrl = await _imageService.SaveImageAsync(dto.ProfileImage, "images/classes"); // get from appsetting
+            newClass.ProfileImageUrl = imageUrl; 
+        }
+        
         newClass.ClassCode = await GenerateUniqueClassCodeAsync();
         
         newClass.PasswordSalt = _passwordService.CreateSalt();
