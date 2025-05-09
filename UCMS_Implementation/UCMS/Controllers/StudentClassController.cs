@@ -4,7 +4,8 @@ using UCMS.DTOs.ClassDto;
 using UCMS.Services.ClassService.Abstraction;
 
 namespace UCMS.Controllers;
-
+[Route("api/[controller]")]
+[ApiController]
 public class StudentClassController: ControllerBase
 {
 
