@@ -434,4 +434,52 @@
   <data name="ProjectCreatedSuccessfully" xml:space="preserve">
       <value>ProjectCreatedSuccessfully</value>
   </data>
+  <data name="CanNotAccessTheProject" xml:space="preserve">
+      <value>Can not access the project.</value>
+  </data>
+  <data name="SomeStudentNumbersNotFound" xml:space="preserve">
+      <value>Some student numbers not found.</value>
+  </data>
+  <data name="LeaderStudentIsNotMemeberOfTeam" xml:space="preserve">
+      <value>Leader student is not memeber of team.</value>
+  </data>
+  <data name="TeamCreatedSuccessfully" xml:space="preserve">
+      <value>Team created successfully.</value>
+  </data>
+  <data name="TeamNotFound" xml:space="preserve">
+      <value>Team not found.</value>
+  </data>
+  <data name="CanNotAccessTheTeam" xml:space="preserve">
+      <value>Can not access the team.</value>
+  </data>
+  <data name="TeamFetchedSuccessfully" xml:space="preserve">
+      <value>Team fetched successfully.</value>
+  </data>
+  <data name="TeamsFetchedSuccessfully" xml:space="preserve">
+      <value>Teams fetched successfully.</value>
+  </data>
+  <data name="TeamDeletedSuccessfully" xml:space="preserve">
+      <value>Team deleted successfully.</value>
+  </data>
+  <data name="TeamLeaderIsNotMemeberOfTeam" xml:space="preserve">
+      <value>Team leader is not memeber of team.</value>
+  </data>
+  <data name="TeamUpdatedSuccessfully" xml:space="preserve">
+      <value>Team updated successfully.</value>
+  </data>
+  <data name="TeamNameIsRequired" xml:space="preserve">
+      <value>Team name is required.</value>
+  </data>
+  <data name="TeamNameMaxLength" xml:space="preserve">
+      <value>Team name max length.</value>
+  </data>
+  <data name="ProjectIdIsRequired" xml:space="preserve">
+      <value>Project id is required.</value>
+  </data>
+  <data name="LeaderStudentNumberIsRequired" xml:space="preserve">
+      <value>Leader student number is required.</value>
+  </data>
+  <data name="StudentNumbersIsRequired" xml:space="preserve">
+      <value>Student numbers is required.</value>
+  </data>
 </root>

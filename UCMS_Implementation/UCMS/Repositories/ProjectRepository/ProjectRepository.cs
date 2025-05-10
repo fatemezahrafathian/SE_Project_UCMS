@@ -60,6 +60,7 @@ public class ProjectRepository: IProjectRepository
         return await query.ToListAsync();
     }
 
+
     private IQueryable<Project> ApplyCommonFilters(IQueryable<Project> query, string? title, string? classTitle, int? projectStatus, string orderBy,bool descending)
     {
         if (!string.IsNullOrWhiteSpace(title))
@@ -584,5 +585,15 @@ public class ProjectRepository: IProjectRepository
     //
     //     return result;
     // }
+    
+    public async Task<bool> IsProjectForInstructorAsync(int projectId, int instructorId)
+    {
+        return await _context.Projects
+            .AnyAsync(p => p.Id == projectId && p.Class.InstructorId == instructorId);
+    }
 
+    public async Task<bool> ProjectExists(int projectId)
+    {
+        return await _context.Projects.AnyAsync(p => p.Id == projectId);
+    }
 }

@@ -14,4 +14,6 @@ public interface IProjectRepository
 
     Task<List<Project>> FilterProjectsForStudentAsync(int instructorId, string? title, string? classTitle,
         int? projectStatus, string orderBy, bool descending);
+    Task<bool> IsProjectForInstructorAsync(int projectId, int instructorId);
+    Task<bool> ProjectExists(int projectId);
 }
