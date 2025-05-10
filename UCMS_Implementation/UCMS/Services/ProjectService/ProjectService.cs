@@ -142,7 +142,7 @@ public class ProjectService: IProjectService
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var project = await _repository.GetProjectByIdAsync(projectId);
 
-        if (project == null || await _studentClassRepository.IsStudentOfClassAsync(project.ClassId,user.Student.Id))
+        if (project == null || !await _studentClassRepository.IsStudentOfClassAsync(project.ClassId,user.Student.Id))
         {
             return ServiceResponseFactory.Failure<GetProjectForStudentDto>(Messages.ProjectCantBeAccessed);
         }

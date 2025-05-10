@@ -12,4 +12,5 @@ public class GetProjectForStudentDto
     public string? ProjectFilePath { get; set; }
     public string? ProjectFileContentType { get; set; }
     public ProjectStatus ProjectStatus { get; set; }
+    public int TotalScore { get; set; }
 }
