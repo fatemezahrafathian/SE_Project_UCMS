@@ -76,7 +76,7 @@ public class StudentClassRepository: IStudentClassRepository
 
     private IQueryable<Class> FilterClassesByInstructorName(IQueryable<Class> query, string instructorName)
     {
-        return query.Where(c => c.Instructor.User.FirstName == instructorName || c.Instructor.User.LastName == instructorName || c.Instructor.User.FirstName+" "+ c.Instructor.User.LastName == instructorName);
+        return query.Where(c => c.Instructor.User.FirstName.Contains(instructorName)  || c.Instructor.User.LastName.Contains(instructorName));
     }
     private IQueryable<Class> FilterClassesByTitle(IQueryable<Class> query, string title)
     {
