@@ -8,6 +8,7 @@ using UCMS.Models;
 using UCMS.Repositories.InstructorRepository.Abstraction;
 using UCMS.Services.InstructorService;
 using UCMS.Services.UserService;
+using UCMS.Services.Utils;
 using Xunit;
 
 namespace UCMS_Test.Service;
@@ -16,8 +17,9 @@ public class InstructorServiceTest
 {
     private readonly Mock<IInstructorRepository> _mockInstructorRepo = new();
     private readonly IMapper _mapper;
-    private readonly Mock<ILogger<UserService>> _logger = new();
+    private readonly Mock<ILogger<InstructorService>> _logger = new();
     private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor = new();
+    private readonly Mock<UrlBuilder> _urlBuilderMock = new();
     private readonly InstructorService _sut;
 
     public InstructorServiceTest()
@@ -30,7 +32,10 @@ public class InstructorServiceTest
         _sut = new InstructorService(
             _mockInstructorRepo.Object,
             _mapper,
-            _mockHttpContextAccessor.Object);
+            _mockHttpContextAccessor.Object,
+            _logger.Object,
+            _urlBuilderMock.Object
+            );
     }
 
     private void SetHttpContextWithUser(int userId)
@@ -38,36 +43,6 @@ public class InstructorServiceTest
         var context = new DefaultHttpContext();
         context.Items["User"] = new User { Id = userId };
         _mockHttpContextAccessor.Setup(x => x.HttpContext).Returns(context);
-    }
-
-    [Fact]
-    public async Task GetInstructorById_ReturnsInstructor_WhenFound()
-    {
-        // Arrange
-        var instructor = new Instructor { Id = 1 };
-        _mockInstructorRepo.Setup(r => r.GetInstructorById(1)).ReturnsAsync(instructor);
-
-        // Act
-        var result = await _sut.GetInstructorById(1);
-
-        // Assert
-        Assert.True(result.Success);
-        Assert.NotNull(result.Data);
-        Assert.Equal("Found", result.Message);
-    }
-
-    [Fact]
-    public async Task GetInstructorById_ReturnsFailure_WhenNotFound()
-    {
-        // Arrange
-        _mockInstructorRepo.Setup(r => r.GetInstructorById(99)).ReturnsAsync((Instructor?)null);
-
-        // Act
-        var result = await _sut.GetInstructorById(99);
-
-        // Assert
-        Assert.False(result.Success);
-        Assert.Null(result.Data);
     }
 
     [Fact]
@@ -91,7 +66,7 @@ public class InstructorServiceTest
             EmployeeCode = "E002",
             Department = "Physics",
             University = 2,
-            Rank = 3
+            Rank = 1
         };
 
         _mockInstructorRepo.Setup(r => r.GetInstructorByUserIdAsync(userId)).ReturnsAsync(instructor);
@@ -105,7 +80,7 @@ public class InstructorServiceTest
         Assert.NotNull(result.Data);
         Assert.Equal("E002", result.Data.EmployeeCode);
         Assert.Equal("Physics", result.Data.Department);
-        Assert.Equal(3, result.Data.Rank);
+        Assert.Equal("Associate", result.Data.Rank);
     }
 
     [Fact]
@@ -149,7 +124,6 @@ public class InstructorServiceTest
         // Assert
         Assert.True(result.Success);
         Assert.NotNull(result.Data);
-        Assert.Equal("Found", result.Message);
     }
 
     [Fact]

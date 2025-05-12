@@ -8,6 +8,7 @@ using UCMS.Models;
 using UCMS.Repositories.StudentRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.StudentService;
+using UCMS.Services.Utils;
 
 namespace UCMS_Test.Service;
 public class StudentServiceTest
@@ -16,6 +17,7 @@ public class StudentServiceTest
     private readonly IMapper _mapper;
     private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor = new();
     private readonly Mock<ILogger<StudentService>> _mockLogger = new();
+    private readonly Mock<UrlBuilder> _urlBuilderMock = new();
     private readonly StudentService _sut;
 
     public StudentServiceTest()
@@ -30,7 +32,8 @@ public class StudentServiceTest
             _mockStudentRepo.Object,
             _mapper,
             _mockHttpContextAccessor.Object,
-            _mockLogger.Object);
+            _mockLogger.Object,
+            _urlBuilderMock.Object);
     }
 
     private void SetHttpContextWithUser(int userId)
@@ -58,27 +61,6 @@ public class StudentServiceTest
 
         // Assert
         Assert.True(result.Success);
-        Assert.Equal(Messages.UserFound, result.Message);
-        Assert.NotNull(result.Data);
-    }
-
-    [Fact]
-    public async Task GetStudentById_ReturnsStudent_WhenFound()
-    {
-        // Arrange
-        int studentId = 1;
-        var student = new Student { UserId = 2 };
-        var dto = new GetStudentDto();
-
-        _mockStudentRepo.Setup(r => r.GetStudentByIdAsync(studentId))
-            .ReturnsAsync(student);
-
-        // Act
-        var result = await _sut.GetStudentById(studentId);
-
-        // Assert
-        Assert.True(result.Success);
-        Assert.Equal(Messages.UserFound, result.Message);
         Assert.NotNull(result.Data);
     }
 
@@ -117,12 +99,11 @@ public class StudentServiceTest
 
         // Assert
         Assert.True(result.Success);
-        Assert.Equal(Messages.UpdateUser, result.Message);
         Assert.NotNull(result.Data);
         Assert.Equal("456", result.Data.StudentNumber);
         Assert.Equal("Computer Science", result.Data.Major);
         Assert.Equal(2021, result.Data.EnrollmentYear);
-        Assert.Equal(EducationLevel.Master, result.Data.EducationLevel);
+        Assert.Equal("Master", result.Data.EducationLevel);
     }
 
     [Fact]

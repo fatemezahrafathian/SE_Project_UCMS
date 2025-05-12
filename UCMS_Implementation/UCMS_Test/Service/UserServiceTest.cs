@@ -7,8 +7,10 @@ using UCMS.DTOs.User;
 using UCMS.Models;
 using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Resources;
+using UCMS.Services.ImageService;
 using UCMS.Services.PasswordService.Abstraction;
 using UCMS.Services.UserService;
+using UCMS.Services.Utils;
 
 namespace UCMS_Test.Service;
 
@@ -19,6 +21,8 @@ public class UserServiceTest
     private readonly Mock<IPasswordService> _passwordService = new();
     private readonly Mock<ILogger<UserService>> _logger = new();
     private readonly Mock<IHttpContextAccessor> _httpContextAccessor = new();
+    private readonly Mock<IImageService> _imageService = new();
+    private readonly Mock<UrlBuilder> _urlBuilderMock = new();
     private readonly UserService _sut;
 
     public UserServiceTest()
@@ -27,7 +31,14 @@ public class UserServiceTest
         services.AddAutoMapper(typeof(UCMS.Profile.AutoMapperProfile));
         var provider = services.BuildServiceProvider();
         _mapper = provider.GetRequiredService<IMapper>();
-        _sut = new UserService(_userRepo.Object, _mapper, _passwordService.Object, _logger.Object, _httpContextAccessor.Object);
+        _sut = new UserService(
+            _userRepo.Object, 
+            _mapper,
+            _passwordService.Object, 
+            _logger.Object, 
+            _httpContextAccessor.Object,
+            _imageService.Object,
+            _urlBuilderMock.Object);
     }
 
     private void SetUserInHttpContext(User user)
@@ -145,7 +156,7 @@ public class UserServiceTest
         Assert.True(result.Success);
         Assert.Equal(editDto.FirstName, result.Data.FirstName);
         Assert.Equal(editDto.LastName, result.Data.LastName);
-        Assert.Equal(editDto.Gender, result.Data.Gender);
+        Assert.Equal("Female", result.Data.Gender);
         Assert.Equal(editDto.Address, result.Data.Address);
         Assert.Equal(editDto.Bio, result.Data.Bio);
         Assert.Equal(editDto.DateOfBirth, result.Data.DateOfBirth);
