@@ -1,33 +1,28 @@
-# This workflow will build a .NET project  
+name: .NET
 
-name: .NET  
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "dev" ]
 
-on:  
-  push:  
-    branches: [ "main" ]  
-  pull_request:  
-    branches: [ "dev" ]  
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-jobs:  
-  build:  
-    runs-on: ubuntu-latest  
+    steps:
+    - uses: actions/checkout@v4
 
-    steps:  
-    - uses: actions/checkout@v4  
-    - name: Setup .NET  
-      uses: actions/setup-dotnet@v4  
-      with:  
-        dotnet-version: 8.0.x  
-        
-    - name: Define Project Path  
-      id: project-path  
-      run: echo "PROJECT_PATH=UCMS_Implementation/UCMS/UCMS.csproj" >> $GITHUB_ENV  
-      
-    - name: Restore dependencies  
-      run: dotnet restore ${{ env.PROJECT_PATH }}  
-      
-    - name: Build  
-      run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore  
-      
-    - name: Test  
-      run: dotnet test ${{ env.PROJECT_PATH }} --configuration Release --no-build --verbosity normal  
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore UCMS_Implementation/UCMS_SE_project.sln
+
+    - name: Build solution
+      run: dotnet build UCMS_Implementation/UCMS_SE_project.sln --configuration Release --no-restore
+
+    - name: Run Tests
+      run: dotnet test UCMS_Implementation/UCMS_Test/UCMS_Test.csproj --configuration Release --no-build --verbosity normal
