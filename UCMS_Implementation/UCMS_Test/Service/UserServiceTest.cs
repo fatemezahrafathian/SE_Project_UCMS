@@ -163,10 +163,14 @@ public class UserServiceTest
     [Fact]
     public async Task DeleteUserAsync_ReturnsSuccess_WhenDeleted()
     {
+        // Arrange
         _userRepo.Setup(r => r.DeleteUserById(1)).ReturnsAsync(true);
 
+        // Act
         var result = await _sut.DeleteUserAsync(1);
 
+
+        // Assert
         Assert.True(result.Success);
         Assert.Equal(string.Format(Messages.DeleteUser, 1), result.Message);
     }
@@ -174,10 +178,13 @@ public class UserServiceTest
     [Fact]
     public async Task DeleteUserAsync_ReturnsFailure_WhenNotFound()
     {
+        // Arrange
         _userRepo.Setup(r => r.DeleteUserById(2)).ReturnsAsync(false);
 
+        // Act
         var result = await _sut.DeleteUserAsync(2);
 
+        // Assert
         Assert.False(result.Success);
         Assert.Equal(string.Format(Messages.UserNotFound, 2), result.Message);
     }
@@ -185,6 +192,7 @@ public class UserServiceTest
     [Fact]
     public async Task ChangePassword_ReturnsSuccess_WhenAllChecksPass()
     {
+        // Arrange
         var user = new User { Id = 1, PasswordSalt = new byte[1], PasswordHash = new byte[1] };
         SetUserInHttpContext(user);
 
@@ -200,8 +208,10 @@ public class UserServiceTest
         _passwordService.Setup(p => p.CreateSalt()).Returns(new byte[256]);
         _passwordService.Setup(p => p.HashPasswordAsync(dto.NewPassword, It.IsAny<byte[]>())).ReturnsAsync(new byte[256]);
 
+        // Act
         var result = await _sut.ChangePassword(dto);
 
+        // Assert
         Assert.True(result.Success);
         Assert.True(result.Data);
         Assert.Equal(Messages.PasswordChange, result.Message);
@@ -210,14 +220,17 @@ public class UserServiceTest
     [Fact]
     public async Task ChangePassword_ReturnsFailure_WhenOldPasswordInvalid()
     {
+        // Arrange
         var user = new User { PasswordSalt = new byte[1], PasswordHash = new byte[1] };
         SetUserInHttpContext(user);
 
         var dto = new ChangePasswordDto { OldPassword = "wrong", NewPassword = "new", ConfirmNewPassword = "new" };
         _passwordService.Setup(p => p.VerifyPasswordAsync(dto.OldPassword, user.PasswordSalt, user.PasswordHash)).ReturnsAsync(false);
 
+        // Act
         var result = await _sut.ChangePassword(dto);
 
+        // Assert
         Assert.False(result.Success);
         Assert.Equal(Messages.WrongPasswordMessage, result.Message);
     }
@@ -225,14 +238,17 @@ public class UserServiceTest
     [Fact]
     public async Task ChangePassword_ReturnsFailure_WhenPasswordMismatch()
     {
+        // Arrange
         var user = new User();
         SetUserInHttpContext(user);
 
         var dto = new ChangePasswordDto { OldPassword = "pass", NewPassword = "123", ConfirmNewPassword = "321" };
         _passwordService.Setup(p => p.VerifyPasswordAsync(It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<byte[]>())).ReturnsAsync(true);
 
+        // Act
         var result = await _sut.ChangePassword(dto);
 
+        // Assert
         Assert.False(result.Success);
         Assert.Equal(Messages.PasswordNotMatch, result.Message);
     }
@@ -240,6 +256,7 @@ public class UserServiceTest
     [Fact]
     public async Task ChangePassword_ReturnsFailure_WhenPasswordNotStrong()
     {
+        // Arrange
         var user = new User();
         SetUserInHttpContext(user);
 
@@ -247,8 +264,10 @@ public class UserServiceTest
         _passwordService.Setup(p => p.VerifyPasswordAsync(It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<byte[]>())).ReturnsAsync(true);
         _passwordService.Setup(p => p.IsPasswordValid(dto.NewPassword)).Returns(false);
 
+        // Act
         var result = await _sut.ChangePassword(dto);
 
+        // Assert
         Assert.False(result.Success);
         Assert.Equal(Messages.PasswordNotStrong, result.Message);
     }
