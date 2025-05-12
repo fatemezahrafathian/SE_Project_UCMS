@@ -10,11 +10,13 @@ namespace UCMS.DTOs.User
 
         public string? Username { get; set; }
 
+        public string? University { get; set; }
+
         public string? FirstName { get; set; }
 
         public string? LastName { get; set; }
 
-        public Gender? Gender { get; set; }
+        public string? Gender { get; set; }
 
         public GetRoleDto? Role { get; set; }
 

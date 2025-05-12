@@ -43,6 +43,7 @@ using UCMS.Services.StudentService.Abstraction;
 using UCMS.Services.TokenService;
 using UCMS.Services.TokenService.Abstraction;
 using UCMS.Services.UserService;
+using UCMS.Services.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -87,8 +88,8 @@ builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<IInstructorService, InstructorService>();
-builder.Services.AddScoped<ICookieService,CookieService>();
-builder.Services.AddScoped<ITokenService,TokenService>();
+builder.Services.AddScoped<ICookieService, CookieService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IOneTimeCodeService, OneTimeCodeService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -99,6 +100,9 @@ builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IStudentClassService, StudentClassService>();
 
+builder.Services.AddTransient<UrlBuilder>();
+
+
 builder.Services.AddScoped<IStudentClassRepository, StudentClassRepository>();
 
 
@@ -108,7 +112,8 @@ builder.Services.Configure<FileUploadSettings>(builder.Configuration.GetSection(
 builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddAuthentication(options =>{
+builder.Services.AddAuthentication(options =>
+{
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
@@ -186,6 +191,7 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // app.UseRouting();
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseCors("AllowLocalhost5173");
 app.UseAuthentication();
 app.UseMiddleware<AuthenticationMiddleware>();

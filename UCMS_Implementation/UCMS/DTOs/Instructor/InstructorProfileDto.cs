@@ -10,8 +10,10 @@ namespace UCMS.DTOs.Instructor
         public string? Username { get; set; }
         public string? Bio { get; set; }
         public GetRoleDto? Role { get; set; }
-        public int? Rank { get; set; }
+        public string? Rank { get; set; }
         public string? Department { get; set; }
-        public int? University { get; set; }
+        public string? University { get; set; }
+
+        public string? ProfileImagePath { get; set; }
     }
 }

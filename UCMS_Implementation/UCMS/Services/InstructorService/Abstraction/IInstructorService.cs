@@ -6,7 +6,7 @@ namespace UCMS.Services.InstructorService.Abstraction
 {
     public interface IInstructorService
     {
-        Task<ServiceResponse<GetInstructorDto>> GetInstructorById(int instructorId);
+        Task<ServiceResponse<GetInstructorDto>> GetSpecializedInfo();
         Task<ServiceResponse<GetInstructorDto>> EditInstructor(EditInstructorDto dto);
         Task<ServiceResponse<InstructorProfileDto>> GetCurrentInstructor();
     }
