@@ -2,18 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
 using Moq;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using UCMS.DTOs.Student;
 using UCMS.Models;
 using UCMS.Repositories.StudentRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.StudentService;
-using UCMS.Services.StudentService.Abstraction;
-using Xunit;
 
 namespace UCMS_Test.Service;
 public class StudentServiceTest

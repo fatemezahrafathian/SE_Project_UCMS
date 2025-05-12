@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Moq;
 using UCMS.DTOs.Instructor;
 using UCMS.Models;
 using UCMS.Repositories.InstructorRepository.Abstraction;
 using UCMS.Services.InstructorService;
+using UCMS.Services.UserService;
 using Xunit;
 
 namespace UCMS_Test.Service;
@@ -14,6 +16,7 @@ public class InstructorServiceTest
 {
     private readonly Mock<IInstructorRepository> _mockInstructorRepo = new();
     private readonly IMapper _mapper;
+    private readonly Mock<ILogger<UserService>> _logger = new();
     private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor = new();
     private readonly InstructorService _sut;
 
