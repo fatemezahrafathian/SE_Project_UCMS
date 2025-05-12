@@ -1,6 +1,8 @@
 using AutoMapper;
 using UCMS.DTOs;
 using UCMS.DTOs.ClassDto;
+using UCMS.Extensions;
+using UCMS.Factories;
 using UCMS.Models;
 using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Resources;
@@ -12,13 +14,15 @@ namespace UCMS.Services.ClassService;
 public class StudentClassService: IStudentClassService
 {
     private readonly IClassRepository _classRepository;
+    private readonly IStudentClassRepository _studentClassRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IPasswordService _passwordService;
     private readonly IMapper _mapper;
 
-    public StudentClassService(IClassRepository classRepository, IHttpContextAccessor httpContextAccessor, IPasswordService passwordService, IMapper mapper)
+    public StudentClassService(IClassRepository classRepository, IStudentClassRepository studentClassRepository, IHttpContextAccessor httpContextAccessor, IPasswordService passwordService, IMapper mapper)
     {
         _classRepository = classRepository;
+        _studentClassRepository = studentClassRepository;
         _httpContextAccessor = httpContextAccessor;
         _passwordService = passwordService;
         _mapper = mapper;
@@ -26,7 +30,7 @@ public class StudentClassService: IStudentClassService
 
     private async Task<bool> IsStudentOfClass(int classId, int studentId)
     {
-        return await _classRepository.IsStudentOfClassAsync(classId, studentId);
+        return await _studentClassRepository.IsStudentOfClassAsync(classId, studentId);
     }
     public async Task<ServiceResponse<JoinClassResponseDto>> JoinClassAsync(JoinClassRequestDto request)
     {
@@ -78,7 +82,7 @@ public class StudentClassService: IStudentClassService
         }
         
 
-        await _classRepository.AddStudentToClassAsync(classEntity.Id, user.Student.Id);
+        await _studentClassRepository.AddStudentToClassAsync(classEntity.Id, user.Student.Id);
         
         return new ServiceResponse<JoinClassResponseDto>
         {
@@ -105,7 +109,7 @@ public class StudentClassService: IStudentClassService
             };
         }
 
-        var success = await _classRepository.RemoveStudentFromClassAsync(classId, user.Student.Id);
+        var success = await _studentClassRepository.RemoveStudentFromClassAsync(classId, user.Student.Id);
         if (!success)
             return new ServiceResponse<bool> { Success = false, Message = Messages.LeftClassNotSuccessfully };
 
@@ -139,7 +143,7 @@ public class StudentClassService: IStudentClassService
             };
         }
 
-        var success = await _classRepository.RemoveStudentFromClassAsync(classId, StudentId);
+        var success = await _studentClassRepository.RemoveStudentFromClassAsync(classId, StudentId);
         if (!success)
             return new ServiceResponse<bool>
                 { Success = false, Message = Messages.RemoveStudentFromClassNotSuccessfully };
@@ -163,7 +167,7 @@ public class StudentClassService: IStudentClassService
                 Message = Messages.UnauthorizedAccess
             };
         }
-        var students = await _classRepository.GetStudentsInClassAsync(classId);
+        var students = await _studentClassRepository.GetStudentsInClassAsync(classId);
         var dtoList = _mapper.Map<List<GetStudentsOfClassforInstructorDto>>(students);
         return new ServiceResponse<List<GetStudentsOfClassforInstructorDto>>
         {
@@ -189,7 +193,7 @@ public class StudentClassService: IStudentClassService
                 Message = Messages.StudentNotInClass
             };
         }
-        var students = await _classRepository.GetStudentsInClassAsync(classId);
+        var students = await _studentClassRepository.GetStudentsInClassAsync(classId);
         var dtoList = _mapper.Map<List<GetStudentsOfClassforStudentDto>>(students);
         return new ServiceResponse<List<GetStudentsOfClassforStudentDto>>
         {
@@ -199,45 +203,46 @@ public class StudentClassService: IStudentClassService
         };
     }
 
-    public async Task<ServiceResponse<GetClassForStudentDto>> GetClassForStudent(int classId)
-    {
-        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
-        
-        var classEntity = await _classRepository.GetClassForStudentAsync(classId);
-        if (classEntity == null)
-        {
-            return new ServiceResponse<GetClassForStudentDto>
-            {
-                Success = false,
-                Message = Messages.ClassNotFound
-            };
-        }
-
-        // _studentClassService or repository
-        var isStudentOfClass = await IsStudentOfClass(classId, user!.Student!.Id);
-        if (!isStudentOfClass)
-        {
-            return new ServiceResponse<GetClassForStudentDto> 
-            {
-                Success = false,
-                Message = Messages.ClassCan_tBeAccessed
-            };
-        }
-
-        var responseDto = _mapper.Map<GetClassForStudentDto>(classEntity);
-        responseDto.StudentCount = await GetStudentClassCount(classEntity.Id); // _studentClassService or repository
-        return new ServiceResponse<GetClassForStudentDto>
-        {
-            Data = responseDto,
-            Message = Messages.ClassFetchedSuccessfully,
-            Success = true
-        };
-
-    }
     public async Task<int> GetStudentClassCount(int classId)
     {
         var classEntity = await _classRepository.GetClassByIdAsync(classId);
         return classEntity.ClassStudents.Count;
+    }
+    public async Task<ServiceResponse<GetClassForStudentDto>> GetClassForStudent(int classId)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+        
+        var classEntity = await _classRepository.GetStudentClassByClassIdAsync(classId);
+        if (classEntity == null)
+        {
+            return ServiceResponseFactory.Failure<GetClassForStudentDto>(
+                Messages.ClassNotFound);
+        }
+
+        // var isStudentOfClass = await _studentClassService.IsStudentOfClass(classId, user!.Student!.Id);
+        // if (!isStudentOfClass)
+        // {
+        //     return new ServiceResponse<GetClassForStudentDto> 
+        //     {
+        //         Success = false,
+        //         Message = Messages.ClassCan_tBeAccessed
+        //     };
+        // }
+
+        var responseDto = _mapper.Map<GetClassForStudentDto>(classEntity);
+        // responseDto.StudentCount = await GetStudentClassCount(classEntity.Id);
+        return ServiceResponseFactory.Success(responseDto, Messages.ClassFetchedSuccessfully);
+    }
+    public async Task<ServiceResponse<GetClassPageForStudentDto>> GetClassesForStudent(PaginatedFilterClassForStudentDto dto)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+
+        var classEntityQueryable = _studentClassRepository.FilterStudentClassesByStudentIdAsync(user!.Student!.Id, dto.Title, dto.IsActive, dto.InstructorName);        
+        var classEntityList = await classEntityQueryable.PaginateAsync(dto.Page, dto.PageSize);
+
+        var responseDto = _mapper.Map<GetClassPageForStudentDto>(classEntityList);
+        
+        return ServiceResponseFactory.Success(responseDto, Messages.ClassesRetrievedSuccessfully); // ClassesFetchedSuccessfully
     }
 
 }

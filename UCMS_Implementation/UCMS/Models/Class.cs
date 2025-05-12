@@ -53,4 +53,6 @@ public class Class
 
     public ICollection<ClassSchedule> Schedules { get; set; }
     public ICollection<ClassStudent> ClassStudents { get; set; }
+    
+    public ICollection<Project> Projects { get; set; }
 }

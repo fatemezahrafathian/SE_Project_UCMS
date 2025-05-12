@@ -4,7 +4,8 @@ using UCMS.DTOs.ClassDto;
 using UCMS.Services.ClassService.Abstraction;
 
 namespace UCMS.Controllers;
-
+[Route("api/[controller]")]
+[ApiController]
 public class StudentClassController: ControllerBase
 {
 
@@ -72,5 +73,15 @@ public class StudentClassController: ControllerBase
 
         return Ok(response.Data);
     }
+    [RoleBasedAuthorization("Student")]
+    [HttpGet("Student")]
+    public async Task<IActionResult> GetClassesForStudent([FromQuery] PaginatedFilterClassForStudentDto dto)
+    {
+        var response = await _studentClassService.GetClassesForStudent(dto);
 
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Data);
+    }
 }

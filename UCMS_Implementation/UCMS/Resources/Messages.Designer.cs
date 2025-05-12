@@ -268,6 +268,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to FileDoesNotExist.
+        /// </summary>
+        public static string FileDoesNotExist {
+            get {
+                return ResourceManager.GetString("FileDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You are not allowed to access this resource.
         /// </summary>
         public static string Forbidden {
@@ -304,11 +313,38 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to InvalidGroupSize.
+        /// </summary>
+        public static string InvalidGroupSize {
+            get {
+                return ResourceManager.GetString("InvalidGroupSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to InvalidInputMessage.
         /// </summary>
         public static string InvalidInputMessage {
             get {
                 return ResourceManager.GetString("InvalidInputMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to InvalidnIstructorForThisClass.
+        /// </summary>
+        public static string InvalidnIstructorForThisClass {
+            get {
+                return ResourceManager.GetString("InvalidnIstructorForThisClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to InvalidProjectTypeSelected.
+        /// </summary>
+        public static string InvalidProjectTypeSelected {
+            get {
+                return ResourceManager.GetString("InvalidProjectTypeSelected", resourceCulture);
             }
         }
         
@@ -448,6 +484,87 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ProjectCantBeAccessed.
+        /// </summary>
+        public static string ProjectCantBeAccessed {
+            get {
+                return ResourceManager.GetString("ProjectCantBeAccessed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ProjectCreatedSuccessfully.
+        /// </summary>
+        public static string ProjectCreatedSuccessfully {
+            get {
+                return ResourceManager.GetString("ProjectCreatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ProjectDeletedSuccessfully.
+        /// </summary>
+        public static string ProjectDeletedSuccessfully {
+            get {
+                return ResourceManager.GetString("ProjectDeletedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ProjectFileDownloadedSuccessfully.
+        /// </summary>
+        public static string ProjectFileDownloadedSuccessfully {
+            get {
+                return ResourceManager.GetString("ProjectFileDownloadedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ProjectNotFound.
+        /// </summary>
+        public static string ProjectNotFound {
+            get {
+                return ResourceManager.GetString("ProjectNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ProjectOrFileNotFound.
+        /// </summary>
+        public static string ProjectOrFileNotFound {
+            get {
+                return ResourceManager.GetString("ProjectOrFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ProjectRetrievedSuccessfully.
+        /// </summary>
+        public static string ProjectRetrievedSuccessfully {
+            get {
+                return ResourceManager.GetString("ProjectRetrievedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ProjectsRetrievedSuccessfully.
+        /// </summary>
+        public static string ProjectsRetrievedSuccessfully {
+            get {
+                return ResourceManager.GetString("ProjectsRetrievedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ProjectUpdatedSuccessfully.
+        /// </summary>
+        public static string ProjectUpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("ProjectUpdatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User registered successfully..
         /// </summary>
         public static string RegisteredSuccessfully {
@@ -552,6 +669,15 @@ namespace UCMS.Resources {
         public static string TitleMaxLength {
             get {
                 return ResourceManager.GetString("TitleMaxLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TotalScoreMustBePositive.
+        /// </summary>
+        public static string TotalScoreMustBePositive {
+            get {
+                return ResourceManager.GetString("TotalScoreMustBePositive", resourceCulture);
             }
         }
         
