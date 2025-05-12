@@ -18,7 +18,7 @@ using UCMS.Services.EmailService.Abstraction;
 using UCMS.Services.PasswordService.Abstraction;
 using UCMS.Services.TokenService.Abstraction;
 
-namespace UCMS_Test;
+namespace UCMS_Test.Service;
 
 public class AuthServiceTest
 {
