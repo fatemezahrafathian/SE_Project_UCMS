@@ -114,22 +114,12 @@ namespace UCMS.Migrations
                     b.Property<int>("StudentId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("ClassId1")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("JoinedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("StudentId1")
-                        .HasColumnType("integer");
-
                     b.HasKey("ClassId", "StudentId");
 
-                    b.HasIndex("ClassId1");
-
                     b.HasIndex("StudentId");
-
-                    b.HasIndex("StudentId1");
 
                     b.ToTable("ClassStudents");
                 });
@@ -335,6 +325,25 @@ namespace UCMS.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("UCMS.Models.ClassStudent", b =>
+                {
+                    b.HasOne("UCMS.Models.Class", "Class")
+                        .WithMany("ClassStudents")
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UCMS.Models.Student", "Student")
+                        .WithMany("ClassStudents")
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Class");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("UCMS.Models.Instructor", b =>
                 {
                     b.HasOne("UCMS.Models.User", "User")
@@ -418,6 +427,70 @@ namespace UCMS.Migrations
 
                     b.Navigation("Student");
                 });
+            modelBuilder.Entity("UCMS.Models.Project", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnType("integer");
+
+                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                b.Property<string>("Title")
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasColumnType("character varying(100)");
+
+                b.Property<string>("Description")
+                    .HasMaxLength(500)
+                    .HasColumnType("character varying(500)");
+
+                b.Property<int>("TotalScore")
+                    .HasColumnType("integer");
+
+                b.Property<string>("ProjectType")
+                    .IsRequired()
+                    .HasColumnType("integer");
+                    // .HasColumnType("text"); // چون از enum به string تبدیل شده است
+
+                b.Property<int?>("GroupSize")
+                    .HasColumnType("integer");
+
+                b.Property<DateTime>("StartDate")
+                    .HasColumnType("timestamp with time zone");
+
+                b.Property<DateTime>("EndDate")
+                    .HasColumnType("timestamp with time zone");
+
+                b.Property<string>("ProjectFilePath")
+                    .HasMaxLength(300)
+                    .HasColumnType("character varying(300)");
+
+                b.Property<DateTime>("CreatedAt")
+                    .HasColumnType("timestamp with time zone")
+                    .HasDefaultValueSql("NOW()");
+
+                b.Property<DateTime>("UpdatedAt")
+                    .HasColumnType("timestamp with time zone")
+                    .HasDefaultValueSql("NOW()");
+
+                b.Property<int>("ClassId")
+                    .HasColumnType("integer");
+
+                b.HasKey("Id");
+
+                b.HasIndex("ClassId");
+
+                b.HasIndex("ProjectType"); 
+
+                b.ToTable("Projects");
+
+                b.HasOne("UCMS.Models.Class", "Class")
+                    .WithMany("Projects")
+                    .HasForeignKey("ClassId")
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .IsRequired();
+            });
+
 #pragma warning restore 612, 618
         }
     }

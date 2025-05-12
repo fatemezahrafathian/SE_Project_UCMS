@@ -167,6 +167,8 @@ public class AuthService : IAuthService
             return new ServiceResponse<string?> { Success = false, Message = Messages.UserNotFoundMessage };
         if (!await _passwordService.VerifyPasswordAsync(loginDto.Password, user.PasswordSalt, user.PasswordHash))
             return new ServiceResponse<string?> { Success = false, Message = Messages.WrongPasswordMessage };
+        // if (!user.IsConfirmed)
+        //     return new ServiceResponse<string?> { Success = false, Message = Messages.AccountNotConfirmed};
         var claims = new List<Claim>()
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),

@@ -12,8 +12,6 @@ namespace UCMS.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            
-            
             migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
@@ -43,6 +41,7 @@ namespace UCMS.Migrations
                     Gender = table.Column<int>(type: "integer", nullable: true),
                     Address = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: true),
                     Bio = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    University = table.Column<int>(type: "integer", nullable: true),
                     ProfileImagePath = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -74,6 +73,7 @@ namespace UCMS.Migrations
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     EmployeeCode = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: true),
                     Department = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    Rank = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -97,6 +97,7 @@ namespace UCMS.Migrations
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     StudentNumber = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     Major = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    EducationLevel = table.Column<int>(type: "integer", nullable: true),
                     EnrollmentYear = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
@@ -161,6 +162,31 @@ namespace UCMS.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ClassStudents",
+                columns: table => new
+                {
+                    ClassId = table.Column<int>(type: "integer", nullable: false),
+                    StudentId = table.Column<int>(type: "integer", nullable: false),
+                    JoinedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClassStudents", x => new { x.ClassId, x.StudentId });
+                    table.ForeignKey(
+                        name: "FK_ClassStudents_Classes_ClassId",
+                        column: x => x.ClassId,
+                        principalTable: "Classes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ClassStudents_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Classes_InstructorId",
                 table: "Classes",
@@ -170,6 +196,11 @@ namespace UCMS.Migrations
                 name: "IX_ClassSchedule_ClassId",
                 table: "ClassSchedule",
                 column: "ClassId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClassStudents_StudentId",
+                table: "ClassStudents",
+                column: "StudentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Instructors_UserId",
@@ -206,58 +237,39 @@ namespace UCMS.Migrations
                 column: "Username",
                 unique: true);
             migrationBuilder.CreateTable(
-                name: "ClassStudents",
+                name: "Projects",
                 columns: table => new
                 {
-                    ClassId = table.Column<int>(type: "integer", nullable: false),
-                    StudentId = table.Column<int>(type: "integer", nullable: false),
-                    JoinedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ClassId1 = table.Column<int>(type: "integer", nullable: true),
-                    StudentId1 = table.Column<int>(type: "integer", nullable: true)
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    TotalScore = table.Column<int>(type: "integer", nullable: false),
+                    ProjectType = table.Column<int>(type: "integer", nullable: false),
+                    GroupSize = table.Column<int>(type: "integer", nullable: true),
+                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ProjectFilePath = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: DateTime.UtcNow),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: DateTime.UtcNow),
+                    ClassId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClassStudents", x => new { x.ClassId, x.StudentId });
+                    table.PrimaryKey("PK_Projects", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClassStudents_Classes_ClassId",
+                        name: "FK_Projects_Classes_ClassId",
                         column: x => x.ClassId,
                         principalTable: "Classes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ClassStudents_Classes_ClassId1",
-                        column: x => x.ClassId1,
-                        principalTable: "Classes",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_ClassStudents_Students_StudentId",
-                        column: x => x.StudentId,
-                        principalTable: "Students",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ClassStudents_Students_StudentId1",
-                        column: x => x.StudentId1,
-                        principalTable: "Students",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ClassStudents_ClassId1",
-                table: "ClassStudents",
-                column: "ClassId1");
+                name: "IX_Projects_ClassId",
+                table: "Projects",
+                column: "ClassId");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_ClassStudents_StudentId",
-                table: "ClassStudents",
-                column: "StudentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ClassStudents_StudentId1",
-                table: "ClassStudents",
-                column: "StudentId1");
-            
-            
         }
 
         /// <inheritdoc />
@@ -267,10 +279,13 @@ namespace UCMS.Migrations
                 name: "ClassSchedule");
 
             migrationBuilder.DropTable(
-                name: "Students");
+                name: "ClassStudents");
 
             migrationBuilder.DropTable(
                 name: "Classes");
+
+            migrationBuilder.DropTable(
+                name: "Students");
 
             migrationBuilder.DropTable(
                 name: "Instructors");
@@ -281,5 +296,6 @@ namespace UCMS.Migrations
             migrationBuilder.DropTable(
                 name: "Roles");
         }
+        
     }
 }

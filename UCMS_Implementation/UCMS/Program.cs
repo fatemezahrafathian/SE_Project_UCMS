@@ -1,6 +1,8 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +13,8 @@ using UCMS.Repositories.ClassRepository;
 using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Repositories.InstructorRepository;
 using UCMS.Repositories.InstructorRepository.Abstraction;
+using UCMS.Repositories.ProjectRepository;
+using UCMS.Repositories.ProjectRepository.Abstarction;
 using UCMS.Repositories.RoleRepository;
 using UCMS.Repositories.RoleRepository.Abstraction;
 using UCMS.Repositories.StudentRepository;
@@ -25,11 +29,13 @@ using UCMS.Services.CookieService;
 using UCMS.Services.CookieService.Abstraction;
 using UCMS.Services.EmailService;
 using UCMS.Services.EmailService.Abstraction;
+using UCMS.Services.FileService;
 using UCMS.Services.ImageService;
 using UCMS.Services.PasswordService;
 using UCMS.Services.PasswordService.Abstraction;
 using UCMS.Services.InstructorService;
 using UCMS.Services.InstructorService.Abstraction;
+using UCMS.Services.ProjectService;
 using UCMS.Services.RoleService;
 using UCMS.Services.RoleService.Abstraction;
 using UCMS.Services.StudentService;
@@ -37,8 +43,10 @@ using UCMS.Services.StudentService.Abstraction;
 using UCMS.Services.TokenService;
 using UCMS.Services.TokenService.Abstraction;
 using UCMS.Services.UserService;
+using UCMS.Services.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
                        ?? builder.Configuration.GetConnectionString("DefaultConnection");
@@ -80,8 +88,8 @@ builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<IInstructorService, InstructorService>();
-builder.Services.AddScoped<ICookieService,CookieService>();
-builder.Services.AddScoped<ITokenService,TokenService>();
+builder.Services.AddScoped<ICookieService, CookieService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IOneTimeCodeService, OneTimeCodeService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -90,10 +98,22 @@ builder.Services.AddScoped<IClassService, ClassService>();
 builder.Services.AddScoped<IClassRepository, ClassRepository>();
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IStudentClassService, StudentClassService>();
 
+builder.Services.AddTransient<UrlBuilder>();
+
+
+builder.Services.AddScoped<IStudentClassRepository, StudentClassRepository>();
+
+
+builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.Configure<FileUploadSettings>(builder.Configuration.GetSection("FileUploadSettings"));
+builder.Services.AddScoped<IFileService, FileService>();
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddAuthentication(options =>{
+builder.Services.AddAuthentication(options =>
+{
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
@@ -137,6 +157,16 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateClassDtoValidator>();
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
+// ValidatorOptions.Global.DefaultRuleLevelCascadeMode = CascadeMode.Stop;
+
+
 // builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 var app = builder.Build();
@@ -161,6 +191,7 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // app.UseRouting();
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseCors("AllowLocalhost5173");
 app.UseAuthentication();
 app.UseMiddleware<AuthenticationMiddleware>();

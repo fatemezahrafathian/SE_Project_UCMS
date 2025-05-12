@@ -2,31 +2,31 @@ using Microsoft.AspNetCore.Mvc;
 using UCMS.Attributes;
 using UCMS.Data;
 using UCMS.DTOs.ClassDto;
-using UCMS.Models;
 using UCMS.Services.ClassService.Abstraction;
 
 namespace UCMS.Controllers;
+
 // determine nullability of dtos properties
 // handle invalid role id
 // captch
 // cloud
 // confirmation link
-// clean and reuse checks in services
-[Route("api/classes")]
+// email service
+[Route("api/[controller]")]
 [ApiController]
-public class ClassController: ControllerBase
+public class ClassesController : ControllerBase
 {
     private readonly IClassService _classService;
     private readonly DataContext _context;
 
-    public ClassController(IClassService classService, DataContext context)
+    public ClassesController(IClassService classService, DataContext context)
     {
         _classService = classService;
         _context = context;
     }
 
-    
-    [RoleBasedAuthorization("Instructor")] // which comes first
+
+    [RoleBasedAuthorization("Instructor")]
     [HttpPost("")]
     public async Task<IActionResult> CreateClass([FromForm] CreateClassDto dto)
     {
@@ -34,13 +34,12 @@ public class ClassController: ControllerBase
 
         if (response.Success)
         {
-            return CreatedAtAction(nameof(GetClassForInstructor), new { classId = response.Data.Id }, response);
+            return CreatedAtAction(nameof(GetClassForInstructor), new {classId = response.Data.Id}, response);
         }
-        
-        return BadRequest(new { message = response.Message });
+
+        return BadRequest(new {message = response.Message});
     }
-
-
+    
     [RoleBasedAuthorization("Instructor")]
     [HttpGet("instructor/{classId}")]
     public async Task<IActionResult> GetClassForInstructor(int classId)
@@ -52,31 +51,19 @@ public class ClassController: ControllerBase
 
         return Ok(response.Data);
     }
-
-    [RoleBasedAuthorization("Student")]
-    [HttpGet("student/{classId}")]
-    public async Task<IActionResult> GetClassForStudent(int classId)
-    {
-        var response = await _classService.GetClassForStudent(classId);
-
-        if (!response.Success)
-            return NotFound(response.Message);
-
-        return Ok(response.Data);
-    }
-
-    [RoleBasedAuthorization("Instructor")]
-    [HttpPost("instructor")]
-    public async Task<IActionResult> FilteredClassesOfInstructor([FromBody] PaginatedFilterClassForInstructorDto dto)
-    {
-        var response = await _classService.FilterClassesOfInstructor(dto);
-
-        if (!response.Success)
-            return NotFound(response.Message);
-
-        return Ok(response.Data);
-    }
     
+    [RoleBasedAuthorization("Instructor")]
+    [HttpGet("instructor")]
+    public async Task<IActionResult> GetClassesForInstructor([FromQuery] PaginatedFilterClassForInstructorDto dto)
+    {
+        var response = await _classService.GetClassesForInstructor(dto);
+
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Data);
+    }
+
     [RoleBasedAuthorization("Instructor")]
     [HttpDelete("{classId}")]
     public async Task<IActionResult> DeleteClass(int classId)
@@ -88,97 +75,49 @@ public class ClassController: ControllerBase
 
         return Ok(response.Message);
     }
-    
-    [HttpPost("test{userId}")]
-    public async Task<IActionResult> Createins(int userId)
-    {
-        var testInstructor = new Instructor
-        {
-            UserId = userId,
-            EmployeeCode = "EMP-001",
-            Department = "مهندسی نرم‌افزار",
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        };
-        _context.Instructors.Add(testInstructor);
-        await _context.SaveChangesAsync();
-        return Ok(1);
-    }
-    
-    [HttpGet("test1{userId}")]
-    public async Task<IActionResult> Createstu(int userId)
-    {
-        var testStudent = new Student
-        {
-            UserId = userId,
-            StudentNumber = "STD123456",
-            Major = "Computer Science",
-            EnrollmentYear = 2023
-        };        
-        _context.Students.Add(testStudent);
-        await _context.SaveChangesAsync();
-        return Ok(1);
-    }
 
     [RoleBasedAuthorization("Instructor")]
     [HttpPatch("{classId}")]
-    public async Task<IActionResult> PartialUpdateClass(int classId, [FromForm] PatchClassDto dto)
+    public async Task<IActionResult> UpdateClassPartial(int classId, [FromForm] PatchClassDto dto)
     {
-        var response = await _classService.PartialUpdateClass(classId, dto);
+        var response = await _classService.UpdateClassPartial(classId, dto);
 
         if (!response.Success)
             return NotFound(response.Message);
 
         return Ok(response.Message);
     }
-    [RoleBasedAuthorization("Student")] // which comes first
-    [HttpPost("join")]
-    public async Task<IActionResult> JoinClass([FromBody] JoinClassRequestDto request)
-    {
-        var response = await _classService.JoinClassAsync(request);
-        if (response.Success)
-            return Ok(response);
-        return BadRequest(response.Message);
-    }
-    [RoleBasedAuthorization("Student")]
-    [HttpDelete("left/{classId}")]
-    public async Task<IActionResult> LeaveClass([FromBody] LeaveClassRequestDto request)
-    {
-        var response = await _classService.LeaveClassAsync(request.ClassId);
-        if (!response.Success)
-            return BadRequest(response.Message);
-        return Ok(response.Message);
-    }
-    [RoleBasedAuthorization("Instructor")]
-    [HttpDelete("/{classId}/removeStudent")]
-    public async Task<IActionResult> RemoveStudentFromClass([FromBody] RemoveStudentFromClassDto request)
-    {
-        var response = await _classService.RemoveStudentFromClassAsync(request.ClassId, request.StudentId);
-        
-        if (!response.Success)
-            return NotFound(response.Message);
-        return Ok(response.Message);
-    }
-    [RoleBasedAuthorization("Instructor")]
-    [HttpGet("{classId}/students")]
-    public async Task<IActionResult> GetStudentsOfClassByInstructor(int classId)
-    {
-        var response = await _classService.GetStudentsOfClassByInstructorAsync(classId);
-        if (!response.Success)
-            return NotFound(response.Message);
-        return Ok(response.Data);
-    }
-    [RoleBasedAuthorization("Student")]
-    [HttpGet("classStudent/{classId}/students")]
-    public async Task<IActionResult> GetStudentsOfClassByStudent(int classId)
-    {
-        var response = await _classService.GetStudentsOfClassByStudentAsync(classId);
-        if (!response.Success)
-            return NotFound(response.Message);
-        return Ok(response.Data);
-    }
 
-    
+    // [HttpPost("test{userId}")]
+    // public async Task<IActionResult> Createins(int userId)
+    // {
+    //     var testInstructor = new Instructor
+    //     {
+    //         UserId = userId,
+    //         EmployeeCode = "EMP-001",
+    //         Department = "مهندسی نرم‌افزار",
+    //         CreatedAt = DateTime.UtcNow,
+    //         UpdatedAt = DateTime.UtcNow
+    //     };
+    //     _context.Instructors.Add(testInstructor);
+    //     await _context.SaveChangesAsync();
+    //     return Ok(1);
+    // }
+    //
+    // [HttpGet("test1{userId}")]
+    // public async Task<IActionResult> Createstu(int userId)
+    // {
+    //     var testStudent = new Student
+    //     {
+    //         UserId = userId,
+    //         StudentNumber = "STD123456",
+    //         Major = "Computer Science",
+    //         EnrollmentYear = 2023
+    //     };        
+    //     _context.Students.Add(testStudent);
+    //     await _context.SaveChangesAsync();
+    //     return Ok(1);
+    // }
 }
 
 // curl -X POST https://localhost:44389/api/classes ^
