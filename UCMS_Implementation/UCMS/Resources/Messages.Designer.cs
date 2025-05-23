@@ -321,11 +321,20 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to InvalidnIstructorForThisClass.
+        ///   Looks up a localized string similar to InvalidIstructorForThisClass.
         /// </summary>
-        public static string InvalidnIstructorForThisClass {
+        public static string InvalidIstructorForThisClass {
             get {
-                return ResourceManager.GetString("InvalidnIstructorForThisClass", resourceCulture);
+                return ResourceManager.GetString("InvalidIstructorForThisClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to InvalidProjectForThisClass.
+        /// </summary>
+        public static string InvalidProjectForThisClass {
+            get {
+                return ResourceManager.GetString("InvalidProjectForThisClass", resourceCulture);
             }
         }
         
@@ -470,6 +479,105 @@ namespace UCMS.Resources {
         public static string PasswordsDoNotMatch {
             get {
                 return ResourceManager.GetString("PasswordsDoNotMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PhaseAlreadyExists.
+        /// </summary>
+        public static string PhaseAlreadyExists {
+            get {
+                return ResourceManager.GetString("PhaseAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PhaseCantBeAccessed.
+        /// </summary>
+        public static string PhaseCantBeAccessed {
+            get {
+                return ResourceManager.GetString("PhaseCantBeAccessed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PhaseCantBeAccessed.
+        /// </summary>
+        public static string PhaseCantBeAccessedC {
+            get {
+                return ResourceManager.GetString("PhaseCantBeAccessedC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PhaseCreatedSuccessfully.
+        /// </summary>
+        public static string PhaseCreatedSuccessfully {
+            get {
+                return ResourceManager.GetString("PhaseCreatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PhaseFileDownloadedSuccessfully.
+        /// </summary>
+        public static string PhaseFileDownloadedSuccessfully {
+            get {
+                return ResourceManager.GetString("PhaseFileDownloadedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PhaseNotFound.
+        /// </summary>
+        public static string PhaseNotFound {
+            get {
+                return ResourceManager.GetString("PhaseNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PhaseOrFileNotFound.
+        /// </summary>
+        public static string PhaseOrFileNotFound {
+            get {
+                return ResourceManager.GetString("PhaseOrFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PhaseRetrievedSuccessfully.
+        /// </summary>
+        public static string PhaseRetrievedSuccessfully {
+            get {
+                return ResourceManager.GetString("PhaseRetrievedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PhaseScoreMustBePositive.
+        /// </summary>
+        public static string PhaseScoreMustBePositive {
+            get {
+                return ResourceManager.GetString("PhaseScoreMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PhasesRetrievedSuccessfully.
+        /// </summary>
+        public static string PhasesRetrievedSuccessfully {
+            get {
+                return ResourceManager.GetString("PhasesRetrievedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PhaseUpdatedSuccessfully.
+        /// </summary>
+        public static string PhaseUpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("PhaseUpdatedSuccessfully", resourceCulture);
             }
         }
         

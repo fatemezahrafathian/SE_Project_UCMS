@@ -118,7 +118,7 @@ public class DataContext : DbContext
             entity.Property(p => p.PhaseScore)
                 .IsRequired();
 
-            entity.Property(p => p.ProjectFilePath)
+            entity.Property(p => p.PhaseFilePath)
                 .HasMaxLength(300);
 
             entity.Property(p => p.FileFormats)

@@ -7,14 +7,18 @@ public class Phase
 {
     [Key]
     public int Id { get; set; } 
+    [Required, MaxLength(100)]
+    public string Title { get; set; }
+    [MaxLength(500)]
     public string? Description { get; set; }
     [Required]
     public DateTime StartDate { get; set; }
     [Required]
     public DateTime EndDate { get; set; }
+    [Required]
     public int PhaseScore { get; set; }
-    public string? ProjectFilePath { get; set; } 
-
+    public string? PhaseFilePath { get; set; } 
+    [Required]
     public string? FileFormats { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

@@ -48,7 +48,7 @@ public class ProjectService: IProjectService
         }
         if (currentClass.InstructorId != user.Instructor.Id)
         {
-            return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.InvalidnIstructorForThisClass);
+            return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.InvalidIstructorForThisClass);
         }
         var validator = new CreateProjectDtoValidator(_fileService);
         
@@ -82,7 +82,7 @@ public class ProjectService: IProjectService
             return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.ProjectNotFound);
     
         if (currentClass.InstructorId != user.Instructor.Id)
-            return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.InvalidnIstructorForThisClass);
+            return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.InvalidIstructorForThisClass);
     
         var existingProject = await _repository.GetProjectByIdAsync(projectId);
         if (existingProject == null || existingProject.ClassId != classId)

@@ -401,8 +401,8 @@
   <data name="InvalidGroupSize" xml:space="preserve">
       <value>InvalidGroupSize</value>
   </data>
-  <data name="InvalidnIstructorForThisClass" xml:space="preserve">
-      <value>InvalidnIstructorForThisClass</value>
+  <data name="InvalidIstructorForThisClass" xml:space="preserve">
+      <value>InvalidIstructorForThisClass</value>
   </data>
   <data name="ProjectNotFound" xml:space="preserve">
       <value>ProjectNotFound</value>
@@ -433,5 +433,41 @@
   </data>
   <data name="ProjectCreatedSuccessfully" xml:space="preserve">
       <value>ProjectCreatedSuccessfully</value>
+  </data>
+  <data name="PhaseCreatedSuccessfully" xml:space="preserve">
+      <value>PhaseCreatedSuccessfully</value>
+  </data>
+  <data name="InvalidProjectForThisClass" xml:space="preserve">
+      <value>InvalidProjectForThisClass</value>
+  </data>
+  <data name="PhaseScoreMustBePositive" xml:space="preserve">
+      <value>PhaseScoreMustBePositive</value>
+  </data>
+  <data name="PhaseCantBeAccessed" xml:space="preserve">
+      <value>PhaseCantBeAccessed</value>
+  </data>
+  <data name="PhaseRetrievedSuccessfully" xml:space="preserve">
+      <value>PhaseRetrievedSuccessfully</value>
+  </data>
+  <data name="PhaseAlreadyExists" xml:space="preserve">
+      <value>PhaseAlreadyExists</value>
+  </data>
+  <data name="PhaseNotFound" xml:space="preserve">
+      <value>PhaseNotFound</value>
+  </data>
+  <data name="PhaseUpdatedSuccessfully" xml:space="preserve">
+      <value>PhaseUpdatedSuccessfully</value>
+  </data>
+  <data name="PhaseCantBeAccessedC" xml:space="preserve">
+      <value>PhaseCantBeAccessed</value>
+  </data>
+  <data name="PhasesRetrievedSuccessfully" xml:space="preserve">
+      <value>PhasesRetrievedSuccessfully</value>
+  </data>
+  <data name="PhaseOrFileNotFound" xml:space="preserve">
+      <value>PhaseOrFileNotFound</value>
+  </data>
+  <data name="PhaseFileDownloadedSuccessfully" xml:space="preserve">
+      <value>PhaseFileDownloadedSuccessfully</value>
   </data>
 </root>

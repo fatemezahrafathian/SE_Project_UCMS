@@ -1,13 +1,20 @@
 using FluentValidation;
+using UCMS.Models;
+using UCMS.Resources;
+using UCMS.Services.FileService;
+using FluentValidation;
+using UCMS.DTOs.PhaseDto;
 using UCMS.DTOs.ProjectDto;
 using UCMS.Models;
 using UCMS.Resources;
 using UCMS.Services.FileService;
 
-namespace UCMS.Services.ProjectService;
-public class CreateProjectDtoValidator : AbstractValidator<CreateProjectDto>
+namespace UCMS.Services.PhaseService;
+
+public class CreatePhaseDtoValidator: AbstractValidator<CreatePhaseDto>
 {
-    public CreateProjectDtoValidator(IFileService fileService)
+    private readonly List<string> _allowedFormats = new() { "pdf", "zip", "rar", "txt" };
+    public CreatePhaseDtoValidator(IFileService fileService)
     {
         ClassLevelCascadeMode = CascadeMode.Stop;
         RuleLevelCascadeMode = CascadeMode.Stop;
@@ -19,8 +26,8 @@ public class CreateProjectDtoValidator : AbstractValidator<CreateProjectDto>
         RuleFor(x => x.Description)
             .MaximumLength(500).WithMessage(Messages.DescriptionMaxLength);
 
-        RuleFor(x => x.TotalScore)
-            .GreaterThan(0).WithMessage(Messages.TotalScoreMustBePositive);
+        RuleFor(x => x.PhaseScore)
+            .GreaterThan(0).WithMessage(Messages.PhaseScoreMustBePositive);
 
         RuleFor(x => x.StartDate)
             .Must(date => date >= DateTime.UtcNow)
@@ -34,33 +41,32 @@ public class CreateProjectDtoValidator : AbstractValidator<CreateProjectDto>
             .Must(dto => dto.StartDate <= dto.EndDate)
             .WithMessage(Messages.StartDateCanNotBeLaterThanEndDatte);
 
-        When(x => x.ProjectFile != null, () =>
+        When(x => x.PhaseFile != null, () =>
         {
-            RuleFor(x => x.ProjectFile)
+            RuleFor(x => x.PhaseFile)
                 .Must(file => fileService.IsValidExtension(file))
                 .WithMessage(Messages.InvalidFormat);
 
-            RuleFor(x => x.ProjectFile)
+            RuleFor(x => x.PhaseFile)
                 .Must(file => fileService.IsValidFileSize(file))
                 .WithMessage(Messages.InvalidSize);
         });
-        RuleFor(x => x.ProjectType)
-            .Must(value => value == 1 || value == 2)
-            .WithMessage(Messages.InvalidProjectTypeSelected);
-
-        When(x => x.ProjectType == (int)ProjectType.Group, () =>
+        When(x => !string.IsNullOrWhiteSpace(x.FileFormats), () =>
         {
-            RuleFor(x => x.GroupSize)
-                .NotNull().WithMessage(Messages.InvalidGroupSize)
-                .GreaterThan(1).WithMessage(Messages.InvalidGroupSize);
+            RuleFor(x => x.FileFormats)
+                .Must(AllFormatsAreValid)
+                .WithMessage(Messages.InvalidFormat);
         });
+        
+    }
+    private bool AllFormatsAreValid(string? formats)
+    {
+        if (string.IsNullOrWhiteSpace(formats)) return true;
 
-        When(x => x.ProjectType == (int)ProjectType.Individual, () =>
-        {
-            RuleFor(x => x.GroupSize)
-                .Must(size => size == null || size == 1)
-                .WithMessage(Messages.InvalidGroupSize);
-        });
+        var formatList = formats
+            .Split(',', StringSplitOptions.RemoveEmptyEntries)
+            .Select(f => f.Trim().ToLower());
 
+        return formatList.All(f => _allowedFormats.Contains(f));
     }
 }

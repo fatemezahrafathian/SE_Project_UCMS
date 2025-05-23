@@ -275,12 +275,13 @@ namespace UCMS.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     PhaseScore = table.Column<int>(type: "integer", nullable: false),
-                    ProjectFilePath = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    FileFormats = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    PhaseFilePath = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    FileFormats = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     ProjectId = table.Column<int>(type: "integer", nullable: false)
