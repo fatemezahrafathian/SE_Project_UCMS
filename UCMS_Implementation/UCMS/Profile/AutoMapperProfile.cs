@@ -184,5 +184,10 @@ public class AutoMapperProfile : Profile
             ));
         CreateMap<Phase, GetPhasesForInstructorDto>()
             .ForMember(dest => dest.phaseId, opt => opt.MapFrom(src => src.Id));
+        CreateMap<Phase, GetPhaseForStudentDto>()
+            .ForMember(dest => dest.phaseId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.PhaseFilePath, opt => opt.MapFrom(src => src.PhaseFilePath));
+        CreateMap<Phase, GetPhasesForStudentDto>()
+            .ForMember(dest => dest.phaseId, opt => opt.MapFrom(src => src.Id));
     }
 }

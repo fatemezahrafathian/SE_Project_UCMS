@@ -10,6 +10,7 @@ using UCMS.Repositories.PhaseRepository.Abstraction;
 using UCMS.Repositories.ProjectRepository.Abstarction;
 using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Resources;
+using UCMS.Services.ClassService.Abstraction;
 using UCMS.Services.FileService;
 using UCMS.Services.PhaseService.Abstraction;
 
@@ -23,8 +24,9 @@ public class PhaseService:IPhaseService
     private readonly IClassRepository _classRepository;
     private readonly IProjectRepository _projectRepository;
     private readonly IFileService _fileService;
+    private readonly IStudentClassRepository _studentClassRepository;
 
-    public PhaseService(IPhaseRepository repository, IMapper mapper,IHttpContextAccessor httpContextAccessor,IClassRepository classRepository,IProjectRepository projectRepository,IFileService fileService)
+    public PhaseService(IPhaseRepository repository, IMapper mapper,IHttpContextAccessor httpContextAccessor,IClassRepository classRepository,IProjectRepository projectRepository,IFileService fileService,IStudentClassRepository studentClassRepository)
     {
         _repository = repository;
         _mapper = mapper;
@@ -32,6 +34,7 @@ public class PhaseService:IPhaseService
         _classRepository = classRepository;
         _projectRepository = projectRepository;
         _fileService = fileService;
+        _studentClassRepository = studentClassRepository;
     }
 
     public async Task<ServiceResponse<GetPhaseForInstructorDto>> CreatePhaseAsync(int projectId,CreatePhaseDto dto)
@@ -165,7 +168,7 @@ public class PhaseService:IPhaseService
         var dto =  _mapper.Map<List<GetPhasesForInstructorDto>>(phases);
         return ServiceResponseFactory.Success(dto,Messages.PhasesRetrievedSuccessfully);
     }
-    public async Task<ServiceResponse<FileDownloadDto>> HandleDownloadPhaseFileAsync(int phaseId)
+    public async Task<ServiceResponse<FileDownloadDto>> HandleDownloadPhaseFileForInstructorAsync(int phaseId)
     {
         //check access for instructor and student
         var project = await _repository.GetPhaseByIdAsync(phaseId);
@@ -188,6 +191,55 @@ public class PhaseService:IPhaseService
             ".doc" => "application/msword",
             _ => "application/octet-stream"
         };
+    }
+    public async Task<ServiceResponse<GetPhaseForStudentDto>> GetPhaseByIdForStudentAsync(int phaseId)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+        var phase = await _repository.GetPhaseByIdAsync(phaseId);
+        
+        if (phase == null || user==null || user.Student==null)
+        {
+            return ServiceResponseFactory.Failure<GetPhaseForStudentDto>(Messages.PhaseCantBeAccessed);
+        }
+        
+        if (!await _studentClassRepository.IsStudentOfClassAsync(phase.Project.ClassId,user.Student.Id))
+        {
+            return ServiceResponseFactory.Failure<GetPhaseForStudentDto>(Messages.PhaseCantBeAccessed);
+        }
+
+        var dto = _mapper.Map<GetPhaseForStudentDto>(phase);
+
+        return ServiceResponseFactory.Success(dto, Messages.PhaseRetrievedSuccessfully);
+    }
+    public async Task<ServiceResponse<List<GetPhasesForStudentDto>>> GetPhasesForStudent(int projectId)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+        var project = await _projectRepository.GetProjectByIdAsync(projectId);
+
+        if (project == null || user==null || user.Student==null || !await _studentClassRepository.IsStudentOfClassAsync(project.ClassId,user.Student.Id))
+        {
+            return ServiceResponseFactory.Failure<List<GetPhasesForStudentDto>>(Messages.ProjectCantBeAccessed);
+        }
+        var phases = await _repository.GetPhasesByProjectIdAsync(projectId);
+        var dto =  _mapper.Map<List<GetPhasesForStudentDto>>(phases);
+        return ServiceResponseFactory.Success(dto,Messages.PhasesRetrievedSuccessfully);
+    }
+    public async Task<ServiceResponse<FileDownloadDto>> HandleDownloadPhaseFileForStudentAsync(int phaseId)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+        var phase = await _repository.GetPhaseByIdAsync(phaseId);
+        if (phase == null || user==null || user.Student==null || !await _studentClassRepository.IsStudentOfClassAsync(phase.Project.ClassId,user.Student.Id))
+        {
+            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.PhaseCantBeAccessed);
+        }
+        var project = await _repository.GetPhaseByIdAsync(phaseId);
+        if (project == null || string.IsNullOrWhiteSpace(project.PhaseFilePath))
+            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.PhaseOrFileNotFound);
+        var dto =await _fileService.DownloadFile(project.PhaseFilePath);
+        if (dto==null)
+            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileDoesNotExist);
+        dto.ContentType = GetContentTypeFromPath(project.PhaseFilePath);
+        return ServiceResponseFactory.Success(dto,Messages.PhaseFileDownloadedSuccessfully);
     }
 
 }

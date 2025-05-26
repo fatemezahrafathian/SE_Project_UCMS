@@ -79,12 +79,43 @@ public class PhaseController:ControllerBase
     [HttpGet("{phaseId}/downloadForInstructor")]
     public async Task<IActionResult> DownloadPhaseFileForInstructor(int phaseId)
     {
-        var response = await _phaseService.HandleDownloadPhaseFileAsync(phaseId);
+        var response = await _phaseService.HandleDownloadPhaseFileForInstructorAsync(phaseId);
         if (!response.Success)
             return NotFound(response.Message);
     
         return File(response.Data.FileBytes, response.Data.ContentType, response.Data.FileName);
     }
+    
+    [RoleBasedAuthorization("Student")]
+    [HttpGet("Student/{phaseId}")]
+    public async Task<IActionResult> GetPhaseForStudent(int phaseId)
+    {
+        var response = await _phaseService.GetPhaseByIdForStudentAsync(phaseId);
+        if (!response.Success)
+            return NotFound(response.Message);
 
+        return Ok(response.Data);
+    }
+    [RoleBasedAuthorization("Student")]
+    [HttpGet("Student")]
+    public async Task<IActionResult> GetPhasesForStudent(int projectId)
+    {
+        var response = await _phaseService.GetPhasesForStudent(projectId);
+
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Data);
+    }
+    [RoleBasedAuthorization("Student")]
+    [HttpGet("{phaseId}/downloadForStudent")]
+    public async Task<IActionResult> DownloadPhaseFileForStudent(int phaseId)
+    {
+        var response = await _phaseService.HandleDownloadPhaseFileForInstructorAsync(phaseId);
+        if (!response.Success)
+            return NotFound(response.Message);
+    
+        return File(response.Data.FileBytes, response.Data.ContentType, response.Data.FileName);
+    }
     
 }
