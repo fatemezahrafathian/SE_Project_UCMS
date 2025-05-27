@@ -4,9 +4,7 @@ using UCMS.DTOs.TeamDto;
 using UCMS.Services.TeamService.Abstraction;
 
 namespace UCMS.Controllers;
-// add for student
 // add create using file
-// add validations
 // clean code
 [ApiController]
 [Route("api/[controller]")]
@@ -21,9 +19,9 @@ public class TeamsController : ControllerBase
     
     [RoleBasedAuthorization("Instructor")]
     [HttpPost("")]
-    public async Task<IActionResult> CreateTeam([FromForm] CreateTeamDto dto)
+    public async Task<IActionResult> CreateTeam(int projectId, [FromForm] CreateTeamDto dto)
     {
-        var response = await _teamService.CreateTeam(dto);
+        var response = await _teamService.CreateTeam(projectId, dto);
         if (response.Success)
             return Ok(response);
         return BadRequest(response.Message);
@@ -41,11 +39,35 @@ public class TeamsController : ControllerBase
         return Ok(response.Data);
     }
 
+    [RoleBasedAuthorization("Student")]
+    [HttpGet("student/{teamId}")]
+    public async Task<IActionResult> GetTeamForStudent(int teamId)
+    {
+        var response = await _teamService.GetTeamForStudent(teamId);
+
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Data);
+    }
+
     [RoleBasedAuthorization("Instructor")]
     [HttpGet("instructor/project/{projectId}/teams")]
     public async Task<IActionResult> GetTeamsForInstructor(int projectId)
     {
         var response = await _teamService.GetProjectTeamsForInstructor(projectId);
+
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Data);
+    }
+
+    [RoleBasedAuthorization("Student")]
+    [HttpGet("student/project/{projectId}/teams")]
+    public async Task<IActionResult> GetTeamsForStudent(int projectId)
+    {
+        var response = await _teamService.GetProjectTeamsForStudent(projectId);
 
         if (!response.Success)
             return NotFound(response.Message);
@@ -76,4 +98,42 @@ public class TeamsController : ControllerBase
 
         return Ok(response.Message);
     }
+    
+    [RoleBasedAuthorization("Instructor")]
+    [HttpGet("template/{projectId}")]
+    public async Task<IActionResult> DownloadTeamTemplate(int projectId)
+    {
+        var response = await _teamService.GetTeamTemplateFile(projectId);
+
+        if (!response.Success)
+            return BadRequest(response.Message);
+
+        var fileDto = response.Data;
+        return File(fileDto.FileContent, fileDto.ContentType, fileDto.FileName);
+    }
+    
+    [RoleBasedAuthorization("Instructor")]
+    [HttpPost("{projectId}")]
+    public async Task<IActionResult> ValidateTeamTemplate(int projectId, IFormFile file)
+    {
+        var response = await _teamService.ValidateTeamFileAsync(projectId, file);
+        
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Message);
+    }
+    
+    [RoleBasedAuthorization("Instructor")]
+    [HttpPost("{projectId}/create-from-file")]
+    public async Task<IActionResult> CreateTeamsFromFile(int projectId, List<CreateTeamDto> validTeams)
+    {
+        var response = await _teamService.CreateTeamsFromFileAsync(projectId, validTeams);
+
+        if (!response.Success)
+            return BadRequest(response.Message);
+
+        return Ok(response.Message);
+    }
+
 }

@@ -64,6 +64,22 @@ public class StudentClassRepository: IStudentClassRepository
         return query;
     }
 
+    public async Task<List<string?>> GetStudentNumbersOfClass(int classId)
+    {
+        return await _context.ClassStudents
+            .Where(cs => cs.ClassId == classId)
+            .Select(cs => cs.Student.StudentNumber)
+            .Distinct()
+            .ToListAsync();
+    }
+
+    public async Task<bool> AreStudentsInClassAsync(List<int> studentIds, int classId)
+    {
+        return await _context.ClassStudents
+            .Where(cs => cs.ClassId == classId && studentIds.Contains(cs.Student.Id))
+            .AnyAsync();
+    }
+    
     private IQueryable<Class> GetClassesByStudentId(int studentId)
     {
         return _context.Classes

@@ -347,10 +347,7 @@
     <data name="UnauthorizedAccess" xml:space="preserve">
         <value>UnauthorizedAccess</value>
     </data>
-    <data name="StudentNotFound" xml:space="preserve">
-        <value>StudentNotFound</value>
-    </data>
-    <data name="RemoveStudentFromClassNotSuccessfully" xml:space="preserve">
+  <data name="RemoveStudentFromClassNotSuccessfully" xml:space="preserve">
         <value>RemoveStudentFromClassNotSuccessfully</value>
     </data>
     <data name="RemoveStudentFromClassSuccessfully" xml:space="preserve">
@@ -437,12 +434,6 @@
   <data name="CanNotAccessTheProject" xml:space="preserve">
       <value>Can not access the project.</value>
   </data>
-  <data name="SomeStudentNumbersNotFound" xml:space="preserve">
-      <value>Some student numbers not found.</value>
-  </data>
-  <data name="LeaderStudentIsNotMemeberOfTeam" xml:space="preserve">
-      <value>Leader student is not memeber of team.</value>
-  </data>
   <data name="TeamCreatedSuccessfully" xml:space="preserve">
       <value>Team created successfully.</value>
   </data>
@@ -481,5 +472,44 @@
   </data>
   <data name="StudentNumbersIsRequired" xml:space="preserve">
       <value>Student numbers is required.</value>
+  </data>
+  <data name="TeamSizeOutOfLimit" xml:space="preserve">
+      <value>Team size is out of limit.</value>
+  </data>
+  <data name="SomeStudentsNotInClass" xml:space="preserve">
+      <value>Some students not in class.</value>
+  </data>
+  <data name="SomeStudentsAlreadyInAnotherTeam" xml:space="preserve">
+      <value>Some students already in another team.</value>
+  </data>
+  <data name="LeaderStudentNotInTeam" xml:space="preserve">
+      <value>Leader student not in team.</value>
+  </data>
+  <data name="SomeAddingStudentAlreadyInTeam" xml:space="preserve">
+      <value>Some adding student already in team.</value>
+  </data>
+  <data name="SomeDeleteingStudentNotInTeam" xml:space="preserve">
+      <value>Some deleteing student not in team.</value>
+  </data>
+  <data name="MustSpecifyNewLeaderWhenDeletingCurrentLeader" xml:space="preserve">
+      <value>Must specify new leader when deleting current leader.</value>
+  </data>
+  <data name="TeamTemplateFileGeneratedSuccessfully" xml:space="preserve">
+      <value>Team template file generated successfully.</value>
+  </data>
+  <data name="TeamFileValidatedSuccessfuly" xml:space="preserve">
+      <value>Team file validated successfuly.</value>
+  </data>
+  <data name="TeamsCreatedSuccessfully" xml:space="preserve">
+      <value>Teams created successfully.</value>
+  </data>
+  <data name="LeaderStudentNumberMaxLength" xml:space="preserve">
+      <value>Leader student number max length.</value>
+  </data>
+  <data name="DuplicateStudentNumbers" xml:space="preserve">
+      <value>Duplicate student numbers.</value>
+  </data>
+  <data name="InvalidStudentNumber" xml:space="preserve">
+      <value>Invalid student number.</value>
   </data>
 </root>

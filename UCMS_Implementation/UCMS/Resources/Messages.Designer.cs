@@ -250,6 +250,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Duplicate student numbers..
+        /// </summary>
+        public static string DuplicateStudentNumbers {
+            get {
+                return ResourceManager.GetString("DuplicateStudentNumbers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Email is already taken..
         /// </summary>
         public static string EmailAlreadyTaken {
@@ -367,6 +376,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid student number..
+        /// </summary>
+        public static string InvalidStudentNumber {
+            get {
+                return ResourceManager.GetString("InvalidStudentNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid token.
         /// </summary>
         public static string InvalidToken {
@@ -376,11 +394,11 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Leader student is not memeber of team..
+        ///   Looks up a localized string similar to Leader student not in team..
         /// </summary>
-        public static string LeaderStudentIsNotMemeberOfTeam {
+        public static string LeaderStudentNotInTeam {
             get {
-                return ResourceManager.GetString("LeaderStudentIsNotMemeberOfTeam", resourceCulture);
+                return ResourceManager.GetString("LeaderStudentNotInTeam", resourceCulture);
             }
         }
         
@@ -390,6 +408,15 @@ namespace UCMS.Resources {
         public static string LeaderStudentNumberIsRequired {
             get {
                 return ResourceManager.GetString("LeaderStudentNumberIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Leader student number max length..
+        /// </summary>
+        public static string LeaderStudentNumberMaxLength {
+            get {
+                return ResourceManager.GetString("LeaderStudentNumberMaxLength", resourceCulture);
             }
         }
         
@@ -435,6 +462,15 @@ namespace UCMS.Resources {
         public static string LogoutSuccessfulyMessage {
             get {
                 return ResourceManager.GetString("LogoutSuccessfulyMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Must specify new leader when deleting current leader..
+        /// </summary>
+        public static string MustSpecifyNewLeaderWhenDeletingCurrentLeader {
+            get {
+                return ResourceManager.GetString("MustSpecifyNewLeaderWhenDeletingCurrentLeader", resourceCulture);
             }
         }
         
@@ -637,11 +673,38 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Some student numbers not found..
+        ///   Looks up a localized string similar to Some adding student already in team..
         /// </summary>
-        public static string SomeStudentNumbersNotFound {
+        public static string SomeAddingStudentAlreadyInTeam {
             get {
-                return ResourceManager.GetString("SomeStudentNumbersNotFound", resourceCulture);
+                return ResourceManager.GetString("SomeAddingStudentAlreadyInTeam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Some deleteing student not in team..
+        /// </summary>
+        public static string SomeDeleteingStudentNotInTeam {
+            get {
+                return ResourceManager.GetString("SomeDeleteingStudentNotInTeam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Some students already in another team..
+        /// </summary>
+        public static string SomeStudentsAlreadyInAnotherTeam {
+            get {
+                return ResourceManager.GetString("SomeStudentsAlreadyInAnotherTeam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Some students not in class..
+        /// </summary>
+        public static string SomeStudentsNotInClass {
+            get {
+                return ResourceManager.GetString("SomeStudentsNotInClass", resourceCulture);
             }
         }
         
@@ -669,15 +732,6 @@ namespace UCMS.Resources {
         public static string StartDateCanNotBeLaterThanEndDatte {
             get {
                 return ResourceManager.GetString("StartDateCanNotBeLaterThanEndDatte", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to StudentNotFound.
-        /// </summary>
-        public static string StudentNotFound {
-            get {
-                return ResourceManager.GetString("StudentNotFound", resourceCulture);
             }
         }
         
@@ -727,6 +781,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Team file validated successfuly..
+        /// </summary>
+        public static string TeamFileValidatedSuccessfuly {
+            get {
+                return ResourceManager.GetString("TeamFileValidatedSuccessfuly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Team leader is not memeber of team..
         /// </summary>
         public static string TeamLeaderIsNotMemeberOfTeam {
@@ -763,11 +826,38 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Teams created successfully..
+        /// </summary>
+        public static string TeamsCreatedSuccessfully {
+            get {
+                return ResourceManager.GetString("TeamsCreatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Teams fetched successfully..
         /// </summary>
         public static string TeamsFetchedSuccessfully {
             get {
                 return ResourceManager.GetString("TeamsFetchedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Team size is out of limit..
+        /// </summary>
+        public static string TeamSizeOutOfLimit {
+            get {
+                return ResourceManager.GetString("TeamSizeOutOfLimit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Team template file generated successfully..
+        /// </summary>
+        public static string TeamTemplateFileGeneratedSuccessfully {
+            get {
+                return ResourceManager.GetString("TeamTemplateFileGeneratedSuccessfully", resourceCulture);
             }
         }
         

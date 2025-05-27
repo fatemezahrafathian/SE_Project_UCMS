@@ -166,9 +166,13 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.StudentTeams, opt => opt.Ignore());
         
         CreateMap<Team, GetTeamForInstructorDto>();
-
+        CreateMap<Team, GetTeamForStudentDto>();
+        CreateMap<Team, GetTeamPreviewDto>();
+        
         CreateMap<StudentTeam, GetStudentTeamForInstructorDto>()
             .ForMember(dest => dest.StudentNumber, opt => opt.MapFrom(src => src.Student.StudentNumber))
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.Student.User.FirstName} {src.Student.User.LastName}"));
+        CreateMap<StudentTeam, GetStudentTeamForStudentDto>()
             .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.Student.User.FirstName} {src.Student.User.LastName}"));
         
         CreateMap<PatchTeamDto, Team>()

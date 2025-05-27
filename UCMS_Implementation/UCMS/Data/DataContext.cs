@@ -92,10 +92,10 @@ public class DataContext : DbContext
                 .HasMaxLength(300);
 
             entity.Property(p => p.CreatedAt)
-                .HasDefaultValueSql("GETUTCDATE()");
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             entity.Property(p => p.UpdatedAt)
-                .HasDefaultValueSql("GETUTCDATE()");
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             entity.HasOne(p => p.Class)
                 .WithMany(c => c.Projects)

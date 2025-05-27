@@ -53,7 +53,7 @@ public class ProjectService: IProjectService
         var validator = new CreateProjectDtoValidator(_fileService);
         
         var result = await validator.ValidateAsync(dto);
-
+        
         if (!result.IsValid)
         {
             var errorMessage = result.Errors.First().ErrorMessage;
