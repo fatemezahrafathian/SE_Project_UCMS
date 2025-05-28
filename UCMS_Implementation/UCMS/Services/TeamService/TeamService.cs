@@ -107,160 +107,170 @@ public class TeamService : ITeamService
         return ServiceResponseFactory.Success(responseDto, Messages.TeamCreatedSuccessfully);
     }
 
-        public async Task<ServiceResponse<List<GetTeamFileValidationResultDto>>> CreateTeams(int projectId, IFormFile file)
+public async Task<ServiceResponse<List<GetTeamFileValidationResultDto>>> CreateTeams(int projectId, IFormFile file)
+{
+    var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+
+    var project = await _projectRepository.GetSimpleProjectByIdAsync(projectId);
+    if (project is null)
     {
-        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+        return ServiceResponseFactory.Failure<List<GetTeamFileValidationResultDto>>(Messages.ProjectNotFound);
+    }
 
-        var project = await _projectRepository.GetSimpleProjectByIdAsync(projectId);
-        if (project is null)
+    if (!await _projectRepository.IsProjectForInstructorAsync(projectId, user!.Instructor!.Id))
+    {
+        return ServiceResponseFactory.Failure<List<GetTeamFileValidationResultDto>>(Messages.CanNotAccessTheProject);
+    }
+
+    XLWorkbook workbook;
+    IXLWorksheet worksheet;
+
+    try
+    {
+        workbook = new XLWorkbook(file.OpenReadStream());
+        worksheet = workbook.Worksheet(_templateSettings.WorksheetName);
+    }
+    catch
+    {
+        return ServiceResponseFactory.Failure<List<GetTeamFileValidationResultDto>>(Messages.InvalidTemplateFileFormat);
+    }
+
+    worksheet.RightToLeft = true;
+
+    int expectedColumns = (int)(2 + (project.GroupSize - 1));
+    for (int i = 1; i <= expectedColumns; i++)
+    {
+        var expectedHeader = i switch
         {
-            return ServiceResponseFactory.Failure<List<GetTeamFileValidationResultDto>>(Messages.ProjectNotFound);
-        }
+            1 => _templateSettings.ColumnHeaders[0],
+            2 => _templateSettings.ColumnHeaders[1],
+            _ => $"{_templateSettings.ColumnHeaders[2]}{i - 2}"
+        };
 
-        if (!await _projectRepository.IsProjectForInstructorAsync(projectId, user!.Instructor!.Id))
-        {
-            return ServiceResponseFactory.Failure<List<GetTeamFileValidationResultDto>>(Messages.CanNotAccessTheProject);
-        }
+        var actualHeader = worksheet.Cell(1, i).GetString().Trim();
 
-        XLWorkbook workbook;
-        IXLWorksheet worksheet;
-
-        try
-        {
-            workbook = new XLWorkbook(file.OpenReadStream());
-            worksheet = workbook.Worksheet(_templateSettings.WorksheetName);
-        }
-        catch
+        if (actualHeader != expectedHeader)
         {
             return ServiceResponseFactory.Failure<List<GetTeamFileValidationResultDto>>(Messages.InvalidTemplateFileFormat);
         }
-
-        worksheet.RightToLeft = true;
-
-        int expectedColumns = (int)(2 + (project.GroupSize - 1));
-        for (int i = 1; i <= expectedColumns; i++)
-        {
-            var expectedHeader = i switch
-            {
-                1 => _templateSettings.ColumnHeaders[0],
-                2 => _templateSettings.ColumnHeaders[1],
-                _ => $"{_templateSettings.ColumnHeaders[2]}{i - 2}"
-            };
-
-            var actualHeader = worksheet.Cell(1, i).GetString().Trim();
-
-            if (actualHeader != expectedHeader)
-            {
-                return ServiceResponseFactory.Failure<List<GetTeamFileValidationResultDto>>(Messages.InvalidTemplateFileFormat);
-            }
-        }
-
-        var validator = new CreateBulkTeamDtoValidator();
-        var validationResults = new List<GetTeamFileValidationResultDto>();
-
-        var allStudentNumbersOfClass = await _studentClassRepository.GetStudentNumbersOfClass(project.ClassId);
-        var allStudentNumbersOfTeams = await _teamRepository.GetStudentNumbersOfProjectTeams(projectId);
-
-        int totalColumns = (int)(1 + project.GroupSize);
-        int row = 2;
-
-        bool RowHasAnyData(IXLWorksheet sheet, int rowNum, int totalCols)
-        {
-            return Enumerable.Range(1, totalCols)
-                .Any(col => !string.IsNullOrWhiteSpace(sheet.Cell(rowNum, col).GetString()));
-        }
-
-        var validTeams = new List<CreateTeamDto>();
-        var allStudentNumbersToFetch = new HashSet<string>();
-
-        while (RowHasAnyData(worksheet, row, totalColumns))
-        {
-            var teamName = worksheet.Cell(row, 1).GetString().Trim();
-            var leaderNumber = worksheet.Cell(row, 2).GetString().Trim();
-            var studentNumbers = new List<string>();
-
-            for (int i = 2; i < 2 + project.GroupSize; i++)
-            {
-                var studentNumber = worksheet.Cell(row, i).GetString().Trim();
-                if (!string.IsNullOrWhiteSpace(studentNumber))
-                    studentNumbers.Add(studentNumber);
-            }
-
-            var dto = new CreateTeamDto
-            {
-                Name = teamName,
-                LeaderStudentNumber = leaderNumber,
-                StudentNumbers = studentNumbers
-            };
-
-            var errors = new List<string>();
-
-            var validationResult = await validator.ValidateAsync(dto);
-            if (!validationResult.IsValid)
-            {
-                errors.AddRange(validationResult.Errors.Select(e => e.ErrorMessage));
-            }
-
-            var notInClass = studentNumbers.Except(allStudentNumbersOfClass).ToList();
-            if (notInClass.Any())
-            {
-                errors.Add(Messages.SomeStudentsNotInClass);
-            }
-
-            var inAnotherTeam = studentNumbers.Intersect(allStudentNumbersOfTeams).ToList();
-            if (inAnotherTeam.Any())
-            {
-                errors.Add(Messages.SomeStudentsAlreadyInAnotherTeam);
-            }
-
-            validationResults.Add(new GetTeamFileValidationResultDto
-            {
-                RowNumber = row,
-                Team = dto,
-                IsValid = !errors.Any(),
-                Errors = errors
-            });
-
-            if (!errors.Any())
-            {
-                validTeams.Add(dto);
-                foreach (var sn in studentNumbers)
-                {
-                    allStudentNumbersToFetch.Add(sn);
-                }
-            }
-
-            row++;
-        }
-
-        if (validationResults.Any(r => !r.IsValid))
-        {
-            return ServiceResponseFactory.Failure(validationResults, Messages.TeamsCanNotBeCreated);
-        }
-
-        var students = await _studentRepository.GetStudentsByStudentNumbersAsync(allStudentNumbersToFetch.ToList());
-        var studentDict = students.ToDictionary(s => s.StudentNumber, s => s);
-
-        var teams = new List<Team>();
-
-        foreach (var teamDto in validTeams)
-        {
-            var team = _mapper.Map<Team>(teamDto);
-            team.ProjectId = projectId;
-
-            team.StudentTeams = teamDto.StudentNumbers.Select(studentNumber => new StudentTeam
-            {
-                StudentId = studentDict[studentNumber].Id,
-                Role = studentNumber == teamDto.LeaderStudentNumber ? TeamRole.Leader : TeamRole.Member
-            }).ToList();
-
-            teams.Add(team);
-        }
-
-        await _teamRepository.AddTeamsAsync(teams);
-
-        return ServiceResponseFactory.Success(validationResults, Messages.TeamsCreatedSuccessfully);
     }
+
+    var validator = new CreateBulkTeamDtoValidator();
+    var validationResults = new List<GetTeamFileValidationResultDto>();
+
+    var allStudentNumbersOfClass = await _studentClassRepository.GetStudentNumbersOfClass(project.ClassId);
+    var allStudentNumbersOfTeams = await _teamRepository.GetStudentNumbersOfProjectTeams(projectId);
+
+    int totalColumns = (int)(1 + project.GroupSize); // not nullable
+    int row = 2;
+
+    bool RowHasAnyData(IXLWorksheet sheet, int rowNum, int totalCols)
+    {
+        return Enumerable.Range(1, totalCols)
+            .Any(col => !string.IsNullOrWhiteSpace(sheet.Cell(rowNum, col).GetString()));
+    }
+
+    var validTeams = new List<(CreateTeamDto dto, int rowNumber)>();
+    var allStudentNumbersToFetch = new HashSet<string>();
+
+    while (RowHasAnyData(worksheet, row, totalColumns))
+    {
+        var teamName = worksheet.Cell(row, 1).GetString().Trim();
+        var leaderNumber = worksheet.Cell(row, 2).GetString().Trim();
+        var studentNumbers = new List<string>();
+
+        for (int i = 2; i < 2 + project.GroupSize; i++)
+        {
+            var studentNumber = worksheet.Cell(row, i).GetString().Trim();
+            if (!string.IsNullOrWhiteSpace(studentNumber))
+                studentNumbers.Add(studentNumber);
+        }
+
+        var dto = new CreateTeamDto
+        {
+            Name = teamName,
+            LeaderStudentNumber = leaderNumber,
+            StudentNumbers = studentNumbers
+        };
+
+        var errors = new List<string>();
+
+        var validationResult = await validator.ValidateAsync(dto);
+        if (!validationResult.IsValid)
+        {
+            errors.AddRange(validationResult.Errors.Select(e => e.ErrorMessage));
+        }
+
+        var notInClass = studentNumbers.Except(allStudentNumbersOfClass).ToList();
+        if (notInClass.Any())
+        {
+            errors.Add(Messages.SomeStudentsNotInClass);
+        }
+
+        var inAnotherTeam = studentNumbers.Intersect(allStudentNumbersOfTeams).ToList();
+        if (inAnotherTeam.Any())
+        {
+            errors.Add(Messages.SomeStudentsAlreadyInAnotherTeam);
+        }
+
+        validationResults.Add(new GetTeamFileValidationResultDto
+        {
+            RowNumber = row,
+            IsValid = !errors.Any(),
+            Errors = errors
+        });
+
+        if (!errors.Any())
+        {
+            validTeams.Add((dto, row));
+            foreach (var sn in studentNumbers)
+            {
+                allStudentNumbersToFetch.Add(sn);
+            }
+        }
+
+        row++;
+    }
+
+    if (validationResults.Any(r => !r.IsValid))
+    {
+        return ServiceResponseFactory.Failure(validationResults, Messages.TeamsCanNotBeCreated);
+    }
+
+    var students = await _studentRepository.GetStudentsByStudentNumbersAsync(allStudentNumbersToFetch.ToList());
+    var studentDict = students.ToDictionary(s => s.StudentNumber, s => s);
+
+    var teams = new List<Team>();
+
+    foreach (var (teamDto, _) in validTeams)
+    {
+        var team = _mapper.Map<Team>(teamDto);
+        team.ProjectId = projectId;
+
+        team.StudentTeams = teamDto.StudentNumbers.Select(studentNumber => new StudentTeam
+        {
+            StudentId = studentDict[studentNumber].Id,
+            Role = studentNumber == teamDto.LeaderStudentNumber ? TeamRole.Leader : TeamRole.Member
+        }).ToList();
+
+        teams.Add(team);
+    }
+
+    await _teamRepository.AddTeamsAsync(teams);
+
+    for (int i = 0; i < validTeams.Count; i++)
+    {
+        var savedTeam = teams[i];
+        var previewDto = _mapper.Map<GetTeamPreviewDto>(savedTeam);
+
+        var rowNumber = validTeams[i].rowNumber;
+
+        var resultDto = validationResults.First(r => r.RowNumber == rowNumber);
+        resultDto.Team = previewDto;
+    }
+
+    return ServiceResponseFactory.Success(validationResults, Messages.TeamsCreatedSuccessfully);
+}
 
     public async Task<ServiceResponse<GetTeamTemplateFileDto>> GetTeamTemplateFile(int projectId)
     {
