@@ -385,6 +385,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid template file format..
+        /// </summary>
+        public static string InvalidTemplateFileFormat {
+            get {
+                return ResourceManager.GetString("InvalidTemplateFileFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid token.
         /// </summary>
         public static string InvalidToken {
@@ -822,6 +831,15 @@ namespace UCMS.Resources {
         public static string TeamNotFound {
             get {
                 return ResourceManager.GetString("TeamNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string TeamsCanNotBeCreated {
+            get {
+                return ResourceManager.GetString("TeamsCanNotBeCreated", resourceCulture);
             }
         }
         

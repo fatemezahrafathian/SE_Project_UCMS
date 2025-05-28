@@ -61,6 +61,8 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.Configure<ImageUploadSettings>(
     builder.Configuration.GetSection("ImageUploadSettings"));
 
+builder.Services.Configure<TeamTemplateSettings>(
+    builder.Configuration.GetSection("TeamTemplateSettings"));
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 // var mapperConfig = new MapperConfiguration(cfg =>

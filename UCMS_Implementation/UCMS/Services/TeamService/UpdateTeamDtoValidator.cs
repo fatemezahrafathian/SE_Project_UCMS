@@ -9,6 +9,9 @@ public class UpdateTeamDtoValidator : AbstractValidator<PatchTeamDto>
 
     public UpdateTeamDtoValidator()
     {
+        ClassLevelCascadeMode = CascadeMode.Stop;
+        RuleLevelCascadeMode = CascadeMode.Stop;
+
         When(x => x.Name != null, () =>
         {
             RuleFor(x => x.Name)

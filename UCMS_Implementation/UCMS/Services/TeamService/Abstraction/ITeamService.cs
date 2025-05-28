@@ -13,6 +13,5 @@ public interface ITeamService
     Task<ServiceResponse<string>> DeleteTeam(int teamId); 
     Task<ServiceResponse<GetTeamForInstructorDto>> UpdateTeamPartial(int teamId, PatchTeamDto dto); 
     Task<ServiceResponse<GetTeamTemplateFileDto>> GetTeamTemplateFile(int projectId);
-    Task<ServiceResponse<List<GetTeamFileValidationResultDto>>> ValidateTeamFileAsync(int projectId, IFormFile file); 
-    Task<ServiceResponse<string>> CreateTeamsFromFileAsync(int projectId, List<CreateTeamDto> validTeams);
+    Task<ServiceResponse<List<GetTeamFileValidationResultDto>>> CreateTeams(int projectId, IFormFile file); 
 }
