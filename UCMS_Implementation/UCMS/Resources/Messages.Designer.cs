@@ -150,6 +150,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ClassCantBeAccessed.
+        /// </summary>
+        public static string ClassCantBeAccessed {
+            get {
+                return ResourceManager.GetString("ClassCantBeAccessed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Class was created successfully..
         /// </summary>
         public static string ClassCreatedSuccessfully {
@@ -285,6 +294,96 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ExerciseAlreadyExists.
+        /// </summary>
+        public static string ExerciseAlreadyExists {
+            get {
+                return ResourceManager.GetString("ExerciseAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExerciseCantBeAccessed.
+        /// </summary>
+        public static string ExerciseCantBeAccessed {
+            get {
+                return ResourceManager.GetString("ExerciseCantBeAccessed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExerciseCreatedSuccessfully.
+        /// </summary>
+        public static string ExerciseCreatedSuccessfully {
+            get {
+                return ResourceManager.GetString("ExerciseCreatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExerciseDeletedSuccessfully.
+        /// </summary>
+        public static string ExerciseDeletedSuccessfully {
+            get {
+                return ResourceManager.GetString("ExerciseDeletedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExerciseFileDownloadedSuccessfully.
+        /// </summary>
+        public static string ExerciseFileDownloadedSuccessfully {
+            get {
+                return ResourceManager.GetString("ExerciseFileDownloadedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExerciseOrFileNotFound.
+        /// </summary>
+        public static string ExerciseOrFileNotFound {
+            get {
+                return ResourceManager.GetString("ExerciseOrFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExerciseRetrievedSuccessfully.
+        /// </summary>
+        public static string ExerciseRetrievedSuccessfully {
+            get {
+                return ResourceManager.GetString("ExerciseRetrievedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExerciseScoreMustBePositive.
+        /// </summary>
+        public static string ExerciseScoreMustBePositive {
+            get {
+                return ResourceManager.GetString("ExerciseScoreMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExercisesRetrievedSuccessfully.
+        /// </summary>
+        public static string ExercisesRetrievedSuccessfully {
+            get {
+                return ResourceManager.GetString("ExercisesRetrievedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExerciseUpdatedSuccessfully.
+        /// </summary>
+        public static string ExerciseUpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("ExerciseUpdatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Expired code.
         /// </summary>
         public static string ExpiredCode {
@@ -353,6 +452,15 @@ namespace UCMS.Resources {
         public static string InvalidInputMessage {
             get {
                 return ResourceManager.GetString("InvalidInputMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to InvalidInstructorForThisClass.
+        /// </summary>
+        public static string InvalidInstructorForThisClass {
+            get {
+                return ResourceManager.GetString("InvalidInstructorForThisClass", resourceCulture);
             }
         }
         

@@ -616,4 +616,40 @@
   <data name="TeamsCanNotBeCreated" xml:space="preserve">
       <value />
   </data>
+  <data name="InvalidInstructorForThisClass" xml:space="preserve">
+    <value>InvalidInstructorForThisClass</value>
+  </data>
+  <data name="ExerciseAlreadyExists" xml:space="preserve">
+    <value>ExerciseAlreadyExists</value>
+  </data>
+  <data name="ExerciseCreatedSuccessfully" xml:space="preserve">
+    <value>ExerciseCreatedSuccessfully</value>
+  </data>
+  <data name="ExerciseScoreMustBePositive" xml:space="preserve">
+    <value>ExerciseScoreMustBePositive</value>
+  </data>
+  <data name="ExerciseCantBeAccessed" xml:space="preserve">
+    <value>ExerciseCantBeAccessed</value>
+  </data>
+  <data name="ExerciseRetrievedSuccessfully" xml:space="preserve">
+    <value>ExerciseRetrievedSuccessfully</value>
+  </data>
+  <data name="ExerciseUpdatedSuccessfully" xml:space="preserve">
+    <value>ExerciseUpdatedSuccessfully</value>
+  </data>
+  <data name="ExerciseDeletedSuccessfully" xml:space="preserve">
+    <value>ExerciseDeletedSuccessfully</value>
+  </data>
+  <data name="ExercisesRetrievedSuccessfully" xml:space="preserve">
+    <value>ExercisesRetrievedSuccessfully</value>
+  </data>
+  <data name="ExerciseOrFileNotFound" xml:space="preserve">
+    <value>ExerciseOrFileNotFound</value>
+  </data>
+  <data name="ExerciseFileDownloadedSuccessfully" xml:space="preserve">
+    <value>ExerciseFileDownloadedSuccessfully</value>
+  </data>
+  <data name="ClassCantBeAccessed" xml:space="preserve">
+    <value>ClassCantBeAccessed</value>
+  </data>
 </root>
