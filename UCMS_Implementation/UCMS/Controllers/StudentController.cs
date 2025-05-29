@@ -26,11 +26,11 @@ namespace UCMS.Controllers
             return Ok(await _studentService.GetAllStudents());
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("profile/specialized-info")]
         [Authorize]
-        public async Task<ActionResult> GetStudentById(int id)
+        public async Task<ActionResult> GetSpecializedInfo()
         {
-            var response = await _studentService.GetStudentById(id);
+            var response = await _studentService.GetSpecializedInfo();
 
             if (response.Data == null) return NotFound(response.Message);
 
@@ -54,9 +54,9 @@ namespace UCMS.Controllers
         {
             var result = await _studentService.EditStudentAsync(editStudentDto);
 
-            if (!result.Success) return NotFound();
+            if (!result.Success) return NotFound(result.Message);
 
-            return Ok();
+            return Ok(result.Message);
         }
 
     }

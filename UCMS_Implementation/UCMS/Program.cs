@@ -21,6 +21,8 @@ using UCMS.Repositories.RoleRepository;
 using UCMS.Repositories.RoleRepository.Abstraction;
 using UCMS.Repositories.StudentRepository;
 using UCMS.Repositories.StudentRepository.Abstraction;
+using UCMS.Repositories.TeamRepository;
+using UCMS.Repositories.TeamRepository.Abstraction;
 using UCMS.Repositories.UserRepository;
 using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Services.AuthService;
@@ -44,9 +46,12 @@ using UCMS.Services.RoleService;
 using UCMS.Services.RoleService.Abstraction;
 using UCMS.Services.StudentService;
 using UCMS.Services.StudentService.Abstraction;
+using UCMS.Services.TeamService;
+using UCMS.Services.TeamService.Abstraction;
 using UCMS.Services.TokenService;
 using UCMS.Services.TokenService.Abstraction;
 using UCMS.Services.UserService;
+using UCMS.Services.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +66,8 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.Configure<ImageUploadSettings>(
     builder.Configuration.GetSection("ImageUploadSettings"));
 
+builder.Services.Configure<TeamTemplateSettings>(
+    builder.Configuration.GetSection("TeamTemplateSettings"));
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 // var mapperConfig = new MapperConfiguration(cfg =>
@@ -91,8 +98,8 @@ builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<IStudentService, StudentService>();
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<IInstructorService, InstructorService>();
-builder.Services.AddScoped<ICookieService,CookieService>();
-builder.Services.AddScoped<ITokenService,TokenService>();
+builder.Services.AddScoped<ICookieService, CookieService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IOneTimeCodeService, OneTimeCodeService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -102,6 +109,9 @@ builder.Services.AddScoped<IClassRepository, ClassRepository>();
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IStudentClassService, StudentClassService>();
+
+builder.Services.AddTransient<UrlBuilder>();
+
 
 builder.Services.AddScoped<IStudentClassRepository, StudentClassRepository>();
 
@@ -115,8 +125,12 @@ builder.Services.AddScoped<IPhaseRepository, PhaseRepository>();
 
 
 
+builder.Services.AddScoped<ITeamService, TeamService>();
+builder.Services.AddScoped<ITeamRepository, TeamRepository>();
+
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddAuthentication(options =>{
+builder.Services.AddAuthentication(options =>
+{
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
@@ -194,6 +208,7 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // app.UseRouting();
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseCors("AllowLocalhost5173");
 app.UseAuthentication();
 app.UseMiddleware<AuthenticationMiddleware>();

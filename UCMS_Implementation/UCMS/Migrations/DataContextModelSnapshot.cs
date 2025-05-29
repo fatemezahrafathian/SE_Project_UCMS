@@ -160,6 +160,64 @@ namespace UCMS.Migrations
                     b.ToTable("Instructors");
                 });
 
+            modelBuilder.Entity("UCMS.Models.Project", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClassId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("GroupSize")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ProjectFilePath")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<int>("ProjectType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("TotalScore")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassId");
+
+                    b.HasIndex("ProjectType");
+
+                    b.ToTable("Projects");
+                });
+
             modelBuilder.Entity("UCMS.Models.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -211,6 +269,63 @@ namespace UCMS.Migrations
                         .IsUnique();
 
                     b.ToTable("Students");
+                });
+
+            modelBuilder.Entity("UCMS.Models.StudentTeam", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentId");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("StudentTeams");
+                });
+
+            modelBuilder.Entity("UCMS.Models.Team", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("Teams");
                 });
 
             modelBuilder.Entity("UCMS.Models.User", b =>
@@ -355,6 +470,17 @@ namespace UCMS.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("UCMS.Models.Project", b =>
+                {
+                    b.HasOne("UCMS.Models.Class", "Class")
+                        .WithMany("Projects")
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Class");
+                });
+
             modelBuilder.Entity("UCMS.Models.Student", b =>
                 {
                     b.HasOne("UCMS.Models.User", "User")
@@ -364,6 +490,36 @@ namespace UCMS.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UCMS.Models.StudentTeam", b =>
+                {
+                    b.HasOne("UCMS.Models.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UCMS.Models.Team", "Team")
+                        .WithMany("StudentTeams")
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Student");
+
+                    b.Navigation("Team");
+                });
+
+            modelBuilder.Entity("UCMS.Models.Team", b =>
+                {
+                    b.HasOne("UCMS.Models.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("UCMS.Models.User", b =>
@@ -403,6 +559,8 @@ namespace UCMS.Migrations
                 {
                     b.Navigation("ClassStudents");
 
+                    b.Navigation("Projects");
+
                     b.Navigation("Schedules");
                 });
 
@@ -421,76 +579,17 @@ namespace UCMS.Migrations
                     b.Navigation("ClassStudents");
                 });
 
+            modelBuilder.Entity("UCMS.Models.Team", b =>
+                {
+                    b.Navigation("StudentTeams");
+                });
+
             modelBuilder.Entity("UCMS.Models.User", b =>
                 {
                     b.Navigation("Instructor");
 
                     b.Navigation("Student");
                 });
-            modelBuilder.Entity("UCMS.Models.Project", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("integer");
-
-                NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                b.Property<string>("Title")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("character varying(100)");
-
-                b.Property<string>("Description")
-                    .HasMaxLength(500)
-                    .HasColumnType("character varying(500)");
-
-                b.Property<int>("TotalScore")
-                    .HasColumnType("integer");
-
-                b.Property<string>("ProjectType")
-                    .IsRequired()
-                    .HasColumnType("integer");
-                    // .HasColumnType("text"); // چون از enum به string تبدیل شده است
-
-                b.Property<int?>("GroupSize")
-                    .HasColumnType("integer");
-
-                b.Property<DateTime>("StartDate")
-                    .HasColumnType("timestamp with time zone");
-
-                b.Property<DateTime>("EndDate")
-                    .HasColumnType("timestamp with time zone");
-
-                b.Property<string>("ProjectFilePath")
-                    .HasMaxLength(300)
-                    .HasColumnType("character varying(300)");
-
-                b.Property<DateTime>("CreatedAt")
-                    .HasColumnType("timestamp with time zone")
-                    .HasDefaultValueSql("NOW()");
-
-                b.Property<DateTime>("UpdatedAt")
-                    .HasColumnType("timestamp with time zone")
-                    .HasDefaultValueSql("NOW()");
-
-                b.Property<int>("ClassId")
-                    .HasColumnType("integer");
-
-                b.HasKey("Id");
-
-                b.HasIndex("ClassId");
-
-                b.HasIndex("ProjectType"); 
-
-                b.ToTable("Projects");
-
-                b.HasOne("UCMS.Models.Class", "Class")
-                    .WithMany("Projects")
-                    .HasForeignKey("ClassId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-            });
-
 #pragma warning restore 612, 618
         }
     }

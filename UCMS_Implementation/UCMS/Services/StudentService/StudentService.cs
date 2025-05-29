@@ -6,6 +6,7 @@ using UCMS.Models;
 using UCMS.Repositories.StudentRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.StudentService.Abstraction;
+using UCMS.Services.Utils;
 
 namespace UCMS.Services.StudentService
 {
@@ -15,13 +16,15 @@ namespace UCMS.Services.StudentService
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<StudentService> _logger;
+        private readonly UrlBuilder _urlBuilder;
 
-        public StudentService(IStudentRepository studentRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<StudentService> logger)
+        public StudentService(IStudentRepository studentRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<StudentService> logger, UrlBuilder urlBuilder)
         {
             _studentRepository = studentRepository;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
+            _urlBuilder = urlBuilder; 
         }
 
 
@@ -40,17 +43,19 @@ namespace UCMS.Services.StudentService
             }
 
             StudentProfileDto responseStudent = _mapper.Map<StudentProfileDto>(student);
+            responseStudent.ProfileImagePath = _urlBuilder.BuildUrl(_httpContextAccessor, responseStudent.ProfileImagePath);
             return new ServiceResponse<StudentProfileDto>
             {
                 Data = responseStudent,
                 Success = true,
-                Message = Messages.UserFound
+                Message = string.Format(Messages.UserFound, user.Id)
             };
         }
 
-        public async Task<ServiceResponse<GetStudentDto>> GetStudentById(int studentId)
+        public async Task<ServiceResponse<GetStudentDto>> GetSpecializedInfo()
         {
-            Student? student = await _studentRepository.GetStudentByIdAsync(studentId);
+            var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+            var student = await _studentRepository.GetStudentByUserIdAsync(user.Id);
 
             if (student == null)
             {
@@ -66,7 +71,7 @@ namespace UCMS.Services.StudentService
             {
                 Data = responseStudent,
                 Success = true,
-                Message = Messages.UserFound
+                Message = string.Format(Messages.UserFound, user.Id)
             };
         }
 
@@ -84,14 +89,14 @@ namespace UCMS.Services.StudentService
 
             Student updatedStudent = _mapper.Map(editStudentDto, student);
             await _studentRepository.UpdateStudentAsync(updatedStudent);
-            _logger.LogInformation("Student {} updated successfully", user.Id);
+            _logger.LogInformation("Student {userId} updated successfully", user.Id);
 
             GetStudentDto responseStudent = _mapper.Map<GetStudentDto>(updatedStudent);
             return new ServiceResponse<GetStudentDto>
             {
                 Data = responseStudent,
                 Success = true,
-                Message = Messages.UpdateUser
+                Message = string.Format(Messages.UpdateUser, user.Id)
             };
         }
 
