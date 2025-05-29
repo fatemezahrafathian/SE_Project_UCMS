@@ -15,6 +15,8 @@ public class DataContext : DbContext
     public DbSet<ClassStudent> ClassStudents { get; set; }
     public DbSet<Project> Projects { get; set; }
     
+    public DbSet<Exercise> Exercises { get; set; }
+    
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

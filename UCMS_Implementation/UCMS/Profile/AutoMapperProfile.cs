@@ -1,6 +1,7 @@
 using UCMS.DTOs;
 using UCMS.DTOs.AuthDto;
 using UCMS.DTOs.ClassDto;
+using UCMS.DTOs.ExerciseDto;
 using UCMS.DTOs.ProjectDto;
 using UCMS.DTOs.RoleDto;
 using UCMS.Models;
@@ -177,6 +178,52 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.DueTime, opt => opt.MapFrom(src => src.EndDate.TimeOfDay))  
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.EndDate < DateTime.UtcNow ? ProjectStatus.Completed : (src.StartDate > DateTime.UtcNow ? ProjectStatus.NotStarted : ProjectStatus.InProgress)))
             .ForMember(dest => dest.ClassTitle, opt => opt.MapFrom(src => src.Class.Title)); 
+        CreateMap<CreateExerciseDto, Exercise>()
+            .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.ToUniversalTime()))
+            .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.ToUniversalTime()))
+            .ForMember(dest => dest.ExerciseFilePath, opt => opt.Ignore()) // File should be handled separately
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
+        CreateMap<Exercise, GetExerciseForInstructorDto>()
+            .ForMember(dest => dest.exerciseId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.ExerciseFilePath, opt => opt.MapFrom(src => src.ExerciseFilePath));
+        CreateMap<PatchExerciseDto, Exercise>()
+            .ForMember(dest => dest.ExerciseFilePath, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.ClassId, opt => opt.Ignore())
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) =>
+                srcMember != null &&
+                !(srcMember is string s && string.IsNullOrWhiteSpace(s)) &&
+                !(srcMember is int i && i == 0) &&
+                !(srcMember is DateTime dt && dt == default)
+            ));
+        CreateMap<Exercise, GetExercisesForInstructorDto>()
+            .ForMember(dest => dest.exerciseId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.classTitle, opt => opt.MapFrom(src => src.Class.Title))
+            .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate))
+            .ForMember(dest => dest.Status, 
+                opt => opt.MapFrom(src => calculateExerciseStatus(src.StartDate, src.EndDate)));
 
+        CreateMap<Exercise, GetExerciseForStudentDto>()
+            .ForMember(dest => dest.exerciseId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.ExerciseFilePath, opt => opt.MapFrom(src => src.ExerciseFilePath));
+        CreateMap<Exercise, GetExercisesForStudentDto>()
+            .ForMember(dest => dest.exerciseId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.classTitle, opt => opt.MapFrom(src => src.Class.Title))
+            .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate))
+            .ForMember(dest => dest.Status, 
+                opt => opt.MapFrom(src => calculateExerciseStatus(src.StartDate, src.EndDate)));
+
+    }
+    private static ExerciseStatus calculateExerciseStatus(DateTime start, DateTime end)
+    {
+        var now = DateTime.UtcNow;
+        if (now < start) return ExerciseStatus.NotStarted;
+        if (now >= start && now <= end) return ExerciseStatus.InProgress;
+        return ExerciseStatus.Completed;
     }
 }

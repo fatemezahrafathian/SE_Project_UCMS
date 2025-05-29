@@ -55,4 +55,5 @@ public class Class
     public ICollection<ClassStudent> ClassStudents { get; set; }
     
     public ICollection<Project> Projects { get; set; }
+    public ICollection<Exercise> Exercises { get; set; }
 }

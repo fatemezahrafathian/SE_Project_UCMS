@@ -11,6 +11,8 @@ using UCMS.Middleware;
 using UCMS.Profile;
 using UCMS.Repositories.ClassRepository;
 using UCMS.Repositories.ClassRepository.Abstraction;
+using UCMS.Repositories.ExerciseRepository;
+using UCMS.Repositories.ExerciseRepository.Abstraction;
 using UCMS.Repositories.InstructorRepository;
 using UCMS.Repositories.InstructorRepository.Abstraction;
 using UCMS.Repositories.ProjectRepository;
@@ -29,6 +31,8 @@ using UCMS.Services.CookieService;
 using UCMS.Services.CookieService.Abstraction;
 using UCMS.Services.EmailService;
 using UCMS.Services.EmailService.Abstraction;
+using UCMS.Services.ExerciseService;
+using UCMS.Services.ExerciseService.Abstraction;
 using UCMS.Services.FileService;
 using UCMS.Services.ImageService;
 using UCMS.Services.PasswordService;
@@ -110,6 +114,8 @@ builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.Configure<FileUploadSettings>(builder.Configuration.GetSection("FileUploadSettings"));
 builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
+builder.Services.AddScoped<IExerciseService, ExerciseService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(options =>
