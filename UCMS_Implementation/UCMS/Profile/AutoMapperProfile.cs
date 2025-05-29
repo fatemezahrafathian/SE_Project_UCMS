@@ -208,7 +208,6 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate))
             .ForMember(dest => dest.Status, 
                 opt => opt.MapFrom(src => calculateExerciseStatus(src.StartDate, src.EndDate)));
-            .ForMember(dest => dest.ClassTitle, opt => opt.MapFrom(src => src.Class.Title));
         CreateMap<CreatePhaseDto, Phase>()
             .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.ToUniversalTime()))
             .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.ToUniversalTime()))
@@ -248,14 +247,6 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate))
             .ForMember(dest => dest.Status, 
                 opt => opt.MapFrom(src => calculateExerciseStatus(src.StartDate, src.EndDate)));
-
-    }
-    private static ExerciseStatus calculateExerciseStatus(DateTime start, DateTime end)
-    {
-        var now = DateTime.UtcNow;
-        if (now < start) return ExerciseStatus.NotStarted;
-        if (now >= start && now <= end) return ExerciseStatus.InProgress;
-        return ExerciseStatus.Completed;
         CreateMap<CreateTeamDto, Team>()
             .ForMember(dest => dest.StudentTeams, opt => opt.Ignore());
         
@@ -272,5 +263,13 @@ public class AutoMapperProfile : Profile
         CreateMap<PatchTeamDto, Team>()
             .ForMember(dest => dest.Name,
                 opt => opt.Condition(src => !string.IsNullOrWhiteSpace(src.Name)));
+
+    }
+    private static ExerciseStatus calculateExerciseStatus(DateTime start, DateTime end)
+    {
+        var now = DateTime.UtcNow;
+        if (now < start) return ExerciseStatus.NotStarted;
+        if (now >= start && now <= end) return ExerciseStatus.InProgress;
+        return ExerciseStatus.Completed;
     }
 }
