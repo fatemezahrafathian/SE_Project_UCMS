@@ -77,7 +77,27 @@ namespace UCMS.Controllers
         {
             var response = await _userService.ChangePassword(changePasswordDto);
 
-            if(response.Data == false)
+            if (response.Data == false)
+                return BadRequest(response.Message);
+            return Ok(response);
+        }
+
+        [HttpPost("profile/change-image")]
+        public async Task<ActionResult> UploadProfileImageAsync([FromForm] UploadProfileImageDto uploadProfileImageDto)
+        {
+            var response = await _userService.UploadProfileImageAsync(uploadProfileImageDto);
+
+            if (response.Data == false)
+                return BadRequest(response.Message);
+            return Ok(response);
+        }
+
+        [HttpDelete("profile/remove-image")]
+        public async Task<ActionResult> RemoveProfileImageAsync()
+        {
+            var response = await _userService.RemoveProfileImage();
+
+            if (response.Data == false)
                 return BadRequest(response.Message);
             return Ok(response);
         }

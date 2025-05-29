@@ -313,6 +313,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to عکس مورد نظر یافت نشد..
+        /// </summary>
+        public static string ImageNotFound {
+            get {
+                return ResourceManager.GetString("ImageNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Internal Server Error.
         /// </summary>
         public static string InternalServerError {
@@ -655,6 +664,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to عکس با موفقیت حذف شد..
+        /// </summary>
+        public static string RemoveImage {
+            get {
+                return ResourceManager.GetString("RemoveImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to RemoveStudentFromClassNotSuccessfully.
         /// </summary>
         public static string RemoveStudentFromClassNotSuccessfully {
@@ -939,6 +957,15 @@ namespace UCMS.Resources {
         public static string UpdateUser {
             get {
                 return ResourceManager.GetString("UpdateUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to عکس با موفقیت بارگذاری شد..
+        /// </summary>
+        public static string UploadImage {
+            get {
+                return ResourceManager.GetString("UploadImage", resourceCulture);
             }
         }
         
