@@ -10,5 +10,6 @@ namespace UCMS.Repositories.StudentRepository.Abstraction
         Task UpdateStudentAsync(Student student);
         Task<List<Student>> GetAllStudentsAsync();
         Task<bool> SaveChangesAsync();
+        Task<List<Student>> GetStudentsByStudentNumbersAsync(List<string> studentNumbers);
     }
 }

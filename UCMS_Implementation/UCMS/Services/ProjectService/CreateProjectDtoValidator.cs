@@ -3,7 +3,6 @@ using UCMS.DTOs.ProjectDto;
 using UCMS.Models;
 using UCMS.Resources;
 using UCMS.Services.FileService;
-using UCMS.Services.ImageService;
 
 namespace UCMS.Services.ProjectService;
 public class CreateProjectDtoValidator : AbstractValidator<CreateProjectDto>

@@ -40,10 +40,17 @@ namespace UCMS.Repositories.StudentRepository
         {
             return await _context.SaveChangesAsync() > 0;
         }
-
         public async Task<List<Student>> GetAllStudentsAsync()
         {
             return await _context.Students.ToListAsync();
+        }
+        
+        public async Task<List<Student>> GetStudentsByStudentNumbersAsync(List<string> studentNumbers)
+        {
+            return await _context.Students
+                .Where(s => studentNumbers.Contains(s.StudentNumber!))
+                .Include(s => s.User)
+                .ToListAsync();
         }
     }
 }
