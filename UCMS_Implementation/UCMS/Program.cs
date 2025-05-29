@@ -13,6 +13,8 @@ using UCMS.Repositories.ClassRepository;
 using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Repositories.ExerciseRepository;
 using UCMS.Repositories.ExerciseRepository.Abstraction;
+using UCMS.Repositories.ExamRepository;
+using UCMS.Repositories.ExamRepository.Abstraction;
 using UCMS.Repositories.InstructorRepository;
 using UCMS.Repositories.InstructorRepository.Abstraction;
 using UCMS.Repositories.PhaseRepository;
@@ -35,6 +37,8 @@ using UCMS.Services.CookieService;
 using UCMS.Services.CookieService.Abstraction;
 using UCMS.Services.EmailService;
 using UCMS.Services.EmailService.Abstraction;
+using UCMS.Services.ExamService;
+using UCMS.Services.ExamService.Abstraction;
 using UCMS.Services.ExerciseService;
 using UCMS.Services.ExerciseService.Abstraction;
 using UCMS.Services.FileService;
@@ -134,6 +138,8 @@ builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 builder.Services.AddScoped<IExerciseRepository, ExerciseRepository>();
 builder.Services.AddScoped<IExerciseService, ExerciseService>();
 
+builder.Services.AddScoped<IExamRepository, ExamRepository>();
+builder.Services.AddScoped<IExamService, ExamService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(options =>
 {

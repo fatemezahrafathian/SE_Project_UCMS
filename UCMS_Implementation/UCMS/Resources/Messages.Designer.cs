@@ -240,6 +240,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DateCanNotBeInPast.
+        /// </summary>
+        public static string DateCanNotBeInPast {
+            get {
+                return ResourceManager.GetString("DateCanNotBeInPast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User with id = {0} deleted successfully..
         /// </summary>
         public static string DeleteUser {
@@ -290,6 +299,87 @@ namespace UCMS.Resources {
         public static string EndDateCanNotBeInPast {
             get {
                 return ResourceManager.GetString("EndDateCanNotBeInPast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExamAlreadyExists.
+        /// </summary>
+        public static string ExamAlreadyExists {
+            get {
+                return ResourceManager.GetString("ExamAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExamCantBeAccessed.
+        /// </summary>
+        public static string ExamCantBeAccessed {
+            get {
+                return ResourceManager.GetString("ExamCantBeAccessed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExamCreatedSuccessfully.
+        /// </summary>
+        public static string ExamCreatedSuccessfully {
+            get {
+                return ResourceManager.GetString("ExamCreatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExamDeletedSuccessfully.
+        /// </summary>
+        public static string ExamDeletedSuccessfully {
+            get {
+                return ResourceManager.GetString("ExamDeletedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExamLocationMaxLength.
+        /// </summary>
+        public static string ExamLocationMaxLength {
+            get {
+                return ResourceManager.GetString("ExamLocationMaxLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExamRetrievedSuccessfully.
+        /// </summary>
+        public static string ExamRetrievedSuccessfully {
+            get {
+                return ResourceManager.GetString("ExamRetrievedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExamScoreMustBePositive.
+        /// </summary>
+        public static string ExamScoreMustBePositive {
+            get {
+                return ResourceManager.GetString("ExamScoreMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExamsRetrievedSuccessfully.
+        /// </summary>
+        public static string ExamsRetrievedSuccessfully {
+            get {
+                return ResourceManager.GetString("ExamsRetrievedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExamUpdatedSuccessfully.
+        /// </summary>
+        public static string ExamUpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("ExamUpdatedSuccessfully", resourceCulture);
             }
         }
         

@@ -264,7 +264,7 @@
     <data name="RemoveStudentFromClassSuccessfully" xml:space="preserve">
     <value>RemoveStudentFromClassSuccessfully</value>
   </data>
-    <data name="ListOfStudent" xml:space="preserve">
+  <data name="ListOfStudent" xml:space="preserve">
     <value>ListOfStudent</value>
   </data>
 
@@ -648,6 +648,42 @@
   </data>
   <data name="ExerciseFileDownloadedSuccessfully" xml:space="preserve">
     <value>ExerciseFileDownloadedSuccessfully</value>
+  </data>
+  <data name="ClassCantBeAccessed" xml:space="preserve">
+    <value>ClassCantBeAccessed</value>
+  </data>
+  <data name="ExamScoreMustBePositive" xml:space="preserve">
+    <value>ExamScoreMustBePositive</value>
+  </data>
+  <data name="DateCanNotBeInPast" xml:space="preserve">
+    <value>DateCanNotBeInPast</value>
+  </data>
+  <data name="ExamLocationMaxLength" xml:space="preserve">
+    <value>ExamLocationMaxLength</value>
+  </data>
+  <data name="InvalidInstructorForThisClass" xml:space="preserve">
+    <value>InvalidInstructorForThisClass</value>
+  </data>
+  <data name="ExamAlreadyExists" xml:space="preserve">
+    <value>ExamAlreadyExists</value>
+  </data>
+  <data name="ExamCreatedSuccessfully" xml:space="preserve">
+    <value>ExamCreatedSuccessfully</value>
+  </data>
+  <data name="ExamCantBeAccessed" xml:space="preserve">
+    <value>ExamCantBeAccessed</value>
+  </data>
+  <data name="ExamRetrievedSuccessfully" xml:space="preserve">
+    <value>ExamRetrievedSuccessfully</value>
+  </data>
+  <data name="ExamUpdatedSuccessfully" xml:space="preserve">
+    <value>ExamUpdatedSuccessfully</value>
+  </data>
+  <data name="ExamDeletedSuccessfully" xml:space="preserve">
+    <value>ExamDeletedSuccessfully</value>
+  </data>
+  <data name="ExamsRetrievedSuccessfully" xml:space="preserve">
+    <value>ExamsRetrievedSuccessfully</value>
   </data>
   <data name="ClassCantBeAccessed" xml:space="preserve">
     <value>ClassCantBeAccessed</value>
