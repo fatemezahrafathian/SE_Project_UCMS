@@ -3,6 +3,7 @@ using UCMS.DTOs.AuthDto;
 using UCMS.DTOs.ClassDto;
 using UCMS.DTOs.ProjectDto;
 using UCMS.DTOs.RoleDto;
+using UCMS.DTOs.TeamDto;
 using UCMS.Models;
 
 namespace UCMS.Profile;
@@ -178,5 +179,21 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.EndDate < DateTime.UtcNow ? ProjectStatus.Completed : (src.StartDate > DateTime.UtcNow ? ProjectStatus.NotStarted : ProjectStatus.InProgress)))
             .ForMember(dest => dest.ClassTitle, opt => opt.MapFrom(src => src.Class.Title)); 
 
+        CreateMap<CreateTeamDto, Team>()
+            .ForMember(dest => dest.StudentTeams, opt => opt.Ignore());
+        
+        CreateMap<Team, GetTeamForInstructorDto>();
+        CreateMap<Team, GetTeamForStudentDto>();
+        CreateMap<Team, GetTeamPreviewDto>();
+        
+        CreateMap<StudentTeam, GetStudentTeamForInstructorDto>()
+            .ForMember(dest => dest.StudentNumber, opt => opt.MapFrom(src => src.Student.StudentNumber))
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.Student.User.FirstName} {src.Student.User.LastName}"));
+        CreateMap<StudentTeam, GetStudentTeamForStudentDto>()
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.Student.User.FirstName} {src.Student.User.LastName}"));
+        
+        CreateMap<PatchTeamDto, Team>()
+            .ForMember(dest => dest.Name,
+                opt => opt.Condition(src => !string.IsNullOrWhiteSpace(src.Name)));
     }
 }

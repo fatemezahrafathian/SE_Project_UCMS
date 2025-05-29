@@ -19,6 +19,8 @@ using UCMS.Repositories.RoleRepository;
 using UCMS.Repositories.RoleRepository.Abstraction;
 using UCMS.Repositories.StudentRepository;
 using UCMS.Repositories.StudentRepository.Abstraction;
+using UCMS.Repositories.TeamRepository;
+using UCMS.Repositories.TeamRepository.Abstraction;
 using UCMS.Repositories.UserRepository;
 using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Services.AuthService;
@@ -40,6 +42,8 @@ using UCMS.Services.RoleService;
 using UCMS.Services.RoleService.Abstraction;
 using UCMS.Services.StudentService;
 using UCMS.Services.StudentService.Abstraction;
+using UCMS.Services.TeamService;
+using UCMS.Services.TeamService.Abstraction;
 using UCMS.Services.TokenService;
 using UCMS.Services.TokenService.Abstraction;
 using UCMS.Services.UserService;
@@ -58,6 +62,8 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.Configure<ImageUploadSettings>(
     builder.Configuration.GetSection("ImageUploadSettings"));
 
+builder.Services.Configure<TeamTemplateSettings>(
+    builder.Configuration.GetSection("TeamTemplateSettings"));
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 // var mapperConfig = new MapperConfiguration(cfg =>
@@ -110,6 +116,9 @@ builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.Configure<FileUploadSettings>(builder.Configuration.GetSection("FileUploadSettings"));
 builder.Services.AddScoped<IFileService, FileService>();
+
+builder.Services.AddScoped<ITeamService, TeamService>();
+builder.Services.AddScoped<ITeamRepository, TeamRepository>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(options =>

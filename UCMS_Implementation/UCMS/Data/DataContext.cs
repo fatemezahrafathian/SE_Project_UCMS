@@ -14,7 +14,9 @@ public class DataContext : DbContext
     public DbSet<Student> Students { get; set; }
     public DbSet<ClassStudent> ClassStudents { get; set; }
     public DbSet<Project> Projects { get; set; }
-    
+    public DbSet<Team> Teams { get; set; }
+    public DbSet<StudentTeam> StudentTeams { get; set; }
+
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -90,10 +92,10 @@ public class DataContext : DbContext
                 .HasMaxLength(300);
 
             entity.Property(p => p.CreatedAt)
-                .HasDefaultValueSql("GETUTCDATE()");
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             entity.Property(p => p.UpdatedAt)
-                .HasDefaultValueSql("GETUTCDATE()");
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             entity.HasOne(p => p.Class)
                 .WithMany(c => c.Projects)
