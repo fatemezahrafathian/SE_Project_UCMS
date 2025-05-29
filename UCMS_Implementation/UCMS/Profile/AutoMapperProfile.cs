@@ -2,8 +2,10 @@ using UCMS.DTOs;
 using UCMS.DTOs.AuthDto;
 using UCMS.DTOs.ClassDto;
 using UCMS.DTOs.ExerciseDto;
+using UCMS.DTOs.PhaseDto;
 using UCMS.DTOs.ProjectDto;
 using UCMS.DTOs.RoleDto;
+using UCMS.DTOs.TeamDto;
 using UCMS.Models;
 
 namespace UCMS.Profile;
@@ -206,6 +208,35 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate))
             .ForMember(dest => dest.Status, 
                 opt => opt.MapFrom(src => calculateExerciseStatus(src.StartDate, src.EndDate)));
+            .ForMember(dest => dest.ClassTitle, opt => opt.MapFrom(src => src.Class.Title));
+        CreateMap<CreatePhaseDto, Phase>()
+            .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.ToUniversalTime()))
+            .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.ToUniversalTime()))
+            .ForMember(dest => dest.PhaseFilePath, opt => opt.Ignore()) // File should be handled separately
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
+        CreateMap<Phase, GetPhaseForInstructorDto>()
+            .ForMember(dest => dest.phaseId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.PhaseFilePath, opt => opt.MapFrom(src => src.PhaseFilePath));
+        CreateMap<PatchPhaseDto, Phase>()
+            .ForMember(dest => dest.PhaseFilePath, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.ProjectId, opt => opt.Ignore())
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) =>
+                srcMember != null &&
+                !(srcMember is string s && string.IsNullOrWhiteSpace(s)) &&
+                !(srcMember is int i && i == 0) &&
+                !(srcMember is DateTime dt && dt == default)
+            ));
+        CreateMap<Phase, GetPhasesForInstructorDto>()
+            .ForMember(dest => dest.phaseId, opt => opt.MapFrom(src => src.Id));
+        CreateMap<Phase, GetPhaseForStudentDto>()
+            .ForMember(dest => dest.phaseId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.PhaseFilePath, opt => opt.MapFrom(src => src.PhaseFilePath));
+        CreateMap<Phase, GetPhasesForStudentDto>()
+            .ForMember(dest => dest.phaseId, opt => opt.MapFrom(src => src.Id));
 
         CreateMap<Exercise, GetExerciseForStudentDto>()
             .ForMember(dest => dest.exerciseId, opt => opt.MapFrom(src => src.Id))
@@ -225,5 +256,21 @@ public class AutoMapperProfile : Profile
         if (now < start) return ExerciseStatus.NotStarted;
         if (now >= start && now <= end) return ExerciseStatus.InProgress;
         return ExerciseStatus.Completed;
+        CreateMap<CreateTeamDto, Team>()
+            .ForMember(dest => dest.StudentTeams, opt => opt.Ignore());
+        
+        CreateMap<Team, GetTeamForInstructorDto>();
+        CreateMap<Team, GetTeamForStudentDto>();
+        CreateMap<Team, GetTeamPreviewDto>();
+        
+        CreateMap<StudentTeam, GetStudentTeamForInstructorDto>()
+            .ForMember(dest => dest.StudentNumber, opt => opt.MapFrom(src => src.Student.StudentNumber))
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.Student.User.FirstName} {src.Student.User.LastName}"));
+        CreateMap<StudentTeam, GetStudentTeamForStudentDto>()
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => $"{src.Student.User.FirstName} {src.Student.User.LastName}"));
+        
+        CreateMap<PatchTeamDto, Team>()
+            .ForMember(dest => dest.Name,
+                opt => opt.Condition(src => !string.IsNullOrWhiteSpace(src.Name)));
     }
 }
