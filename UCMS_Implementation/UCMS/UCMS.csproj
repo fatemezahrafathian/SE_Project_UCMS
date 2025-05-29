@@ -60,8 +60,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="wwwroot" />
-      <Folder Include="wwwroot\images\classes" />
+      <Folder Include="wwwroot\" />
     </ItemGroup>
     
 </Project>

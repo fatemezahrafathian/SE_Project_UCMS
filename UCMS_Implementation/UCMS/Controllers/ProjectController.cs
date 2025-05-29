@@ -28,8 +28,7 @@ public class ProjectController: ControllerBase
 
         if (response.Success)
         {
-            /////////////////////////////////////////////
-            return Ok(response.Message);
+            return CreatedAtAction(nameof(GetProjectForInstructor), new {projectId = response.Data.Id}, response);
         }
 
         return BadRequest(new {message = response.Message});
@@ -42,7 +41,7 @@ public class ProjectController: ControllerBase
         if (!response.Success)
             return NotFound(response.Message);
 
-        return Ok(response.Message);
+        return Ok(new {Data=response.Data,message = response.Message});
     }
     [RoleBasedAuthorization("Instructor")]
     [HttpDelete("{projectId}")]

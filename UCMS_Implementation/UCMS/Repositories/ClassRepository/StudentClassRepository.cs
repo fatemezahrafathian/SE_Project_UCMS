@@ -53,15 +53,28 @@ public class StudentClassRepository: IStudentClassRepository
     }
     public IQueryable<Class> FilterStudentClassesByStudentIdAsync(int studentId, string? title, bool? isActive,string? instructorName)
     {
-        var query = GetClassesByStudentId(studentId);
-        if (!string.IsNullOrWhiteSpace(title))
-            query = FilterClassesByTitle(query, title);
-        if (!string.IsNullOrWhiteSpace(instructorName))
-            query = FilterClassesByInstructorName(query, instructorName);
+        var baseQuery = GetClassesByStudentId(studentId);
+    
+        // IQueryable<Class> titleQuery = Enumerable.Empty<Class>().AsQueryable();
+        // IQueryable<Class> instructorNameQuery = Enumerable.Empty<Class>().AsQueryable();
+        //
+        // if (!string.IsNullOrWhiteSpace(title))
+        //     titleQuery = FilterClassesByTitle(baseQuery, title);
+        //
+        // if (!string.IsNullOrWhiteSpace(instructorName))
+        //     instructorNameQuery = FilterClassesByInstructorName(baseQuery, instructorName);
+        //
+        // var combinedQuery = titleQuery.Union(instructorNameQuery);
+        //
+        // if (string.IsNullOrWhiteSpace(title) && string.IsNullOrWhiteSpace(instructorName))
+        //     combinedQuery = baseQuery;
+        if (!string.IsNullOrWhiteSpace(title) || !string.IsNullOrWhiteSpace(instructorName))
+            baseQuery = FilterClassesByInstructorNameAndTitle(baseQuery, title, instructorName);
+        
         if (isActive.HasValue)
-            query = FilterClassesByIsActive(query, isActive.Value);
+            baseQuery = FilterClassesByIsActive(baseQuery, isActive.Value);
 
-        return query;
+        return baseQuery;
     }
 
     public async Task<List<string?>> GetStudentNumbersOfClass(int classId)
@@ -87,17 +100,19 @@ public class StudentClassRepository: IStudentClassRepository
             .Include(c=>c.Instructor.User)
             .Include(c => c.ClassStudents)
             .Where(c => c.ClassStudents.Any(cs => cs.StudentId == studentId));
-        
     }
-
-    private IQueryable<Class> FilterClassesByInstructorName(IQueryable<Class> query, string instructorName)
+    private IQueryable<Class> FilterClassesByInstructorNameAndTitle(IQueryable<Class> query,string title, string instructorName)
     {
-        return query.Where(c => c.Instructor.User.FirstName.Contains(instructorName)  || c.Instructor.User.LastName.Contains(instructorName));
+        return query.Where(c => c.Instructor.User.FirstName.Contains(instructorName)  || c.Instructor.User.LastName.Contains(instructorName) ||  c.Title.Contains(title));
     }
-    private IQueryable<Class> FilterClassesByTitle(IQueryable<Class> query, string title)
-    {
-        return query.Where(c => c.Title.Contains(title));
-    }
+    // private IQueryable<Class> FilterClassesByInstructorName(IQueryable<Class> query, string instructorName)
+    // {
+    //     return query.Where(c => c.Instructor.User.FirstName.Contains(instructorName)  || c.Instructor.User.LastName.Contains(instructorName));
+    // }
+    // private IQueryable<Class> FilterClassesByTitle(IQueryable<Class> query, string title)
+    // {
+    //     return query.Where(c => c.Title.Contains(title));
+    // }
 
     private IQueryable<Class> FilterClassesByIsActive(IQueryable<Class> query, bool isActive)
     {

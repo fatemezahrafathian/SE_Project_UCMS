@@ -219,18 +219,18 @@ public class StudentClassService: IStudentClassService
                 Messages.ClassNotFound);
         }
 
-        // var isStudentOfClass = await _studentClassService.IsStudentOfClass(classId, user!.Student!.Id);
-        // if (!isStudentOfClass)
-        // {
-        //     return new ServiceResponse<GetClassForStudentDto> 
-        //     {
-        //         Success = false,
-        //         Message = Messages.ClassCan_tBeAccessed
-        //     };
-        // }
+        var isStudentOfClass = await IsStudentOfClass(classId, user!.Student!.Id);
+        if (!isStudentOfClass)
+        {
+            return new ServiceResponse<GetClassForStudentDto> 
+            {
+                Success = false,
+                Message = Messages.ClassCan_tBeAccessed
+            };
+        }
 
         var responseDto = _mapper.Map<GetClassForStudentDto>(classEntity);
-        // responseDto.StudentCount = await GetStudentClassCount(classEntity.Id);
+        responseDto.StudentCount = await GetStudentClassCount(classEntity.Id);
         return ServiceResponseFactory.Success(responseDto, Messages.ClassFetchedSuccessfully);
     }
     public async Task<ServiceResponse<GetClassPageForStudentDto>> GetClassesForStudent(PaginatedFilterClassForStudentDto dto)

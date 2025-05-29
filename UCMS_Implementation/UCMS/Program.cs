@@ -13,6 +13,8 @@ using UCMS.Repositories.ClassRepository;
 using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Repositories.InstructorRepository;
 using UCMS.Repositories.InstructorRepository.Abstraction;
+using UCMS.Repositories.PhaseRepository;
+using UCMS.Repositories.PhaseRepository.Abstraction;
 using UCMS.Repositories.ProjectRepository;
 using UCMS.Repositories.ProjectRepository.Abstarction;
 using UCMS.Repositories.RoleRepository;
@@ -37,6 +39,8 @@ using UCMS.Services.PasswordService;
 using UCMS.Services.PasswordService.Abstraction;
 using UCMS.Services.InstructorService;
 using UCMS.Services.InstructorService.Abstraction;
+using UCMS.Services.PhaseService;
+using UCMS.Services.PhaseService.Abstraction;
 using UCMS.Services.ProjectService;
 using UCMS.Services.RoleService;
 using UCMS.Services.RoleService.Abstraction;
@@ -116,6 +120,10 @@ builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.Configure<FileUploadSettings>(builder.Configuration.GetSection("FileUploadSettings"));
 builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IPhaseService, PhaseService>();
+builder.Services.AddScoped<IPhaseRepository, PhaseRepository>();
+
+
 
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<ITeamRepository, TeamRepository>();
