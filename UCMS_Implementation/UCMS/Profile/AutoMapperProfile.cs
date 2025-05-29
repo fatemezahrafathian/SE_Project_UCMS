@@ -207,7 +207,6 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.PhaseFilePath, opt => opt.MapFrom(src => src.PhaseFilePath));
         CreateMap<Phase, GetPhasesForStudentDto>()
             .ForMember(dest => dest.phaseId, opt => opt.MapFrom(src => src.Id));
-            .ForMember(dest => dest.ClassTitle, opt => opt.MapFrom(src => src.Class.Title)); 
 
         CreateMap<CreateTeamDto, Team>()
             .ForMember(dest => dest.StudentTeams, opt => opt.Ignore());
