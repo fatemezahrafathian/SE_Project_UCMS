@@ -187,12 +187,13 @@ namespace UCMS.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-                        migrationBuilder.CreateTable(
+            migrationBuilder.CreateTable(
                 name: "Projects",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                        .Annotation("Npgsql:ValueGenerationStrategy",
+                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     TotalScore = table.Column<int>(type: "integer", nullable: false),
@@ -200,9 +201,12 @@ namespace UCMS.Migrations
                     GroupSize = table.Column<int>(type: "integer", nullable: true),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ProjectFilePath = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: DateTime.UtcNow),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: DateTime.UtcNow),
+                    ProjectFilePath =
+                        table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false,
+                        defaultValue: DateTime.UtcNow),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false,
+                        defaultValue: DateTime.UtcNow),
                     ClassId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -215,11 +219,6 @@ namespace UCMS.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Projects_ClassId",
-                table: "Projects",
-                column: "ClassId");
 
             migrationBuilder.CreateTable(
                 name: "Teams",
