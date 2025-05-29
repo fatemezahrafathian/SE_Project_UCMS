@@ -1,6 +1,7 @@
 using UCMS.DTOs;
 using UCMS.DTOs.AuthDto;
 using UCMS.DTOs.ClassDto;
+using UCMS.DTOs.ExamDto;
 using UCMS.DTOs.ProjectDto;
 using UCMS.DTOs.RoleDto;
 using UCMS.Models;
@@ -177,6 +178,34 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.DueTime, opt => opt.MapFrom(src => src.EndDate.TimeOfDay))  
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.EndDate < DateTime.UtcNow ? ProjectStatus.Completed : (src.StartDate > DateTime.UtcNow ? ProjectStatus.NotStarted : ProjectStatus.InProgress)))
             .ForMember(dest => dest.ClassTitle, opt => opt.MapFrom(src => src.Class.Title)); 
-
+        CreateMap<CreateExamDto, Exam>()
+            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.ToUniversalTime()))
+            .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
+            .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
+        CreateMap<Exam, GetExamForInstructorDto>()
+            .ForMember(dest => dest.examId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.classTitle, opt => opt.MapFrom(src => src.Class.Title))
+            .ForMember(dest => dest.ExamLocation, opt => opt.MapFrom(src => src.ExamLocation))
+            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
+            .ForMember(dest => dest.ExamScore, opt => opt.MapFrom(src => src.ExamScore));
+        CreateMap<PatchExamDto, Exam>()
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.ClassId, opt => opt.Ignore())
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) =>
+                srcMember != null &&
+                !(srcMember is string s && string.IsNullOrWhiteSpace(s)) &&
+                !(srcMember is int i && i == 0) &&
+                !(srcMember is DateTime dt && dt == default)
+            ));
+        CreateMap<Exam, GetExamForStudentDto>()
+            .ForMember(dest => dest.examId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+            .ForMember(dest => dest.classTitle, opt => opt.MapFrom(src => src.Class.Title))
+            .ForMember(dest => dest.ExamLocation, opt => opt.MapFrom(src => src.ExamLocation))
+            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
+            .ForMember(dest => dest.ExamScore, opt => opt.MapFrom(src => src.ExamScore));
     }
 }
