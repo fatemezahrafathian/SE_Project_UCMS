@@ -424,10 +424,6 @@ namespace UCMS.Migrations
                 table: "Users",
                 column: "Username",
                 unique: true);
-            migrationBuilder.CreateIndex(
-                name: "IX_Projects_ClassId",
-                table: "Projects",
-                column: "ClassId");
             
             
             migrationBuilder.CreateIndex(
