@@ -45,9 +45,9 @@ public class ProjectController: ControllerBase
     }
     [RoleBasedAuthorization("Instructor")]
     [HttpDelete("{projectId}")]
-    public async Task<IActionResult> DeleteProject(int classId, int projectId)
+    public async Task<IActionResult> DeleteProject(int projectId)
     {
-        var response = await _projectService.DeleteProjectAsync(classId, projectId);
+        var response = await _projectService.DeleteProjectAsync(projectId);
         if (!response.Success)
             return NotFound(response.Message);
 
