@@ -4,6 +4,7 @@ using UCMS.DTOs.Instructor;
 using UCMS.DTOs.Student;
 using UCMS.Models;
 using UCMS.Repositories.InstructorRepository.Abstraction;
+using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.InstructorService.Abstraction;
 using UCMS.Services.Utils;
@@ -17,14 +18,16 @@ namespace UCMS.Services.InstructorService
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<InstructorService> _logger;
         private readonly UrlBuilder _urlBuilder;
+        private readonly IUserRepository _userRepository;
 
-        public InstructorService(IInstructorRepository instructorRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<InstructorService> logger, UrlBuilder urlBuilder)
+        public InstructorService(IInstructorRepository instructorRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<InstructorService> logger, UrlBuilder urlBuilder, IUserRepository userRepository)
         {
             _instructorRepository = instructorRepository;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             _urlBuilder = urlBuilder;
             _logger = logger;
+            _userRepository = userRepository;
         }
 
         public async Task<ServiceResponse<GetInstructorDto>> GetSpecializedInfo()
@@ -76,17 +79,30 @@ namespace UCMS.Services.InstructorService
             };
         }
 
+        public async Task<ServiceResponse<InstructorProfileDto>> GetInstructorProfileById(int userId)
+        {
+            User? user = await _userRepository.GetUserByIdAsync(userId);
+            Instructor? instructor = await _instructorRepository.GetInstructorByUserIdAsync(userId);
+
+            return BuildInstructorProfileOutput(instructor, userId);
+        }
+
         public async Task<ServiceResponse<InstructorProfileDto>> GetCurrentInstructor()
         {
             var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
             Instructor? instructor = await _instructorRepository.GetInstructorByUserIdAsync(user.Id);
 
+            return BuildInstructorProfileOutput(instructor, user.Id);
+        }
+
+        private ServiceResponse<InstructorProfileDto> BuildInstructorProfileOutput(Instructor? instructor, int userId)
+        {
             if (instructor == null)
             {
                 return new ServiceResponse<InstructorProfileDto>
                 {
                     Success = false,
-                    Message = String.Format(Messages.UserNotFound, user.Id)
+                    Message = String.Format(Messages.UserNotFound, userId)
                 };
             }
 
@@ -96,7 +112,7 @@ namespace UCMS.Services.InstructorService
             {
                 Data = responseInstructor,
                 Success = true,
-                Message = string.Format(Messages.UserFound, user.Id)
+                Message = string.Format(Messages.UserFound, instructor.UserId)
             };
         }
     }
