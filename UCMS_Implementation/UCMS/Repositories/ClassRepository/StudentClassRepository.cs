@@ -51,25 +51,11 @@ public class StudentClassRepository: IStudentClassRepository
             .Select(cs => cs.Student)
             .ToListAsync();
     }
-    public IQueryable<Class> FilterStudentClassesByStudentIdAsync(int studentId, string? title, bool? isActive,string? instructorName)
+    public IQueryable<Class> FilterStudentClassesByStudentIdAsync(int studentId, string? title, bool? isActive)
     {
         var baseQuery = GetClassesByStudentId(studentId);
-    
-        // IQueryable<Class> titleQuery = Enumerable.Empty<Class>().AsQueryable();
-        // IQueryable<Class> instructorNameQuery = Enumerable.Empty<Class>().AsQueryable();
-        //
-        // if (!string.IsNullOrWhiteSpace(title))
-        //     titleQuery = FilterClassesByTitle(baseQuery, title);
-        //
-        // if (!string.IsNullOrWhiteSpace(instructorName))
-        //     instructorNameQuery = FilterClassesByInstructorName(baseQuery, instructorName);
-        //
-        // var combinedQuery = titleQuery.Union(instructorNameQuery);
-        //
-        // if (string.IsNullOrWhiteSpace(title) && string.IsNullOrWhiteSpace(instructorName))
-        //     combinedQuery = baseQuery;
-        if (!string.IsNullOrWhiteSpace(title) || !string.IsNullOrWhiteSpace(instructorName))
-            baseQuery = FilterClassesByInstructorNameAndTitle(baseQuery, title, instructorName);
+        if (!string.IsNullOrWhiteSpace(title))
+            baseQuery = FilterClassesByInstructorNameAndTitle(baseQuery, title);
         
         if (isActive.HasValue)
             baseQuery = FilterClassesByIsActive(baseQuery, isActive.Value);
@@ -101,9 +87,9 @@ public class StudentClassRepository: IStudentClassRepository
             .Include(c => c.ClassStudents)
             .Where(c => c.ClassStudents.Any(cs => cs.StudentId == studentId));
     }
-    private IQueryable<Class> FilterClassesByInstructorNameAndTitle(IQueryable<Class> query,string title, string instructorName)
+    private IQueryable<Class> FilterClassesByInstructorNameAndTitle(IQueryable<Class> query,string title)
     {
-        return query.Where(c => c.Instructor.User.FirstName.Contains(instructorName)  || c.Instructor.User.LastName.Contains(instructorName) ||  c.Title.Contains(title));
+        return query.Where(c => c.Instructor.User.FirstName.Contains(title)  || c.Instructor.User.LastName.Contains(title) ||  c.Title.Contains(title));
     }
     // private IQueryable<Class> FilterClassesByInstructorName(IQueryable<Class> query, string instructorName)
     // {

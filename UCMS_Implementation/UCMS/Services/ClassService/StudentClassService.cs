@@ -237,7 +237,7 @@ public class StudentClassService: IStudentClassService
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        var classEntityQueryable = _studentClassRepository.FilterStudentClassesByStudentIdAsync(user!.Student!.Id, dto.Title, dto.IsActive, dto.InstructorName);        
+        var classEntityQueryable = _studentClassRepository.FilterStudentClassesByStudentIdAsync(user!.Student!.Id, dto.Title, dto.IsActive);        
         var classEntityList = await classEntityQueryable.PaginateAsync(dto.Page, dto.PageSize);
 
         var responseDto = _mapper.Map<GetClassPageForStudentDto>(classEntityList);

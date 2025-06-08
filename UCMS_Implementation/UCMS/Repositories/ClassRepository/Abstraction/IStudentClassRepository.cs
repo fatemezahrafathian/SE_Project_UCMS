@@ -8,6 +8,6 @@ public interface IStudentClassRepository
     Task AddStudentToClassAsync(int classId, int studentId);
     Task<bool> RemoveStudentFromClassAsync(int classId, int studentId);
     Task<List<Student>> GetStudentsInClassAsync(int classId);
-    IQueryable<Class> FilterStudentClassesByStudentIdAsync(int studentId, string? title, bool? isActive,string? instructorName); 
+    IQueryable<Class> FilterStudentClassesByStudentIdAsync(int studentId, string? title, bool? isActive); 
     Task<List<string?>> GetStudentNumbersOfClass(int classId);
 }
