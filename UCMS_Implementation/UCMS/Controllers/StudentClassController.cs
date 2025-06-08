@@ -16,7 +16,7 @@ public class StudentClassController: ControllerBase
     }
     
     [RoleBasedAuthorization("Student")]
-    [HttpPost("join")]
+    [HttpPost("Join")]
     public async Task<IActionResult> JoinClass([FromBody] JoinClassRequestDto request)
     {
         var response = await _studentClassService.JoinClassAsync(request);
@@ -25,7 +25,7 @@ public class StudentClassController: ControllerBase
         return BadRequest(response.Message);
     }
     [RoleBasedAuthorization("Student")]
-    [HttpDelete("left/{classId}")]
+    [HttpDelete("{classId}/Leave")]
     public async Task<IActionResult> LeaveClass([FromBody] LeaveClassRequestDto request)
     {
         var response = await _studentClassService.LeaveClassAsync(request.ClassId);
@@ -34,7 +34,7 @@ public class StudentClassController: ControllerBase
         return Ok(response.Message);
     }
     [RoleBasedAuthorization("Instructor")]
-    [HttpDelete("/{classId}/removeStudent")]
+    [HttpDelete("{classId}/Students/remove")]
     public async Task<IActionResult> RemoveStudentFromClass([FromBody] RemoveStudentFromClassDto request)
     {
         var response = await _studentClassService.RemoveStudentFromClassAsync(request.ClassId, request.StudentId);
@@ -44,7 +44,7 @@ public class StudentClassController: ControllerBase
         return Ok(response.Message);
     }
     [RoleBasedAuthorization("Instructor")]
-    [HttpGet("{classId}/students")]
+    [HttpGet("Instructor/{classId}/Students")]
     public async Task<IActionResult> GetStudentsOfClassByInstructor(int classId)
     {
         var response = await _studentClassService.GetStudentsOfClassByInstructorAsync(classId);
@@ -53,7 +53,7 @@ public class StudentClassController: ControllerBase
         return Ok(response.Data);
     }
     [RoleBasedAuthorization("Student")]
-    [HttpGet("classStudent/{classId}/students")]
+    [HttpGet("Student/{classId}/Students")]
     public async Task<IActionResult> GetStudentsOfClassByStudent(int classId)
     {
         var response = await _studentClassService.GetStudentsOfClassByStudentAsync(classId);
@@ -63,7 +63,7 @@ public class StudentClassController: ControllerBase
     }
 
     [RoleBasedAuthorization("Student")]
-    [HttpGet("student/{classId}")]
+    [HttpGet("Student/{classId}")]
     public async Task<IActionResult> GetClassForStudent(int classId)
     {
         var response = await _studentClassService.GetClassForStudent(classId);
@@ -74,7 +74,7 @@ public class StudentClassController: ControllerBase
         return Ok(response.Data);
     }
     [RoleBasedAuthorization("Student")]
-    [HttpGet("Student")]
+    [HttpGet("Student/classes")]
     public async Task<IActionResult> GetClassesForStudent([FromQuery] PaginatedFilterClassForStudentDto dto)
     {
         var response = await _studentClassService.GetClassesForStudent(dto);
