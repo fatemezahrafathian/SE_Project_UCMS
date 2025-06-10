@@ -44,4 +44,18 @@ public class ExamRepository:IExamRepository
         _context.Exams.Remove(exam);
         await _context.SaveChangesAsync();
     }
+    public async Task<List<Exam>> GetExamsByStudentIdAsync(int studentId)
+    {
+        return await _context.Exams
+            .Include(e => e.Class)
+            .Where(e => e.Class.ClassStudents.Any(cs => cs.StudentId == studentId))
+            .ToListAsync();
+    }
+    public async Task<List<Exam>> GetExamsByInstructorIdAsync(int instructorId)
+    {
+        return await _context.Exams
+            .Include(e => e.Class)
+            .Where(e => e.Class.InstructorId == instructorId)
+            .ToListAsync();
+    }
 }

@@ -10,4 +10,6 @@ public interface IExamRepository
     Task UpdateAsync(Exam exercise);
     Task<bool> ExistsWithTitleExceptIdAsync(string title, int classId, int examIdToExclude);
     Task DeleteAsync(Exam exam);
+    Task<List<Exam>> GetExamsByStudentIdAsync(int studentId);
+    Task<List<Exam>> GetExamsByInstructorIdAsync(int instructorId);
 }
