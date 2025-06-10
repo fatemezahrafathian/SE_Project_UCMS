@@ -7,8 +7,9 @@ services:
     ports:
       - "8080:80"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - CONNECTION_STRING=Host=db;Port=5432;Database=UCMS;Username=postgres;Password=@Simpleuser01  
+      - ASPNETCORE_ENVIRONMENT=Production
+      - CONNECTION_STRING=Host=db;Port=5432;Database=UCMS;Username=postgres;Password=@Simpleuser01
+      - ORIGIN_URL=http://2.189.242.228:81
     depends_on:
       - db
     command: >
