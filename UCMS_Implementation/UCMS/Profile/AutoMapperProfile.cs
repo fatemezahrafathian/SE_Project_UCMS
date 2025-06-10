@@ -277,7 +277,7 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
             .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
         CreateMap<Exam, GetExamForInstructorDto>()
-            .ForMember(dest => dest.examId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.ExamId, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
             .ForMember(dest => dest.classTitle, opt => opt.MapFrom(src => src.Class.Title))
             .ForMember(dest => dest.ExamLocation, opt => opt.MapFrom(src => src.ExamLocation))

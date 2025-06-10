@@ -1,10 +1,6 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using UCMS.Attributes;
-using UCMS.Data;
-using UCMS.DTOs.ClassDto;
 using UCMS.DTOs.ProjectDto;
-using UCMS.Services.ClassService.Abstraction;
 using UCMS.Services.ProjectService;
 
 namespace UCMS.Controllers;
@@ -13,12 +9,10 @@ namespace UCMS.Controllers;
 public class ProjectController: ControllerBase
 {
     private readonly IProjectService _projectService;
-    private readonly DataContext _context;
-
-    public ProjectController(IProjectService projectService, DataContext context)
+    
+    public ProjectController(IProjectService projectService)
     {
         _projectService = projectService;
-        _context = context;
     }
     [RoleBasedAuthorization("Instructor")]
     [HttpPost("")]
@@ -35,9 +29,9 @@ public class ProjectController: ControllerBase
     }
     [RoleBasedAuthorization("Instructor")]
     [HttpPatch("{projectId}")]
-    public async Task<IActionResult> UpdateProject(int classId, int projectId, [FromForm] PatchProjectDto dto)
+    public async Task<IActionResult> UpdateProject(int projectId, [FromForm] PatchProjectDto dto)
     {
-        var response = await _projectService.UpdateProjectAsync(classId, projectId, dto);
+        var response = await _projectService.UpdateProjectAsync(projectId, dto);
         if (!response.Success)
             return NotFound(response.Message);
 

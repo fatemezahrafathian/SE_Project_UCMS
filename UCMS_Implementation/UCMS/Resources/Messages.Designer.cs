@@ -348,6 +348,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ExamEndDateCannotBeAfterClassEndDate.
+        /// </summary>
+        public static string ExamEndDateCannotBeAfterClassEndDate {
+            get {
+                return ResourceManager.GetString("ExamEndDateCannotBeAfterClassEndDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ExamLocationMaxLength.
         /// </summary>
         public static string ExamLocationMaxLength {
@@ -429,6 +438,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ExerciseEndDateCannotBeAfterClassEndDate.
+        /// </summary>
+        public static string ExerciseEndDateCannotBeAfterClassEndDate {
+            get {
+                return ResourceManager.GetString("ExerciseEndDateCannotBeAfterClassEndDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ExerciseFileDownloadedSuccessfully.
         /// </summary>
         public static string ExerciseFileDownloadedSuccessfully {
@@ -474,6 +492,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ExerciseStartDateCannotBeBeforeClassStartDate.
+        /// </summary>
+        public static string ExerciseStartDateCannotBeBeforeClassStartDate {
+            get {
+                return ResourceManager.GetString("ExerciseStartDateCannotBeBeforeClassStartDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ExerciseUpdatedSuccessfully.
         /// </summary>
         public static string ExerciseUpdatedSuccessfully {
@@ -497,6 +524,15 @@ namespace UCMS.Resources {
         public static string FileDoesNotExist {
             get {
                 return ResourceManager.GetString("FileDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to FileNotFound.
+        /// </summary>
+        public static string FileNotFound {
+            get {
+                return ResourceManager.GetString("FileNotFound", resourceCulture);
             }
         }
         
@@ -569,6 +605,24 @@ namespace UCMS.Resources {
         public static string InvalidIstructorForThisClass {
             get {
                 return ResourceManager.GetString("InvalidIstructorForThisClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to InvalidIstructorForThisPhase.
+        /// </summary>
+        public static string InvalidIstructorForThisPhase {
+            get {
+                return ResourceManager.GetString("InvalidIstructorForThisPhase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to InvalidIstructorForThisProject.
+        /// </summary>
+        public static string InvalidIstructorForThisProject {
+            get {
+                return ResourceManager.GetString("InvalidIstructorForThisProject", resourceCulture);
             }
         }
         
@@ -816,6 +870,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to PhaseEndTimeCannotBeAfterProjectEndTime.
+        /// </summary>
+        public static string PhaseEndTimeCannotBeAfterProjectEndTime {
+            get {
+                return ResourceManager.GetString("PhaseEndTimeCannotBeAfterProjectEndTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to PhaseFileDownloadedSuccessfully.
         /// </summary>
         public static string PhaseFileDownloadedSuccessfully {
@@ -866,6 +929,15 @@ namespace UCMS.Resources {
         public static string PhasesRetrievedSuccessfully {
             get {
                 return ResourceManager.GetString("PhasesRetrievedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PhaseStartTimeCannotBeBeforeProjectStartTime.
+        /// </summary>
+        public static string PhaseStartTimeCannotBeBeforeProjectStartTime {
+            get {
+                return ResourceManager.GetString("PhaseStartTimeCannotBeBeforeProjectStartTime", resourceCulture);
             }
         }
         

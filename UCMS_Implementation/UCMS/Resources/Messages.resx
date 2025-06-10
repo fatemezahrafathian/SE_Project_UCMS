@@ -700,4 +700,28 @@
   <data name="ClassHasNoProjects" xml:space="preserve">
       <value>ClassHasNoProjects</value>
   </data>
+  <data name="InvalidIstructorForThisProject" xml:space="preserve">
+      <value>InvalidIstructorForThisProject</value>
+  </data>
+  <data name="PhaseEndTimeCannotBeAfterProjectEndTime" xml:space="preserve">
+      <value>PhaseEndTimeCannotBeAfterProjectEndTime</value>
+  </data>
+  <data name="PhaseStartTimeCannotBeBeforeProjectStartTime" xml:space="preserve">
+      <value>PhaseStartTimeCannotBeBeforeProjectStartTime</value>
+  </data>
+  <data name="InvalidIstructorForThisPhase" xml:space="preserve">
+      <value>InvalidIstructorForThisPhase</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+      <value>FileNotFound</value>
+  </data>
+  <data name="ExerciseStartDateCannotBeBeforeClassStartDate" xml:space="preserve">
+      <value>ExerciseStartDateCannotBeBeforeClassStartDate</value>
+  </data>
+  <data name="ExerciseEndDateCannotBeAfterClassEndDate" xml:space="preserve">
+      <value>ExerciseEndDateCannotBeAfterClassEndDate</value>
+  </data>
+  <data name="ExamEndDateCannotBeAfterClassEndDate" xml:space="preserve">
+      <value>ExamEndDateCannotBeAfterClassEndDate</value>
+  </data>
 </root>

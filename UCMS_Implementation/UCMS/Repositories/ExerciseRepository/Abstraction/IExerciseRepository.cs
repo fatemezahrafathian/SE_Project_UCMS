@@ -10,4 +10,6 @@ public interface IExerciseRepository
     Task UpdateAsync(Exercise exercise);
     Task<bool> ExistsWithTitleExceptIdAsync(string title, int classId, int exerciseIdToExclude);
     Task DeleteAsync(Exercise exercise);
+    Task<List<Exercise>> GetExercisesByStudentIdAsync(int studentId);
+    Task<List<Exercise>> GetExercisesByInstructorIdAsync(int instructorId);
 }

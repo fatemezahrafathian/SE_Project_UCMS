@@ -14,4 +14,7 @@ public interface IExerciseService
     Task<ServiceResponse<GetExerciseForStudentDto>> GetExerciseByIdForStudentAsync(int exerciseId);
     Task<ServiceResponse<List<GetExercisesForStudentDto>>> GetExercisesForStudent(int classId);
     Task<ServiceResponse<FileDownloadDto>> HandleDownloadExerciseFileForStudentAsync(int exerciseId);
+    Task<ServiceResponse<List<GetExercisesForStudentDto>>> GetExercisesOfClassForStudent();
+    Task<ServiceResponse<List<GetExercisesForInstructorDto>>> GetExercisesOfClassForInstructor();
+    
 }

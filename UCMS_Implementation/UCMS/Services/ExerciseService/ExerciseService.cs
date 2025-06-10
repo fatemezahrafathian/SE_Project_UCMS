@@ -5,7 +5,6 @@ using UCMS.Factories;
 using UCMS.Models;
 using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Repositories.ExerciseRepository.Abstraction;
-using UCMS.Repositories.ProjectRepository.Abstarction;
 using UCMS.Resources;
 using UCMS.Services.ExerciseService.Abstraction;
 using UCMS.Services.FileService;
@@ -37,11 +36,37 @@ public class ExerciseService:IExerciseService
         var currentClass = await _classRepository.GetClassByIdAsync(classId);
         if (currentClass == null)
         {
-            return ServiceResponseFactory.Failure<GetExerciseForInstructorDto>(Messages.ProjectNotFound);
+            return ServiceResponseFactory.Failure<GetExerciseForInstructorDto>(Messages.ClassNotFound);
         }
-        if (currentClass.InstructorId != user.Instructor.Id)
+        if (currentClass.InstructorId != user!.Instructor!.Id)
         {
             return ServiceResponseFactory.Failure<GetExerciseForInstructorDto>(Messages.InvalidInstructorForThisClass);
+        }
+        var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
+
+        dto.StartDate = TimeZoneInfo.ConvertTimeToUtc(
+            DateTime.SpecifyKind(dto.StartDate, DateTimeKind.Unspecified),
+            tehranZone
+        );
+
+        dto.EndDate = TimeZoneInfo.ConvertTimeToUtc(
+            DateTime.SpecifyKind(dto.EndDate, DateTimeKind.Unspecified),
+            tehranZone
+        );
+
+        if (currentClass.StartDate.HasValue)
+        {
+            if (currentClass.StartDate.Value > DateOnly.FromDateTime(dto.StartDate.Date))
+            {
+                return ServiceResponseFactory.Failure<GetExerciseForInstructorDto>(Messages.ExerciseStartDateCannotBeBeforeClassStartDate);
+            }
+        }
+        if (currentClass.EndDate.HasValue)
+        {
+            if (currentClass.EndDate.Value < DateOnly.FromDateTime(dto.EndDate.Date))
+            {
+                return ServiceResponseFactory.Failure<GetExerciseForInstructorDto>(Messages.ExerciseEndDateCannotBeAfterClassEndDate);
+            }
         }
         var validator = new CreateExerciseDtoValidator(_fileService);
         var result = await validator.ValidateAsync(dto);
@@ -88,21 +113,54 @@ public class ExerciseService:IExerciseService
         var existingExercise = await _repository.GetExerciseByIdAsync(exerciseId);
         if (existingExercise == null || existingExercise.Class.InstructorId !=  user?.Instructor?.Id)
             return ServiceResponseFactory.Failure<GetExerciseForInstructorDto>(Messages.ExerciseCantBeAccessed);
+        var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
 
+        if (dto.StartDate.HasValue)
+        {
+            dto.StartDate = TimeZoneInfo.ConvertTimeToUtc(
+                DateTime.SpecifyKind(dto.StartDate.Value, DateTimeKind.Unspecified),
+                tehranZone
+            );
+            if (existingExercise.Class.StartDate.HasValue)
+            {
+                if (existingExercise.Class.StartDate.Value > DateOnly.FromDateTime(dto.StartDate.Value.Date))
+                {
+                    return ServiceResponseFactory.Failure<GetExerciseForInstructorDto>(Messages.ExerciseStartDateCannotBeBeforeClassStartDate);
+                }
+            }
+        }
+        if (dto.EndDate.HasValue)
+        {
+            dto.EndDate = TimeZoneInfo.ConvertTimeToUtc(
+                DateTime.SpecifyKind(dto.EndDate.Value, DateTimeKind.Unspecified),
+                tehranZone
+            );
+            if (existingExercise.Class.EndDate.HasValue)
+            {
+                if (existingExercise.Class.EndDate.Value < DateOnly.FromDateTime(dto.EndDate.Value.Date))
+                {
+                    return ServiceResponseFactory.Failure<GetExerciseForInstructorDto>(Messages.ExerciseEndDateCannotBeAfterClassEndDate);
+                }
+            }
+        }
         var validator = new UpdateExerciseDtoValidator(_fileService);
         var validationResult = await validator.ValidateAsync(dto);
         if (!validationResult.IsValid)
             return ServiceResponseFactory.Failure<GetExerciseForInstructorDto>(validationResult.Errors.First().ErrorMessage);
-        
-        var isDuplicate = await _repository.ExistsWithTitleExceptIdAsync(dto.Title, existingExercise.ClassId, exerciseId);
-        if (isDuplicate)
-            return ServiceResponseFactory.Failure<GetExerciseForInstructorDto>(Messages.ExerciseAlreadyExists);
-
+        if (dto.Title != null)
+        {
+                    var isDuplicate = await _repository.ExistsWithTitleExceptIdAsync(dto.Title, existingExercise.ClassId, exerciseId);
+                    if (isDuplicate)
+                        return ServiceResponseFactory.Failure<GetExerciseForInstructorDto>(Messages.ExerciseAlreadyExists);
+        }
         _mapper.Map(dto, existingExercise);
 
         if (dto.ExerciseFile != null)
         {
-            _fileService.DeleteFile(existingExercise.ExerciseFilePath);
+            if (existingExercise.ExerciseFilePath != null)
+            {
+                _fileService.DeleteFile(existingExercise.ExerciseFilePath);
+            }
             existingExercise.ExerciseFilePath = await _fileService.SaveFileAsync(dto.ExerciseFile, "exercises");
         }
 
@@ -118,10 +176,13 @@ public class ExerciseService:IExerciseService
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var exercise = await _repository.GetExerciseByIdAsync(exerciseId);
-        if (exercise.Class.InstructorId != user!.Instructor!.Id)
+        if (exercise == null ||exercise.Class.InstructorId != user!.Instructor!.Id)
             return ServiceResponseFactory.Failure<string>(Messages.ExerciseCantBeAccessed);
         await _repository.DeleteAsync(exercise);
-        _fileService.DeleteFile(exercise.ExerciseFilePath);
+        if (exercise.ExerciseFilePath != null)
+        {
+                    _fileService.DeleteFile(exercise.ExerciseFilePath);
+        }
         return ServiceResponseFactory.Success("Exercise deleted successfully", Messages.ExerciseDeletedSuccessfully);
     }
     public async Task<ServiceResponse<List<GetExercisesForInstructorDto>>> GetExercisesForInstructor(int classId)
@@ -131,7 +192,7 @@ public class ExerciseService:IExerciseService
 
         if (currentclass == null || currentclass.InstructorId != user?.Instructor?.Id)
         {
-            return ServiceResponseFactory.Failure<List<GetExercisesForInstructorDto>>(Messages.ProjectCantBeAccessed);
+            return ServiceResponseFactory.Failure<List<GetExercisesForInstructorDto>>(Messages.ExerciseCantBeAccessed);
         }
         var phases = await _repository.GetExercisesByClassIdAsync(classId);
         var dto =  _mapper.Map<List<GetExercisesForInstructorDto>>(phases);
@@ -139,10 +200,15 @@ public class ExerciseService:IExerciseService
     }
     public async Task<ServiceResponse<FileDownloadDto>> HandleDownloadExerciseFileForInstructorAsync(int exerciseId)
     {
-        //check access for instructor and student
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var exercise = await _repository.GetExerciseByIdAsync(exerciseId);
-        if (exercise == null || string.IsNullOrWhiteSpace(exercise.ExerciseFilePath))
-            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.ExerciseOrFileNotFound);
+        
+        if (exercise == null || exercise.Class.InstructorId != user?.Instructor?.Id)
+        {
+            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.ExerciseCantBeAccessed);
+        }
+        if (string.IsNullOrWhiteSpace(exercise.ExerciseFilePath))
+            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileNotFound);
         var dto =await _fileService.DownloadFile(exercise.ExerciseFilePath);
         if (dto==null)
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileDoesNotExist);
@@ -166,12 +232,12 @@ public class ExerciseService:IExerciseService
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var exercise = await _repository.GetExerciseByIdAsync(exerciseId);
         
-        if (exercise == null || user==null || user.Student==null)
+        if (exercise == null)
         {
             return ServiceResponseFactory.Failure<GetExerciseForStudentDto>(Messages.ExerciseCantBeAccessed);
         }
         
-        if (!await _studentClassRepository.IsStudentOfClassAsync(exercise.ClassId,user.Student.Id))
+        if (!await _studentClassRepository.IsStudentOfClassAsync(exercise.ClassId,user!.Student!.Id))
         {
             return ServiceResponseFactory.Failure<GetExerciseForStudentDto>(Messages.ExerciseCantBeAccessed);
         }
@@ -185,9 +251,9 @@ public class ExerciseService:IExerciseService
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var currentClass = await _classRepository.GetClassByIdAsync(classId);
 
-        if (currentClass == null || user==null || user.Student==null || !await _studentClassRepository.IsStudentOfClassAsync(classId,user.Student.Id))
+        if (currentClass == null || !await _studentClassRepository.IsStudentOfClassAsync(classId,user!.Student!.Id))
         {
-            return ServiceResponseFactory.Failure<List<GetExercisesForStudentDto>>(Messages.ClassCantBeAccessed);
+            return ServiceResponseFactory.Failure<List<GetExercisesForStudentDto>>(Messages.ExerciseCantBeAccessed);
         }
         var exercises = await _repository.GetExercisesByClassIdAsync(classId);
         var dto =  _mapper.Map<List<GetExercisesForStudentDto>>(exercises);
@@ -197,18 +263,30 @@ public class ExerciseService:IExerciseService
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var exercise = await _repository.GetExerciseByIdAsync(exerciseId);
-        if (exercise == null || user==null || user.Student==null || !await _studentClassRepository.IsStudentOfClassAsync(exercise.ClassId,user.Student.Id))
+        if (exercise == null || !await _studentClassRepository.IsStudentOfClassAsync(exercise.ClassId,user!.Student!.Id))
         {
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.ExerciseCantBeAccessed);
         }
-        var project = await _repository.GetExerciseByIdAsync(exerciseId);
-        if (project == null || string.IsNullOrWhiteSpace(project.ExerciseFilePath))
-            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.ExerciseOrFileNotFound);
-        var dto =await _fileService.DownloadFile(project.ExerciseFilePath);
+        if (string.IsNullOrWhiteSpace(exercise.ExerciseFilePath))
+            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileNotFound);
+        var dto =await _fileService.DownloadFile(exercise.ExerciseFilePath);
         if (dto==null)
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileDoesNotExist);
-        dto.ContentType = GetContentTypeFromPath(project.ExerciseFilePath);
+        dto.ContentType = GetContentTypeFromPath(exercise.ExerciseFilePath);
         return ServiceResponseFactory.Success(dto,Messages.ExerciseFileDownloadedSuccessfully);
     }
-    
+    public async Task<ServiceResponse<List<GetExercisesForInstructorDto>>> GetExercisesOfClassForInstructor()
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+        var exercises = await _repository.GetExercisesByInstructorIdAsync(user!.Instructor!.Id);
+        var dto =  _mapper.Map<List<GetExercisesForInstructorDto>>(exercises);
+        return ServiceResponseFactory.Success(dto,Messages.ExercisesRetrievedSuccessfully);
+    }
+    public async Task<ServiceResponse<List<GetExercisesForStudentDto>>> GetExercisesOfClassForStudent()
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+        var exercises = await _repository.GetExercisesByClassIdAsync(user!.Instructor!.Id);
+        var dto =  _mapper.Map<List<GetExercisesForStudentDto>>(exercises);
+        return ServiceResponseFactory.Success(dto,Messages.ExercisesRetrievedSuccessfully);
+    }
 }
