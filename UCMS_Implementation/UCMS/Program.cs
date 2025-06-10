@@ -68,7 +68,7 @@ var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
                        ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<DataContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(connectionString));
 
 
 builder.Services.Configure<ImageUploadSettings>(
@@ -179,7 +179,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost5173", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://localhost:5173")
+        policy.WithOrigins("http://localhost:5173", "https://localhost:5173", "http://2.189.242.228:81")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -203,7 +203,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-    //db.Database.Migrate(); // Ensures schema is created before anything else
+    db.Database.Migrate(); // Ensures schema is created before anything else
 
     var roleService = scope.ServiceProvider.GetRequiredService<IRoleService>();
     await SeedData.Initialize(scope.ServiceProvider, roleService); // Seed roles etc.
