@@ -48,9 +48,11 @@ public class ExerciseRepository:IExerciseRepository
     {
         return await _context.Exercises
             .Include(e => e.Class)
+            .ThenInclude(c => c.ClassStudents)
             .Where(e => e.Class.ClassStudents.Any(cs => cs.StudentId == studentId))
             .ToListAsync();
     }
+
     public async Task<List<Exercise>> GetExercisesByInstructorIdAsync(int instructorId)
     {
         return await _context.Exercises
