@@ -204,6 +204,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ClassHasNoProjects.
+        /// </summary>
+        public static string ClassHasNoProjects {
+            get {
+                return ResourceManager.GetString("ClassHasNoProjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to class joined successfully..
         /// </summary>
         public static string ClassJoinedSuccessfully {
@@ -897,6 +906,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ProjectEndDateCannotBeAfterClassEndDate.
+        /// </summary>
+        public static string ProjectEndDateCannotBeAfterClassEndDate {
+            get {
+                return ResourceManager.GetString("ProjectEndDateCannotBeAfterClassEndDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ProjectFileDownloadedSuccessfully.
         /// </summary>
         public static string ProjectFileDownloadedSuccessfully {
@@ -947,6 +965,15 @@ namespace UCMS.Resources {
         public static string ProjectsRetrievedSuccessfully {
             get {
                 return ResourceManager.GetString("ProjectsRetrievedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ProjectStartDateCannotBeBeforeClassStartDate.
+        /// </summary>
+        public static string ProjectStartDateCannotBeBeforeClassStartDate {
+            get {
+                return ResourceManager.GetString("ProjectStartDateCannotBeBeforeClassStartDate", resourceCulture);
             }
         }
         
@@ -1217,6 +1244,15 @@ namespace UCMS.Resources {
         public static string TeamUpdatedSuccessfully {
             get {
                 return ResourceManager.GetString("TeamUpdatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to titleIsDuplicated.
+        /// </summary>
+        public static string titleIsDuplicated {
+            get {
+                return ResourceManager.GetString("titleIsDuplicated", resourceCulture);
             }
         }
         

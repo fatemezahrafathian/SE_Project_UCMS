@@ -14,5 +14,7 @@ public interface IProjectService
     Task<ServiceResponse<FileDownloadDto>> HandleDownloadProjectFileAsync(int projectId);
     Task<ServiceResponse<List<GetProjectListForInstructorDto>>> GetProjectsForInstructor(FilterProjectsForInstructorDto dto);
     Task<ServiceResponse<List<GetProjectListForStudentDto>>> GetProjectsForStudent(FilterProjectsForStudentDto dto);
+    Task<ServiceResponse<List<GetProjectsOfClassDto>>> GetProjectsOfClassForInstructorAsync(int classId);
+    Task<ServiceResponse<List<GetProjectsOfClassDto>>> GetProjectsOfClassForStudentAsync(int classId);
 
 }

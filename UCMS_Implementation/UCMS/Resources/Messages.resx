@@ -688,4 +688,16 @@
   <data name="ClassCantBeAccessed" xml:space="preserve">
     <value>ClassCantBeAccessed</value>
   </data>
+  <data name="ProjectStartDateCannotBeBeforeClassStartDate" xml:space="preserve">
+      <value>ProjectStartDateCannotBeBeforeClassStartDate</value>
+  </data>
+  <data name="ProjectEndDateCannotBeAfterClassEndDate" xml:space="preserve">
+      <value>ProjectEndDateCannotBeAfterClassEndDate</value>
+  </data>
+  <data name="titleIsDuplicated" xml:space="preserve">
+      <value>titleIsDuplicated</value>
+  </data>
+  <data name="ClassHasNoProjects" xml:space="preserve">
+      <value>ClassHasNoProjects</value>
+  </data>
 </root>

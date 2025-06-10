@@ -1,19 +1,12 @@
 using AutoMapper;
-using Microsoft.Extensions.Options;
 using UCMS.DTOs;
-using UCMS.DTOs.ClassDto;
 using UCMS.DTOs.ProjectDto;
 using UCMS.Factories;
 using UCMS.Models;
 using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Repositories.ProjectRepository.Abstarction;
-using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Resources;
-using UCMS.Services.ClassService;
-using UCMS.Services.ClassService.Abstraction;
 using UCMS.Services.FileService;
-using UCMS.Services.ImageService;
-using UCMS.Services.PasswordService.Abstraction;
 
 namespace UCMS.Services.ProjectService;
 
@@ -50,10 +43,40 @@ public class ProjectService: IProjectService
         {
             return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.InvalidIstructorForThisClass);
         }
+        var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
+
+        dto.StartDate = TimeZoneInfo.ConvertTimeToUtc(
+            DateTime.SpecifyKind(dto.StartDate, DateTimeKind.Unspecified),
+            tehranZone
+        );
+
+        dto.EndDate = TimeZoneInfo.ConvertTimeToUtc(
+            DateTime.SpecifyKind(dto.EndDate, DateTimeKind.Unspecified),
+            tehranZone
+        );
+
+        if (currentClass.StartDate.HasValue)
+        {
+            if (currentClass.StartDate.Value > DateOnly.FromDateTime(dto.StartDate.Date))
+            {
+                return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.ProjectStartDateCannotBeBeforeClassStartDate);
+            }
+        }
+        if (currentClass.EndDate.HasValue)
+        {
+            if (currentClass.EndDate.Value < DateOnly.FromDateTime(dto.EndDate.Date))
+            {
+                return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.ProjectEndDateCannotBeAfterClassEndDate);
+            }
+        }
+        if (await _repository.IsProjectNameDuplicateAsync(classId, dto.Title))
+        {
+            return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.titleIsDuplicated);
+        }
+        
         var validator = new CreateProjectDtoValidator(_fileService);
         
         var result = await validator.ValidateAsync(dto);
-        
         if (!result.IsValid)
         {
             var errorMessage = result.Errors.First().ErrorMessage;
@@ -76,27 +99,69 @@ public class ProjectService: IProjectService
     public async Task<ServiceResponse<GetProjectForInstructorDto>> UpdateProjectAsync(int classId, int projectId, PatchProjectDto dto)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
-        var currentClass = await _classRepository.GetClassByIdAsync(classId);
+        
+        var existingProject = await _repository.GetProjectByIdAsync(projectId);
+        if (existingProject == null || existingProject.ClassId != classId)
+            return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.ProjectNotFound);
+        
+        var currentClass = await _classRepository.GetClassByIdAsync(existingProject.ClassId);
 
         if (currentClass == null)
             return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.ProjectNotFound);
     
         if (currentClass.InstructorId != user.Instructor.Id)
             return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.InvalidIstructorForThisClass);
-    
-        var existingProject = await _repository.GetProjectByIdAsync(projectId);
-        if (existingProject == null || existingProject.ClassId != classId)
-            return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.ProjectNotFound);
+        
+        var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
 
+        if (dto.StartDate.HasValue)
+        {
+            dto.StartDate = TimeZoneInfo.ConvertTimeToUtc(
+                DateTime.SpecifyKind(dto.StartDate.Value, DateTimeKind.Unspecified),
+                tehranZone
+            );
+            if (currentClass.StartDate.HasValue)
+            {
+                if (currentClass.StartDate.Value > DateOnly.FromDateTime(dto.StartDate.Value.Date))
+                {
+                    return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.ProjectStartDateCannotBeBeforeClassStartDate);
+                }
+            }
+        }
+        if (dto.EndDate.HasValue)
+        {
+            dto.EndDate = TimeZoneInfo.ConvertTimeToUtc(
+                DateTime.SpecifyKind(dto.EndDate.Value, DateTimeKind.Unspecified),
+                tehranZone
+            );
+            if (currentClass.EndDate.HasValue)
+            {
+                if (currentClass.EndDate.Value < DateOnly.FromDateTime(dto.EndDate.Value.Date))
+                {
+                    return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.ProjectEndDateCannotBeAfterClassEndDate);
+                }
+            }
+        }
+
+        if (dto.Title != null)
+        {
+            if (await _repository.IsProjectNameDuplicateAsync(classId, dto.Title))
+            {
+                return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.titleIsDuplicated);
+            }
+        }
         var validator = new UpdateProjectDtoValidator(_fileService);
         var result = await validator.ValidateAsync(dto);
         if (!result.IsValid)
             return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(result.Errors.First().ErrorMessage);
 
-        _mapper.Map(dto, existingProject); // map changes
+        _mapper.Map(dto, existingProject);
         if (dto.ProjectFile != null)
         {
-            _fileService.DeleteFile(existingProject.ProjectFilePath); 
+            if (existingProject.ProjectFilePath != null)
+            {
+                _fileService.DeleteFile(existingProject.ProjectFilePath); 
+            }
             existingProject.ProjectFilePath = await _fileService.SaveFileAsync(dto.ProjectFile, "projects"); 
         }
            
@@ -118,7 +183,10 @@ public class ProjectService: IProjectService
 
         if (project.Class.InstructorId != user!.Instructor!.Id)
             return ServiceResponseFactory.Failure<string>(Messages.ProjectCantBeAccessed);
-        _fileService.DeleteFile(project.ProjectFilePath);
+        if (project.ProjectFilePath != null)
+        {
+            _fileService.DeleteFile(project.ProjectFilePath);
+        }
         await _repository.DeleteAsync(project);
         return ServiceResponseFactory.Success("Project deleted successfully", Messages.ProjectDeletedSuccessfully);
     }
@@ -174,14 +242,17 @@ public class ProjectService: IProjectService
     }
     public async Task<ServiceResponse<FileDownloadDto>> HandleDownloadProjectFileAsync(int projectId)
     {
-        //check access for instructor and student
         var project = await _repository.GetProjectByIdAsync(projectId);
         if (project == null || string.IsNullOrWhiteSpace(project.ProjectFilePath))
-            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.ProjectOrFileNotFound);
+            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileDoesNotExist);
         var dto =await _fileService.DownloadFile(project.ProjectFilePath);
         if (dto==null)
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileDoesNotExist);
-        dto.ContentType = GetContentTypeFromPath(project.ProjectFilePath);
+        if (project.ProjectFilePath != null)
+        {
+            dto.ContentType = GetContentTypeFromPath(project.ProjectFilePath);
+        }
+
         return ServiceResponseFactory.Success(dto,Messages.ProjectFileDownloadedSuccessfully);
     }
     public async Task<ServiceResponse<List<GetProjectListForInstructorDto>>> GetProjectsForInstructor(FilterProjectsForInstructorDto dto)
@@ -192,7 +263,7 @@ public class ProjectService: IProjectService
         
         var responseDto = _mapper.Map<List<GetProjectListForInstructorDto>>(projectEntityList);
         
-        return ServiceResponseFactory.Success(responseDto, Messages.ProjectsRetrievedSuccessfully); // ClassesFetchedSuccessfully
+        return ServiceResponseFactory.Success(responseDto, Messages.ProjectsRetrievedSuccessfully);
     }
     public async Task<ServiceResponse<List<GetProjectListForStudentDto>>> GetProjectsForStudent(FilterProjectsForStudentDto dto)
     {
@@ -202,8 +273,49 @@ public class ProjectService: IProjectService
         
         var responseDto = _mapper.Map<List<GetProjectListForStudentDto>>(projectEntityList);
         
-        return ServiceResponseFactory.Success(responseDto, Messages.ProjectsRetrievedSuccessfully); // ClassesFetchedSuccessfully
+        return ServiceResponseFactory.Success(responseDto, Messages.ProjectsRetrievedSuccessfully);
     }
+    public async Task<ServiceResponse<List<GetProjectsOfClassDto>>> GetProjectsOfClassForInstructorAsync(int classId)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+        
+        var currentClass = await _classRepository.GetClassByIdAsync(classId);
+        if (currentClass == null)
+        {
+            return ServiceResponseFactory.Failure<List<GetProjectsOfClassDto>>(Messages.ClassNotFound);
+        }
+        if (currentClass.InstructorId != user.Instructor.Id)
+        {
+            return ServiceResponseFactory.Failure<List<GetProjectsOfClassDto>>(Messages.InvalidIstructorForThisClass);
+        }
+        var projects = await _repository.GetProjectsByClassIdAsync(classId);
 
+        if (!projects.Any())
+            return ServiceResponseFactory.Failure<List<GetProjectsOfClassDto>>(Messages.ClassHasNoProjects);
+
+        var dto = _mapper.Map<List<GetProjectsOfClassDto>>(projects);
+        return ServiceResponseFactory.Success(dto, Messages.ProjectsRetrievedSuccessfully);
+    }
+    public async Task<ServiceResponse<List<GetProjectsOfClassDto>>> GetProjectsOfClassForStudentAsync(int classId)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+        
+        var currentClass = await _classRepository.GetClassByIdAsync(classId);
+        if (currentClass == null)
+        {
+            return ServiceResponseFactory.Failure<List<GetProjectsOfClassDto>>(Messages.ClassNotFound);
+        }
+        if (!await _studentClassRepository.IsStudentOfClassAsync(classId, user!.Student!.Id))
+        {
+            return ServiceResponseFactory.Failure<List<GetProjectsOfClassDto>>(Messages.StudentNotInClass);
+        }
+        var projects = await _repository.GetProjectsByClassIdAsync(classId);
+
+        if (!projects.Any())
+            return ServiceResponseFactory.Failure<List<GetProjectsOfClassDto>>(Messages.ClassHasNoProjects);
+
+        var dto = _mapper.Map<List<GetProjectsOfClassDto>>(projects);
+        return ServiceResponseFactory.Success(dto, Messages.ProjectsRetrievedSuccessfully);    
+    }
 }
 

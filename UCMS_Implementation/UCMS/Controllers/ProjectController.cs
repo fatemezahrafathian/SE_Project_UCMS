@@ -115,4 +115,27 @@ public class ProjectController: ControllerBase
 
         return Ok(response.Data);
     }
+    [RoleBasedAuthorization("Instructor")]
+    [HttpGet("projectsOfClass/Instructor")]
+    public async Task<IActionResult> GetProjectsOfClassForInstructor(int classId)
+    {
+        var response = await _projectService.GetProjectsOfClassForInstructorAsync(classId);
+
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Data);
+    }
+    [RoleBasedAuthorization("Student")]
+    [HttpGet("projectsOfClass/Student")]
+    public async Task<IActionResult> GetProjectsOfClassForStudent(int classId)
+    {
+        var response = await _projectService.GetProjectsOfClassForStudentAsync(classId);
+
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Data);
+    }
+
 }
