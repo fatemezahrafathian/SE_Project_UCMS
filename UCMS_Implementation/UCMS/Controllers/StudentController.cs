@@ -48,6 +48,15 @@ namespace UCMS.Controllers
             return Ok(response);
         }
 
+        [HttpGet("{id}/profile")]
+        [Authorize]
+        public async Task<ActionResult> GetStudentProfileById(int id)
+        {
+            var response = await _studentService.GetStudentProfileById(id);
+            if (response.Data == null) return NotFound(response.Message);
+            return Ok(response);
+        }
+
         [HttpPut("profile/edit")]
         [RoleBasedAuthorization("Student")]
         public async Task<IActionResult> EditStudent([FromBody] EditStudentDto editStudentDto)
