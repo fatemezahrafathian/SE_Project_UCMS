@@ -132,9 +132,6 @@
   <data name="InvalidToken" xml:space="preserve">
     <value>Invalid token</value>
   </data>
-  <data name="AccountConfirmedSuccessfully" xml:space="preserve">
-    <value>Account confirmed successfully</value>
-  </data>
   <data name="InternalServerError" xml:space="preserve">
     <value>Internal Server Error</value>
   </data>
@@ -158,9 +155,6 @@
   </data>
   <data name="UnauthorizedMessage" xml:space="preserve">
     <value>UnauthorizedMessage</value>
-  </data>
-  <data name="AuthorizedMessage" xml:space="preserve">
-    <value>AuthorizedMessage</value>
   </data>
   <data name="OneTimeCodeSent" xml:space="preserve">
     <value>OneTimeCodeSent</value>
@@ -227,160 +221,18 @@
   </data>
     <data name="EndDateCanNotBeInPast" xml:space="preserve">
     <value>End date cannot be in the past.</value>
-  </data>
+    </data>
     <data name="StartDateCanNotBeEarlierThanCreationTime" xml:space="preserve">
     <value>Start date can not be earlier than creation time.</value>
-  </data>
+    </data>
     <data name="AlreadyEnteredThisClass." xml:space="preserve">
     <value>already entered this class.</value>
-  </data>
+    </data>
     <data name="AlreadyJoinedClass" xml:space="preserve">
     <value>AlreadyJoinedClass</value>
-  </data>
+    </data>
     <data name="ClassCurrentlyNotActive" xml:space="preserve">
     <value>Class Currently Not Active</value>
-  </data>
-    <data name="ClassJoinedSuccessfully" xml:space="preserve">
-    <value>class joined successfully.</value>
-  </data>
-    <data name="StudentNotInClass" xml:space="preserve">
-    <value>Student Not In Class</value>
-  </data>
-    <data name="LeftClassSuccessfully" xml:space="preserve">
-    <value>Left Class Successfully</value>
-  </data>
-    <data name="LeftClassNotSuccessfully" xml:space="preserve">
-    <value>LeftClassNotSuccessfully</value>
-  </data>
-    <data name="UnauthorizedAccess" xml:space="preserve">
-    <value>UnauthorizedAccess</value>
-  </data>
-    <data name="StudentNotFound" xml:space="preserve">
-    <value>StudentNotFound</value>
-  </data>
-    <data name="RemoveStudentFromClassNotSuccessfully" xml:space="preserve">
-    <value>RemoveStudentFromClassNotSuccessfully</value>
-  </data>
-    <data name="RemoveStudentFromClassSuccessfully" xml:space="preserve">
-    <value>RemoveStudentFromClassSuccessfully</value>
-  </data>
-  <data name="ListOfStudent" xml:space="preserve">
-    <value>ListOfStudent</value>
-  </data>
-
-    <data name="TitleIsRequired" xml:space="preserve">
-    <value>Title is required.</value>
-  </data>
-    <data name="TitleMaxLength" xml:space="preserve">
-    <value>Title must be at most 100 chars.</value>
-  </data>
-    <data name="DescriptionMaxLength" xml:space="preserve">
-    <value>Description must be at most 500 chars.</value>
-  </data>
-  <data name="AllRolesFetchedSuccessfully" xml:space="preserve">
-    <value>All roles fetched successfully</value>
-  </data>
-    <data name="EmailAlreadyTaken" xml:space="preserve">
-        <value>Email is already taken.</value>
-    </data>
-    <data name="UsernameAlreadyTaken" xml:space="preserve">
-        <value>Username is already taken.</value>
-    </data>
-    <data name="PasswordNotMatch" xml:space="preserve">
-        <value>Passwords do no.t match</value>
-    </data>
-    <data name="PasswordNotStrong" xml:space="preserve">
-        <value>Password is not strong enough.</value>
-    </data>
-    <data name="RegisteredSuccessfully" xml:space="preserve">
-        <value>User registered successfully.</value>
-    </data>
-    <data name="InvalidToken" xml:space="preserve">
-        <value>Invalid token</value>
-    </data>
-    <data name="AccountConfirmedSuccessfully" xml:space="preserve">
-        <value>Account confirmed successfully</value>
-    </data>
-    <data name="InternalServerError" xml:space="preserve">
-        <value>Internal Server Error</value>
-    </data>
-    <data name="InvalidInputMessage" xml:space="preserve">
-        <value>InvalidInputMessage</value>
-    </data>
-    <data name="UserNotFoundMessage" xml:space="preserve">
-        <value>UserNotFoundMessage</value>
-    </data>
-    <data name="WrongPasswordMessage" xml:space="preserve">
-        <value>WrongPasswordMessage</value>
-    </data>
-    <data name="LoginSuccessfulMessage" xml:space="preserve">
-        <value>LoginSuccessfulMessage</value>
-    </data>
-    <data name="LogoutSuccessfulyMessage" xml:space="preserve">
-        <value>LogoutSuccessfulyMessage</value>
-    </data>
-    <data name="UnauthorizedMessage" xml:space="preserve">
-        <value>UnauthorizedMessage</value>
-    </data>
-    <data name="AuthorizedMessage" xml:space="preserve">
-        <value>AuthorizedMessage</value>
-    </data>
-    <data name="OneTimeCodeSent" xml:space="preserve">
-        <value>OneTimeCodeSent</value>
-    </data>
-    <data name="ExpiredCode" xml:space="preserve">
-        <value>Expired code</value>
-    </data>
-    <data name="AllRolesFetchedSuccessfully" xml:space="preserve">
-        <value>All roles fetched successfully.</value>
-    </data>
-    <data name="ClassCreatedSuccessfully" xml:space="preserve">
-        <value>Class was created successfully.</value>
-    </data>
-    <data name="ClassNotFound" xml:space="preserve">
-        <value>Class not found.</value>
-    </data>
-    <data name="ClassCan'tBeAccessed" xml:space="preserve">
-        <value>Class can't be accessed.</value>
-    </data>
-    <data name="ClassFetchedSuccessfully" xml:space="preserve">
-        <value>Class fetched successfully.</value>
-    </data>
-    <data name="ClassesRetrievedSuccessfully" xml:space="preserve">
-        <value>Classes retrieved successfully.</value>
-    </data>
-    <data name="ClassDeletedSuccessfully" xml:space="preserve">
-        <value>Class deleted successfully.</value>
-    </data>
-    <data name="ClassUpdatedSuccessfully" xml:space="preserve">
-        <value>Class updated successfully.</value>
-    </data>
-    <data name="InvalidFormat" xml:space="preserve">
-        <value>File format is not valid.</value>
-    </data>
-    <data name="InvalidSize" xml:space="preserve">
-        <value>file size is not valid.</value>
-    </data>
-    <data name="StartDateCanNotBeLaterThanEndDatte" xml:space="preserve">
-        <value>Start date cannot be later than end date.</value>
-    </data>
-    <data name="StartDateCanNotBeInPast" xml:space="preserve">
-        <value>Start date cannot be in the past.</value>
-    </data>
-    <data name="EndDateCanNotBeInPast" xml:space="preserve">
-        <value>End date cannot be in the past.</value>
-    </data>
-    <data name="StartDateCanNotBeEarlierThanCreationTime" xml:space="preserve">
-        <value>Start date can not be earlier than creation time.</value>
-    </data>
-    <data name="AlreadyEnteredThisClass." xml:space="preserve">
-        <value>already entered this class.</value>
-    </data>
-    <data name="AlreadyJoinedClass" xml:space="preserve">
-        <value>AlreadyJoinedClass</value>
-    </data>
-    <data name="ClassCurrentlyNotActive" xml:space="preserve">
-        <value>Class Currently Not Active</value>
     </data>
     <data name="ClassJoinedSuccessfully" xml:space="preserve">
         <value>class joined successfully.</value>
@@ -614,10 +466,7 @@
       <value>Invalid template file format.</value>
   </data>
   <data name="TeamsCanNotBeCreated" xml:space="preserve">
-      <value />
-  </data>
-  <data name="InvalidInstructorForThisClass" xml:space="preserve">
-    <value>InvalidInstructorForThisClass</value>
+      <value>TeamsCanNotBeCreated</value>
   </data>
   <data name="ExerciseAlreadyExists" xml:space="preserve">
     <value>ExerciseAlreadyExists</value>
@@ -685,8 +534,8 @@
   <data name="ExamsRetrievedSuccessfully" xml:space="preserve">
     <value>ExamsRetrievedSuccessfully</value>
   </data>
-  <data name="ClassCantBeAccessed" xml:space="preserve">
-    <value>ClassCantBeAccessed</value>
+  <data name="AccountConfirmedSuccessfully" xml:space="preserve">
+      <value>AccountConfirmedSuccessfully</value>
   </data>
   <data name="ProjectStartDateCannotBeBeforeClassStartDate" xml:space="preserve">
       <value>ProjectStartDateCannotBeBeforeClassStartDate</value>
@@ -723,5 +572,8 @@
   </data>
   <data name="ExamEndDateCannotBeAfterClassEndDate" xml:space="preserve">
       <value>ExamEndDateCannotBeAfterClassEndDate</value>
+  </data>
+  <data name="AuthorizedMessage" xml:space="preserve">
+      <value>AuthorizedMessage</value>
   </data>
 </root>

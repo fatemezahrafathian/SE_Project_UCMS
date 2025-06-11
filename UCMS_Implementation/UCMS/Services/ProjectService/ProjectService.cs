@@ -285,9 +285,6 @@ public class ProjectService: IProjectService
         }
         var projects = await _repository.GetProjectsByClassIdAsync(classId);
 
-        if (!projects.Any())
-            return ServiceResponseFactory.Failure<List<GetProjectsOfClassDto>>(Messages.ClassHasNoProjects);
-
         var dto = _mapper.Map<List<GetProjectsOfClassDto>>(projects);
         return ServiceResponseFactory.Success(dto, Messages.ProjectsRetrievedSuccessfully);
     }
@@ -305,9 +302,6 @@ public class ProjectService: IProjectService
             return ServiceResponseFactory.Failure<List<GetProjectsOfClassDto>>(Messages.StudentNotInClass);
         }
         var projects = await _repository.GetProjectsByClassIdAsync(classId);
-
-        if (!projects.Any())
-            return ServiceResponseFactory.Failure<List<GetProjectsOfClassDto>>(Messages.ClassHasNoProjects);
 
         var dto = _mapper.Map<List<GetProjectsOfClassDto>>(projects);
         return ServiceResponseFactory.Success(dto, Messages.ProjectsRetrievedSuccessfully);    

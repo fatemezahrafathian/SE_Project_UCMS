@@ -110,7 +110,7 @@ public class ProjectController: ControllerBase
         return Ok(response.Data);
     }
     [RoleBasedAuthorization("Instructor")]
-    [HttpGet("projectsOfClass/Instructor")]
+    [HttpGet("{classId}/projectsOfClass/Instructor")]
     public async Task<IActionResult> GetProjectsOfClassForInstructor(int classId)
     {
         var response = await _projectService.GetProjectsOfClassForInstructorAsync(classId);
@@ -121,7 +121,7 @@ public class ProjectController: ControllerBase
         return Ok(response.Data);
     }
     [RoleBasedAuthorization("Student")]
-    [HttpGet("projectsOfClass/Student")]
+    [HttpGet("{classId}/projectsOfClass/Student")]
     public async Task<IActionResult> GetProjectsOfClassForStudent(int classId)
     {
         var response = await _projectService.GetProjectsOfClassForStudentAsync(classId);

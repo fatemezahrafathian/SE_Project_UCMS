@@ -60,7 +60,7 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Account confirmed successfully.
+        ///   Looks up a localized string similar to AccountConfirmedSuccessfully.
         /// </summary>
         public static string AccountConfirmedSuccessfully {
             get {
@@ -1266,7 +1266,7 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to TeamsCanNotBeCreated.
         /// </summary>
         public static string TeamsCanNotBeCreated {
             get {

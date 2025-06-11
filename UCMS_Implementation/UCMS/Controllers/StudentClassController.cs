@@ -34,10 +34,10 @@ public class StudentClassController: ControllerBase
         return Ok(response.Message);
     }
     [RoleBasedAuthorization("Instructor")]
-    [HttpDelete("{classId}/Students/remove")]
-    public async Task<IActionResult> RemoveStudentFromClass([FromBody] RemoveStudentFromClassDto request)
+    [HttpDelete("{classId}/Students/remove/{studentId}")]
+    public async Task<IActionResult> RemoveStudentFromClass(int classId,int studentId)
     {
-        var response = await _studentClassService.RemoveStudentFromClassAsync(request.ClassId, request.StudentId);
+        var response = await _studentClassService.RemoveStudentFromClassAsync(classId, studentId);
         
         if (!response.Success)
             return NotFound(response.Message);
