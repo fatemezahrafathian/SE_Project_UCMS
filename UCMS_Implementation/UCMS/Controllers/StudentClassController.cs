@@ -26,9 +26,9 @@ public class StudentClassController: ControllerBase
     }
     [RoleBasedAuthorization("Student")]
     [HttpDelete("{classId}/Leave")]
-    public async Task<IActionResult> LeaveClass([FromBody] LeaveClassRequestDto request)
+    public async Task<IActionResult> LeaveClass(int classId)
     {
-        var response = await _studentClassService.LeaveClassAsync(request.ClassId);
+        var response = await _studentClassService.LeaveClassAsync(classId);
         if (!response.Success)
             return BadRequest(response.Message);
         return Ok(response.Message);
