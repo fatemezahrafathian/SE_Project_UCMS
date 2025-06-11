@@ -42,7 +42,7 @@ public class PhaseSubmissionController: ControllerBase
     }
 
     [RoleBasedAuthorization("Instructor")]
-    [HttpGet("{submissionId}")]
+    [HttpGet("instructor/{submissionId}")]
     public async Task<IActionResult> GetPhaseSubmissionFileForInstructor(int submissionId)
     {
         var response = await _phaseSubmissionService.GetPhaseSubmissionFileForInstructor(submissionId);
@@ -54,7 +54,7 @@ public class PhaseSubmissionController: ControllerBase
     }
 
     [RoleBasedAuthorization("Student")]
-    [HttpGet("{submissionId}")]
+    [HttpGet("student/{submissionId}")]
     public async Task<IActionResult> GetPhaseSubmissionFileForStudent(int submissionId)
     {
         var response = await _phaseSubmissionService.GetPhaseSubmissionFileForStudent(submissionId);
@@ -78,7 +78,7 @@ public class PhaseSubmissionController: ControllerBase
     }
     
     [RoleBasedAuthorization("Instructor")]
-    [HttpGet]
+    [HttpGet("instructor")]
     public async Task<IActionResult> GetPhaseSubmissionsForInstructor([FromQuery] SortPhaseSubmissionsForInsrtuctorDto dto)
     {
         var response = await _phaseSubmissionService.GetPhaseSubmissionsForInstructor(dto);
@@ -90,7 +90,7 @@ public class PhaseSubmissionController: ControllerBase
     }
 
     [RoleBasedAuthorization("Student")]
-    [HttpGet]
+    [HttpGet("student")]
     public async Task<IActionResult> GetPhaseSubmissionsForStudent([FromQuery] SortPhaseSubmissionsStudentDto dto)
     {
         var response = await _phaseSubmissionService.GetPhaseSubmissionsForStudent(dto);

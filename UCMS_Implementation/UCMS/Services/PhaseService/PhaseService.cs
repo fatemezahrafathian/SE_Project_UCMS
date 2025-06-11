@@ -11,6 +11,7 @@ using UCMS.Repositories.ProjectRepository.Abstarction;
 using UCMS.Repositories.TeamPhaseRepository;
 using UCMS.Repositories.TeamPhaseRepository.Abstraction;
 using UCMS.Repositories.TeamRepository;
+using UCMS.Repositories.TeamRepository.Abstraction;
 using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.ClassService.Abstraction;
@@ -28,10 +29,10 @@ public class PhaseService:IPhaseService
     private readonly IProjectRepository _projectRepository;
     private readonly IFileService _fileService;
     private readonly IStudentClassRepository _studentClassRepository;
-    private readonly TeamRepository _teamRepository;
+    private readonly ITeamRepository _teamRepository;
     private readonly IPhaseSubmissionRepository _phaseSubmissionRepository;
 
-    public PhaseService(IPhaseRepository repository, IMapper mapper,IHttpContextAccessor httpContextAccessor,IClassRepository classRepository,IProjectRepository projectRepository,IFileService fileService,IStudentClassRepository studentClassRepository, TeamRepository teamRepository, IPhaseSubmissionRepository phaseSubmissionRepository)
+    public PhaseService(IPhaseRepository repository, IMapper mapper,IHttpContextAccessor httpContextAccessor,IClassRepository classRepository,IProjectRepository projectRepository,IFileService fileService,IStudentClassRepository studentClassRepository, ITeamRepository teamRepository, IPhaseSubmissionRepository phaseSubmissionRepository)
     {
         _repository = repository;
         _mapper = mapper;

@@ -22,6 +22,39 @@ namespace UCMS.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("PhaseSubmission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<bool>("IsFinal")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("StudentTeamPhaseId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StudentTeamPhaseId");
+
+                    b.ToTable("PhaseSubmissions");
+                });
+
             modelBuilder.Entity("UCMS.Models.Class", b =>
                 {
                     b.Property<int>("Id")
@@ -124,6 +157,94 @@ namespace UCMS.Migrations
                     b.ToTable("ClassStudents");
                 });
 
+            modelBuilder.Entity("UCMS.Models.Exam", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClassId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ExamLocation")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int>("ExamScore")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassId");
+
+                    b.ToTable("Exams");
+                });
+
+            modelBuilder.Entity("UCMS.Models.Exercise", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClassId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ExerciseFilePath")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ExerciseScore")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("FileFormats")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClassId");
+
+                    b.ToTable("Exercises");
+                });
+
             modelBuilder.Entity("UCMS.Models.Instructor", b =>
                 {
                     b.Property<int>("Id")
@@ -158,6 +279,55 @@ namespace UCMS.Migrations
                         .IsUnique();
 
                     b.ToTable("Instructors");
+                });
+
+            modelBuilder.Entity("UCMS.Models.Phase", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FileFormats")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhaseFilePath")
+                        .HasColumnType("text");
+
+                    b.Property<int>("PhaseScore")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("Phases");
                 });
 
             modelBuilder.Entity("UCMS.Models.Project", b =>
@@ -300,6 +470,32 @@ namespace UCMS.Migrations
                     b.ToTable("StudentTeams");
                 });
 
+            modelBuilder.Entity("UCMS.Models.StudentTeamPhase", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PhaseId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Score")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StudentTeamId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PhaseId");
+
+                    b.HasIndex("StudentTeamId");
+
+                    b.ToTable("StudentTeamPhases");
+                });
+
             modelBuilder.Entity("UCMS.Models.Team", b =>
                 {
                     b.Property<int>("Id")
@@ -420,6 +616,17 @@ namespace UCMS.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("PhaseSubmission", b =>
+                {
+                    b.HasOne("UCMS.Models.StudentTeamPhase", "StudentTeamPhase")
+                        .WithMany("Submissions")
+                        .HasForeignKey("StudentTeamPhaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("StudentTeamPhase");
+                });
+
             modelBuilder.Entity("UCMS.Models.Class", b =>
                 {
                     b.HasOne("UCMS.Models.Instructor", "Instructor")
@@ -459,6 +666,28 @@ namespace UCMS.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("UCMS.Models.Exam", b =>
+                {
+                    b.HasOne("UCMS.Models.Class", "Class")
+                        .WithMany()
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Class");
+                });
+
+            modelBuilder.Entity("UCMS.Models.Exercise", b =>
+                {
+                    b.HasOne("UCMS.Models.Class", "Class")
+                        .WithMany("Exercises")
+                        .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Class");
+                });
+
             modelBuilder.Entity("UCMS.Models.Instructor", b =>
                 {
                     b.HasOne("UCMS.Models.User", "User")
@@ -468,6 +697,17 @@ namespace UCMS.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UCMS.Models.Phase", b =>
+                {
+                    b.HasOne("UCMS.Models.Project", "Project")
+                        .WithMany("Phases")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("UCMS.Models.Project", b =>
@@ -509,6 +749,25 @@ namespace UCMS.Migrations
                     b.Navigation("Student");
 
                     b.Navigation("Team");
+                });
+
+            modelBuilder.Entity("UCMS.Models.StudentTeamPhase", b =>
+                {
+                    b.HasOne("UCMS.Models.Phase", "Phase")
+                        .WithMany("StudentTeamPhases")
+                        .HasForeignKey("PhaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UCMS.Models.StudentTeam", "StudentTeam")
+                        .WithMany("StudentTeamPhases")
+                        .HasForeignKey("StudentTeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Phase");
+
+                    b.Navigation("StudentTeam");
                 });
 
             modelBuilder.Entity("UCMS.Models.Team", b =>
@@ -559,6 +818,8 @@ namespace UCMS.Migrations
                 {
                     b.Navigation("ClassStudents");
 
+                    b.Navigation("Exercises");
+
                     b.Navigation("Projects");
 
                     b.Navigation("Schedules");
@@ -569,6 +830,16 @@ namespace UCMS.Migrations
                     b.Navigation("Classes");
                 });
 
+            modelBuilder.Entity("UCMS.Models.Phase", b =>
+                {
+                    b.Navigation("StudentTeamPhases");
+                });
+
+            modelBuilder.Entity("UCMS.Models.Project", b =>
+                {
+                    b.Navigation("Phases");
+                });
+
             modelBuilder.Entity("UCMS.Models.Role", b =>
                 {
                     b.Navigation("Users");
@@ -577,6 +848,16 @@ namespace UCMS.Migrations
             modelBuilder.Entity("UCMS.Models.Student", b =>
                 {
                     b.Navigation("ClassStudents");
+                });
+
+            modelBuilder.Entity("UCMS.Models.StudentTeam", b =>
+                {
+                    b.Navigation("StudentTeamPhases");
+                });
+
+            modelBuilder.Entity("UCMS.Models.StudentTeamPhase", b =>
+                {
+                    b.Navigation("Submissions");
                 });
 
             modelBuilder.Entity("UCMS.Models.Team", b =>
