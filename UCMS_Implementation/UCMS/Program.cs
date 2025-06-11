@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using UCMS.Data;
 using UCMS.Middleware;
+using UCMS.Models;
 using UCMS.Profile;
 using UCMS.Repositories.ClassRepository;
 using UCMS.Repositories.ClassRepository.Abstraction;
@@ -25,6 +26,10 @@ using UCMS.Repositories.RoleRepository;
 using UCMS.Repositories.RoleRepository.Abstraction;
 using UCMS.Repositories.StudentRepository;
 using UCMS.Repositories.StudentRepository.Abstraction;
+using UCMS.Repositories.StudentTeamPhaseRepository;
+using UCMS.Repositories.StudentTeamPhaseRepository.Abstraction;
+using UCMS.Repositories.TeamPhaseRepository;
+using UCMS.Repositories.TeamPhaseRepository.Abstraction;
 using UCMS.Repositories.TeamRepository;
 using UCMS.Repositories.TeamRepository.Abstraction;
 using UCMS.Repositories.UserRepository;
@@ -54,6 +59,7 @@ using UCMS.Services.RoleService;
 using UCMS.Services.RoleService.Abstraction;
 using UCMS.Services.StudentService;
 using UCMS.Services.StudentService.Abstraction;
+using UCMS.Services.TeamPhaseSrvice;
 using UCMS.Services.TeamService;
 using UCMS.Services.TeamService.Abstraction;
 using UCMS.Services.TokenService;
@@ -69,6 +75,9 @@ var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
 
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.Configure<MimeTypeOptions>(
+    builder.Configuration.GetSection("MimeTypes"));
 
 
 builder.Services.Configure<ImageUploadSettings>(
@@ -117,6 +126,9 @@ builder.Services.AddScoped<IClassRepository, ClassRepository>();
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IStudentClassService, StudentClassService>();
+builder.Services.AddScoped<IPhaseSubmissionRepository, PhaseSubmissionRepository>();
+builder.Services.AddScoped<IPhaseSubmissionService, PhaseSubmissionService>();
+builder.Services.AddScoped<IStudentTeamPhaseRepository, StudentTeamPhaseRepository>();
 
 builder.Services.AddTransient<UrlBuilder>();
 

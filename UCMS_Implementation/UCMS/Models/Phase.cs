@@ -27,4 +27,5 @@ public class Phase
     public int ProjectId { get; set; }
     [ForeignKey("ProjectId")]
     public Project Project { get; set; }
+    public ICollection<StudentTeamPhase> StudentTeamPhases { get; set; } = new List<StudentTeamPhase>();
 }

@@ -13,4 +13,6 @@ public class StudentTeam
     public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
 
     public TeamRole Role { get; set; } = TeamRole.Member;
+
+    public ICollection<StudentTeamPhase> StudentTeamPhases { get; set; } = new List<StudentTeamPhase>();
 }

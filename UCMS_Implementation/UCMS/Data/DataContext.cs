@@ -16,10 +16,11 @@ public class DataContext : DbContext
     public DbSet<Project> Projects { get; set; }
     public DbSet<Phase> Phases { get; set; }
     public DbSet<Exam> Exams { get; set; }
-    
     public DbSet<Team> Teams { get; set; }
     public DbSet<StudentTeam> StudentTeams { get; set; }
     public DbSet<Exercise> Exercises { get; set; }
+    public DbSet<StudentTeamPhase> StudentTeamPhases { get; set; }
+    public DbSet<PhaseSubmission> PhaseSubmissions { get; set; }
     
 
 
@@ -96,10 +97,10 @@ public class DataContext : DbContext
                 .HasMaxLength(300);
 
             entity.Property(p => p.CreatedAt)
-                .HasDefaultValueSql("GETUTCDATE()");
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             entity.Property(p => p.UpdatedAt)
-                .HasDefaultValueSql("GETUTCDATE()");
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             entity.HasOne(p => p.Class)
                 .WithMany(c => c.Projects)

@@ -614,7 +614,7 @@
       <value>Invalid template file format.</value>
   </data>
   <data name="TeamsCanNotBeCreated" xml:space="preserve">
-      <value />
+      <value>Teams can not be created.</value>
   </data>
   <data name="InvalidInstructorForThisClass" xml:space="preserve">
     <value>InvalidInstructorForThisClass</value>
@@ -687,5 +687,35 @@
   </data>
   <data name="ClassCantBeAccessed" xml:space="preserve">
     <value>ClassCantBeAccessed</value>
+  </data>
+  <data name="StudentInNoTeamForThisPhase" xml:space="preserve">
+      <value>StudentInNoTeamForThisPhase</value>
+  </data>
+  <data name="FileIsNeeded" xml:space="preserve">
+      <value>FileIsNeeded</value>
+  </data>
+  <data name="PhaseSubmissionCreatesSuccessfully" xml:space="preserve">
+      <value>PhaseSubmissionCreatesSuccessfully</value>
+  </data>
+  <data name="PhaseSubmissionNotFound" xml:space="preserve">
+      <value>PhaseSubmissionNotFound</value>
+  </data>
+  <data name="PhaseSubmissionCanNotBeAccessed" xml:space="preserve">
+      <value>PhaseSubmissionCanNotBeAccessed</value>
+  </data>
+  <data name="PhaseSubmissionFileFetchedSuccessfully" xml:space="preserve">
+      <value>PhaseSubmissionFileFetchedSuccessfully</value>
+  </data>
+  <data name="PhaseSubmissionFilesFetchedSuccessfully" xml:space="preserve">
+      <value>PhaseSubmissionFilesFetchedSuccessfully</value>
+  </data>
+  <data name="PhaseSubmissionsFetchedSuccessfully" xml:space="preserve">
+      <value>PhaseSubmissionsFetchedSuccessfully</value>
+  </data>
+  <data name="PhaseSubmissionMarkedAsFinalAlready" xml:space="preserve">
+      <value>PhaseSubmissionMarkedAsFinalAlready</value>
+  </data>
+  <data name="PhaseSubmissionMarkedAsFinal" xml:space="preserve">
+      <value>PhaseSubmissionMarkedAsFinal</value>
   </data>
 </root>

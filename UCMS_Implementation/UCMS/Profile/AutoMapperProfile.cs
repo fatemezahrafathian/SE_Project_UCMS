@@ -7,6 +7,7 @@ using UCMS.DTOs.ExamDto;
 using UCMS.DTOs.ProjectDto;
 using UCMS.DTOs.RoleDto;
 using UCMS.DTOs.TeamDto;
+using UCMS.DTOs.TeamPhaseDto;
 using UCMS.Models;
 
 namespace UCMS.Profile;
@@ -293,6 +294,15 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.ExamLocation, opt => opt.MapFrom(src => src.ExamLocation))
             .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
             .ForMember(dest => dest.ExamScore, opt => opt.MapFrom(src => src.ExamScore));
+
+        CreateMap<CreatePhaseSubmissionDto, PhaseSubmission>();
+
+        CreateMap<PhaseSubmission, GetSubmissionPreviewForInstructorDto>()
+            .ForMember(dest => dest.TeamName, opt => opt.MapFrom(src => src.StudentTeamPhase.StudentTeam.Team.Name))
+            .ForMember(dest => dest.FileType, opt => opt.Ignore());
+        
+        CreateMap<PhaseSubmission, GetSubmissionPreviewForStudentDto>()
+            .ForMember(dest => dest.FileType, opt => opt.Ignore());
 
     }
     private static ExerciseStatus calculateExerciseStatus(DateTime start, DateTime end)

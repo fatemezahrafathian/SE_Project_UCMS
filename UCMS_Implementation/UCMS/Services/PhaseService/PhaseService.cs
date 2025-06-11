@@ -8,6 +8,9 @@ using UCMS.Models;
 using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Repositories.PhaseRepository.Abstraction;
 using UCMS.Repositories.ProjectRepository.Abstarction;
+using UCMS.Repositories.TeamPhaseRepository;
+using UCMS.Repositories.TeamPhaseRepository.Abstraction;
+using UCMS.Repositories.TeamRepository;
 using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.ClassService.Abstraction;
@@ -25,8 +28,10 @@ public class PhaseService:IPhaseService
     private readonly IProjectRepository _projectRepository;
     private readonly IFileService _fileService;
     private readonly IStudentClassRepository _studentClassRepository;
+    private readonly TeamRepository _teamRepository;
+    private readonly IPhaseSubmissionRepository _phaseSubmissionRepository;
 
-    public PhaseService(IPhaseRepository repository, IMapper mapper,IHttpContextAccessor httpContextAccessor,IClassRepository classRepository,IProjectRepository projectRepository,IFileService fileService,IStudentClassRepository studentClassRepository)
+    public PhaseService(IPhaseRepository repository, IMapper mapper,IHttpContextAccessor httpContextAccessor,IClassRepository classRepository,IProjectRepository projectRepository,IFileService fileService,IStudentClassRepository studentClassRepository, TeamRepository teamRepository, IPhaseSubmissionRepository phaseSubmissionRepository)
     {
         _repository = repository;
         _mapper = mapper;
@@ -35,6 +40,8 @@ public class PhaseService:IPhaseService
         _projectRepository = projectRepository;
         _fileService = fileService;
         _studentClassRepository = studentClassRepository;
+        _teamRepository = teamRepository;
+        _phaseSubmissionRepository = phaseSubmissionRepository;
     }
 
     public async Task<ServiceResponse<GetPhaseForInstructorDto>> CreatePhaseAsync(int projectId,CreatePhaseDto dto)
@@ -75,6 +82,22 @@ public class PhaseService:IPhaseService
         newPhase.ProjectId=currentProject.Id;
         newPhase.PhaseFilePath = filePath;
         await _repository.AddAsync(newPhase);
+
+        // var teams = await _teamRepository.GetTeamsByProjectIdAsync(newPhase.ProjectId); // change function to join with stdTeam
+        // foreach (var team in teams)
+        // {
+        //     var newTeamPhase = new TeamPhase()
+        //     {
+        //         TeamId = team.Id,
+        //         PhaseId = newPhase.Id
+        //     };
+        //     foreach (var stdTeam in team.StudentTeams)
+        //     {
+        //         newTeamPhase.StudentTeamPhases.Add();
+        //     }
+        //     _teamPhaseRepository.AddTeamPhaseAsync(newTeamPhase);
+        // }
+        
         var phaseDto = _mapper.Map<GetPhaseForInstructorDto>(newPhase);
         return ServiceResponseFactory.Success(phaseDto, Messages.PhaseCreatedSuccessfully);
     }
@@ -177,20 +200,8 @@ public class PhaseService:IPhaseService
         var dto =await _fileService.DownloadFile(project.PhaseFilePath);
         if (dto==null)
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileDoesNotExist);
-        dto.ContentType = GetContentTypeFromPath(project.PhaseFilePath);
+        dto.ContentType = _fileService.GetContentTypeFromPath(project.PhaseFilePath);
         return ServiceResponseFactory.Success(dto,Messages.PhaseFileDownloadedSuccessfully);
-    }
-    private static string? GetContentTypeFromPath(string? filePath)
-    {
-        if (string.IsNullOrEmpty(filePath)) return null;
-        var extension = Path.GetExtension(filePath).ToLowerInvariant();
-        return extension switch
-        {
-            ".pdf" => "application/pdf",
-            ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            ".doc" => "application/msword",
-            _ => "application/octet-stream"
-        };
     }
     public async Task<ServiceResponse<GetPhaseForStudentDto>> GetPhaseByIdForStudentAsync(int phaseId)
     {
@@ -238,7 +249,7 @@ public class PhaseService:IPhaseService
         var dto =await _fileService.DownloadFile(project.PhaseFilePath);
         if (dto==null)
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileDoesNotExist);
-        dto.ContentType = GetContentTypeFromPath(project.PhaseFilePath);
+        dto.ContentType = _fileService.GetContentTypeFromPath(project.PhaseFilePath);
         return ServiceResponseFactory.Success(dto,Messages.PhaseFileDownloadedSuccessfully);
     }
 
