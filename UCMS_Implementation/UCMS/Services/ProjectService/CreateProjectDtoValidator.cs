@@ -45,7 +45,7 @@ public class CreateProjectDtoValidator : AbstractValidator<CreateProjectDto>
                 .WithMessage(Messages.InvalidSize);
         });
         RuleFor(x => x.ProjectType)
-            .Must(value => value == 1 || value == 2)
+            .Must(value => value == 0 || value == 1)
             .WithMessage(Messages.InvalidProjectTypeSelected);
 
         When(x => x.ProjectType == (int)ProjectType.Group, () =>
