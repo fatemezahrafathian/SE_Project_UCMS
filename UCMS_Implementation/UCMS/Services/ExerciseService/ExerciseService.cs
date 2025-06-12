@@ -185,7 +185,7 @@ public class ExerciseService:IExerciseService
         }
         return ServiceResponseFactory.Success("Exercise deleted successfully", Messages.ExerciseDeletedSuccessfully);
     }
-    public async Task<ServiceResponse<List<GetExercisesForInstructorDto>>> GetExercisesForInstructor(int classId)
+    public async Task<ServiceResponse<List<GetExercisesForInstructorDto>>> GetExercisesOfClassForInstructor(int classId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var currentclass = await _classRepository.GetClassByIdAsync(classId);
@@ -246,7 +246,7 @@ public class ExerciseService:IExerciseService
 
         return ServiceResponseFactory.Success(dto, Messages.ExerciseRetrievedSuccessfully);
     }
-    public async Task<ServiceResponse<List<GetExercisesForStudentDto>>> GetExercisesForStudent(int classId)
+    public async Task<ServiceResponse<List<GetExercisesForStudentDto>>> GetExercisesOfClassForStudent(int classId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var currentClass = await _classRepository.GetClassByIdAsync(classId);
@@ -275,14 +275,14 @@ public class ExerciseService:IExerciseService
         dto.ContentType = GetContentTypeFromPath(exercise.ExerciseFilePath);
         return ServiceResponseFactory.Success(dto,Messages.ExerciseFileDownloadedSuccessfully);
     }
-    public async Task<ServiceResponse<List<GetExercisesForInstructorDto>>> GetExercisesOfClassForInstructor()
+    public async Task<ServiceResponse<List<GetExercisesForInstructorDto>>> GetExercisesForInstructor()
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var exercises = await _repository.GetExercisesByInstructorIdAsync(user!.Instructor!.Id);
         var dto =  _mapper.Map<List<GetExercisesForInstructorDto>>(exercises);
         return ServiceResponseFactory.Success(dto,Messages.ExercisesRetrievedSuccessfully);
     }
-    public async Task<ServiceResponse<List<GetExercisesForStudentDto>>> GetExercisesOfClassForStudent()
+    public async Task<ServiceResponse<List<GetExercisesForStudentDto>>> GetExercisesForStudent()
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var exercises = await _repository.GetExercisesByStudentIdAsync(user!.Instructor!.Id);
