@@ -43,17 +43,17 @@ public class PhaseService:IPhaseService
         {
             return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.InvalidIstructorForThisProject);
         }
-        var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
-
-        dto.StartDate = TimeZoneInfo.ConvertTimeToUtc(
-            DateTime.SpecifyKind(dto.StartDate, DateTimeKind.Unspecified),
-            tehranZone
-        );
-
-        dto.EndDate = TimeZoneInfo.ConvertTimeToUtc(
-            DateTime.SpecifyKind(dto.EndDate, DateTimeKind.Unspecified),
-            tehranZone
-        );
+        // var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
+        //
+        // dto.StartDate = TimeZoneInfo.ConvertTimeToUtc(
+        //     DateTime.SpecifyKind(dto.StartDate, DateTimeKind.Unspecified),
+        //     tehranZone
+        // );
+        //
+        // dto.EndDate = TimeZoneInfo.ConvertTimeToUtc(
+        //     DateTime.SpecifyKind(dto.EndDate, DateTimeKind.Unspecified),
+        //     tehranZone
+        // );
 
         if (currentProject.StartDate > dto.StartDate)
         {
@@ -114,14 +114,14 @@ public class PhaseService:IPhaseService
         if (existingPhase.Project.Class.InstructorId != user?.Instructor?.Id)
             return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.InvalidIstructorForThisPhase);
         
-        var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
+        // var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
 
         if (dto.StartDate.HasValue)
         {
-            dto.StartDate = TimeZoneInfo.ConvertTimeToUtc(
-                DateTime.SpecifyKind(dto.StartDate.Value, DateTimeKind.Unspecified),
-                tehranZone
-            );
+            // dto.StartDate = TimeZoneInfo.ConvertTimeToUtc(
+            //     DateTime.SpecifyKind(dto.StartDate.Value, DateTimeKind.Unspecified),
+            //     tehranZone
+            // );
             if (existingPhase.Project.StartDate > dto.StartDate)
             {
                 return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseStartTimeCannotBeBeforeProjectStartTime);
@@ -129,10 +129,10 @@ public class PhaseService:IPhaseService
         }
         if (dto.EndDate.HasValue)
         {
-            dto.EndDate = TimeZoneInfo.ConvertTimeToUtc(
-                DateTime.SpecifyKind(dto.EndDate.Value, DateTimeKind.Unspecified),
-                tehranZone
-            );
+            // dto.EndDate = TimeZoneInfo.ConvertTimeToUtc(
+            //     DateTime.SpecifyKind(dto.EndDate.Value, DateTimeKind.Unspecified),
+            //     tehranZone
+            // );
             if (existingPhase.Project.EndDate < dto.EndDate)
             {
                 return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseEndTimeCannotBeAfterProjectEndTime);

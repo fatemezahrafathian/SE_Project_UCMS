@@ -39,12 +39,12 @@ public class ExamService:IExamService
         {
             return ServiceResponseFactory.Failure<GetExamForInstructorDto>(Messages.InvalidInstructorForThisClass);
         }
-        var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
-        
-        dto.Date = TimeZoneInfo.ConvertTimeToUtc(
-            DateTime.SpecifyKind(dto.Date, DateTimeKind.Unspecified),
-            tehranZone
-        );
+        // var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
+        //
+        // dto.Date = TimeZoneInfo.ConvertTimeToUtc(
+        //     DateTime.SpecifyKind(dto.Date, DateTimeKind.Unspecified),
+        //     tehranZone
+        // );
         
         if (currentClass.EndDate.HasValue)
         {
@@ -92,14 +92,14 @@ public class ExamService:IExamService
         var existingExam = await _repository.GetExamByIdAsync(examId);
         if (existingExam == null || existingExam.Class.InstructorId !=  user?.Instructor?.Id)
             return ServiceResponseFactory.Failure<GetExamForInstructorDto>(Messages.ExamCantBeAccessed);
-        var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
+        // var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
         
         if (dto.Date.HasValue)
         {
-            dto.Date = TimeZoneInfo.ConvertTimeToUtc(
-                DateTime.SpecifyKind(dto.Date.Value, DateTimeKind.Unspecified),
-                tehranZone
-            );
+            // dto.Date = TimeZoneInfo.ConvertTimeToUtc(
+            //     DateTime.SpecifyKind(dto.Date.Value, DateTimeKind.Unspecified),
+            //     tehranZone
+            // );
             if (existingExam.Class.EndDate.HasValue)
             {
                 if (existingExam.Class.EndDate.Value < DateOnly.FromDateTime(dto.Date.Value.Date))
