@@ -285,7 +285,7 @@ public class ExerciseService:IExerciseService
     public async Task<ServiceResponse<List<GetExercisesForStudentDto>>> GetExercisesForStudent()
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
-        var exercises = await _repository.GetExercisesByStudentIdAsync(user!.Instructor!.Id);
+        var exercises = await _repository.GetExercisesByStudentIdAsync(user!.Student!.Id);
         var dto =  _mapper.Map<List<GetExercisesForStudentDto>>(exercises);
         return ServiceResponseFactory.Success(dto,Messages.ExercisesRetrievedSuccessfully);
     }
