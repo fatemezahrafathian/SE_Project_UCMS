@@ -1,16 +1,12 @@
 using AutoMapper;
-using Microsoft.AspNetCore.StaticFiles;
 using UCMS.DTOs;
 using UCMS.DTOs.PhaseDto;
-using UCMS.DTOs.ProjectDto;
 using UCMS.Factories;
 using UCMS.Models;
 using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Repositories.PhaseRepository.Abstraction;
 using UCMS.Repositories.ProjectRepository.Abstarction;
-using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Resources;
-using UCMS.Services.ClassService.Abstraction;
 using UCMS.Services.FileService;
 using UCMS.Services.PhaseService.Abstraction;
 
@@ -21,17 +17,15 @@ public class PhaseService:IPhaseService
     private readonly IPhaseRepository _repository;
     private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IClassRepository _classRepository;
     private readonly IProjectRepository _projectRepository;
     private readonly IFileService _fileService;
     private readonly IStudentClassRepository _studentClassRepository;
 
-    public PhaseService(IPhaseRepository repository, IMapper mapper,IHttpContextAccessor httpContextAccessor,IClassRepository classRepository,IProjectRepository projectRepository,IFileService fileService,IStudentClassRepository studentClassRepository)
+    public PhaseService(IPhaseRepository repository, IMapper mapper,IHttpContextAccessor httpContextAccessor,IProjectRepository projectRepository,IFileService fileService,IStudentClassRepository studentClassRepository)
     {
         _repository = repository;
         _mapper = mapper;
         _httpContextAccessor = httpContextAccessor;
-        _classRepository = classRepository;
         _projectRepository = projectRepository;
         _fileService = fileService;
         _studentClassRepository = studentClassRepository;
@@ -45,14 +39,29 @@ public class PhaseService:IPhaseService
         {
             return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.ProjectNotFound);
         }
-        var currentClass = currentProject.Class;
-        if (currentClass == null)
+        if (currentProject.Class.InstructorId != user!.Instructor!.Id)
         {
-            return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.ClassNotFound);
+            return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.InvalidIstructorForThisProject);
         }
-        if (currentClass.InstructorId != user.Instructor.Id)
+        var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
+
+        dto.StartDate = TimeZoneInfo.ConvertTimeToUtc(
+            DateTime.SpecifyKind(dto.StartDate, DateTimeKind.Unspecified),
+            tehranZone
+        );
+
+        dto.EndDate = TimeZoneInfo.ConvertTimeToUtc(
+            DateTime.SpecifyKind(dto.EndDate, DateTimeKind.Unspecified),
+            tehranZone
+        );
+
+        if (currentProject.StartDate > dto.StartDate)
         {
-            return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.InvalidIstructorForThisClass);
+            return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseStartTimeCannotBeBeforeProjectStartTime);
+        }
+        if (currentProject.EndDate < dto.EndDate)
+        {
+            return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseEndTimeCannotBeAfterProjectEndTime);
         }
         var validator = new CreatePhaseDtoValidator(_fileService);
         var result = await validator.ValidateAsync(dto);
@@ -93,35 +102,60 @@ public class PhaseService:IPhaseService
 
         return ServiceResponseFactory.Success(dto, Messages.PhaseRetrievedSuccessfully);
     }
-    public async Task<ServiceResponse<GetPhaseForInstructorDto>> UpdatePhaseAsync(int projectId, int phaseId, PatchPhaseDto dto)
+    public async Task<ServiceResponse<GetPhaseForInstructorDto>> UpdatePhaseAsync(int phaseId, PatchPhaseDto dto)
     {
+        
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
-
-        var currentProject = await _projectRepository.GetProjectByIdAsync(projectId);
-        if (currentProject == null)
-            return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.ProjectNotFound);
-
-        if (currentProject.Class == null || currentProject.Class.InstructorId != user?.Instructor?.Id)
-            return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.InvalidIstructorForThisClass);
-
+        
         var existingPhase = await _repository.GetPhaseByIdAsync(phaseId);
-        if (existingPhase == null || existingPhase.ProjectId != projectId)
+        if (existingPhase == null)
             return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseNotFound);
 
+        if (existingPhase.Project.Class.InstructorId != user?.Instructor?.Id)
+            return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.InvalidIstructorForThisPhase);
+        
+        var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
+
+        if (dto.StartDate.HasValue)
+        {
+            dto.StartDate = TimeZoneInfo.ConvertTimeToUtc(
+                DateTime.SpecifyKind(dto.StartDate.Value, DateTimeKind.Unspecified),
+                tehranZone
+            );
+            if (existingPhase.Project.StartDate > dto.StartDate)
+            {
+                return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseStartTimeCannotBeBeforeProjectStartTime);
+            }
+        }
+        if (dto.EndDate.HasValue)
+        {
+            dto.EndDate = TimeZoneInfo.ConvertTimeToUtc(
+                DateTime.SpecifyKind(dto.EndDate.Value, DateTimeKind.Unspecified),
+                tehranZone
+            );
+            if (existingPhase.Project.EndDate < dto.EndDate)
+            {
+                return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseEndTimeCannotBeAfterProjectEndTime);
+            }
+        }
         var validator = new UpdatePhaseDtoValidator(_fileService);
         var validationResult = await validator.ValidateAsync(dto);
         if (!validationResult.IsValid)
             return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(validationResult.Errors.First().ErrorMessage);
-        
-        var isDuplicate = await _repository.ExistsWithTitleExceptIdAsync(dto.Title, projectId, phaseId);
-        if (isDuplicate)
-            return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseAlreadyExists);
+
+        if (dto.Title != null)
+        {
+            var isDuplicate = await _repository.ExistsWithTitleExceptIdAsync(dto.Title, existingPhase.ProjectId, phaseId);
+            if (isDuplicate)
+                return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseAlreadyExists);
+        }
 
         _mapper.Map(dto, existingPhase);
 
         if (dto.PhaseFile != null)
         {
-            _fileService.DeleteFile(existingPhase.PhaseFilePath);
+            if (existingPhase.PhaseFilePath != null)
+                _fileService.DeleteFile(existingPhase.PhaseFilePath);
             existingPhase.PhaseFilePath = await _fileService.SaveFileAsync(dto.PhaseFile, "phases");
         }
 
@@ -133,26 +167,20 @@ public class PhaseService:IPhaseService
         return ServiceResponseFactory.Success(phaseDto, Messages.PhaseUpdatedSuccessfully);
     }
 
-    public async Task<ServiceResponse<string>>  DeletePhaseAsync(int projectId, int phaseId)
+    public async Task<ServiceResponse<string>>  DeletePhaseAsync(int phaseId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
-    
-        var project = await _projectRepository.GetProjectByIdAsync(projectId);
-        if (project == null)
-            return ServiceResponseFactory.Failure<string>(Messages.ProjectNotFound);
-
-        if (project.Class.InstructorId != user!.Instructor!.Id)
-            return ServiceResponseFactory.Failure<string>(Messages.PhaseCantBeAccessed);
         
         var phase = await _repository.GetPhaseByIdAsync(phaseId);
         if (phase == null)
             return ServiceResponseFactory.Failure<string>(Messages.PhaseNotFound);
-        if (phase.ProjectId != projectId)
-        {
+
+        if (phase.Project.Class.InstructorId != user!.Instructor!.Id)
             return ServiceResponseFactory.Failure<string>(Messages.PhaseCantBeAccessed);
-        }
+        
         await _repository.DeleteAsync(phase);
-        _fileService.DeleteFile(project.ProjectFilePath);
+        if (phase.PhaseFilePath != null) 
+            _fileService.DeleteFile(phase.PhaseFilePath!);
         return ServiceResponseFactory.Success("Phase deleted successfully", Messages.ProjectDeletedSuccessfully);
     }
     public async Task<ServiceResponse<List<GetPhasesForInstructorDto>>> GetPhasesForInstructor(int projectId)
@@ -162,7 +190,7 @@ public class PhaseService:IPhaseService
 
         if (project == null || project.Class.InstructorId != user?.Instructor?.Id)
         {
-            return ServiceResponseFactory.Failure<List<GetPhasesForInstructorDto>>(Messages.ProjectCantBeAccessed);
+            return ServiceResponseFactory.Failure<List<GetPhasesForInstructorDto>>(Messages.PhaseCantBeAccessed);
         }
         var phases = await _repository.GetPhasesByProjectIdAsync(projectId);
         var dto =  _mapper.Map<List<GetPhasesForInstructorDto>>(phases);
@@ -170,14 +198,19 @@ public class PhaseService:IPhaseService
     }
     public async Task<ServiceResponse<FileDownloadDto>> HandleDownloadPhaseFileForInstructorAsync(int phaseId)
     {
-        //check access for instructor and student
-        var project = await _repository.GetPhaseByIdAsync(phaseId);
-        if (project == null || string.IsNullOrWhiteSpace(project.PhaseFilePath))
-            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.PhaseOrFileNotFound);
-        var dto =await _fileService.DownloadFile(project.PhaseFilePath);
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+        var phase = await _repository.GetPhaseByIdAsync(phaseId);
+        
+        if (phase == null || phase.Project.Class.InstructorId != user?.Instructor?.Id)
+        {
+            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.PhaseCantBeAccessed);
+        }
+        if (string.IsNullOrWhiteSpace(phase.PhaseFilePath))
+            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileNotFound);
+        var dto =await _fileService.DownloadFile(phase.PhaseFilePath);
         if (dto==null)
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileDoesNotExist);
-        dto.ContentType = GetContentTypeFromPath(project.PhaseFilePath);
+        dto.ContentType = GetContentTypeFromPath(phase.PhaseFilePath);
         return ServiceResponseFactory.Success(dto,Messages.PhaseFileDownloadedSuccessfully);
     }
     private static string? GetContentTypeFromPath(string? filePath)
@@ -197,12 +230,12 @@ public class PhaseService:IPhaseService
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var phase = await _repository.GetPhaseByIdAsync(phaseId);
         
-        if (phase == null || user==null || user.Student==null)
+        if (phase == null)
         {
             return ServiceResponseFactory.Failure<GetPhaseForStudentDto>(Messages.PhaseCantBeAccessed);
         }
         
-        if (!await _studentClassRepository.IsStudentOfClassAsync(phase.Project.ClassId,user.Student.Id))
+        if (!await _studentClassRepository.IsStudentOfClassAsync(phase.Project.ClassId,user!.Student!.Id))
         {
             return ServiceResponseFactory.Failure<GetPhaseForStudentDto>(Messages.PhaseCantBeAccessed);
         }
@@ -216,9 +249,9 @@ public class PhaseService:IPhaseService
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var project = await _projectRepository.GetProjectByIdAsync(projectId);
 
-        if (project == null || user==null || user.Student==null || !await _studentClassRepository.IsStudentOfClassAsync(project.ClassId,user.Student.Id))
+        if (project == null || !await _studentClassRepository.IsStudentOfClassAsync(project.ClassId,user!.Student!.Id))
         {
-            return ServiceResponseFactory.Failure<List<GetPhasesForStudentDto>>(Messages.ProjectCantBeAccessed);
+            return ServiceResponseFactory.Failure<List<GetPhasesForStudentDto>>(Messages.PhaseCantBeAccessed);
         }
         var phases = await _repository.GetPhasesByProjectIdAsync(projectId);
         var dto =  _mapper.Map<List<GetPhasesForStudentDto>>(phases);
@@ -228,7 +261,7 @@ public class PhaseService:IPhaseService
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var phase = await _repository.GetPhaseByIdAsync(phaseId);
-        if (phase == null || user==null || user.Student==null || !await _studentClassRepository.IsStudentOfClassAsync(phase.Project.ClassId,user.Student.Id))
+        if (phase == null || !await _studentClassRepository.IsStudentOfClassAsync(phase.Project.ClassId,user!.Student!.Id))
         {
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.PhaseCantBeAccessed);
         }

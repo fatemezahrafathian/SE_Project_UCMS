@@ -1,3 +1,4 @@
+using UCMS.DTOs.ProjectDto;
 using UCMS.Models;
 
 namespace UCMS.Repositories.ProjectRepository.Abstarction;
@@ -18,4 +19,7 @@ public interface IProjectRepository
     Task<bool> IsProjectForInstructorAsync(int projectId, int instructorId);
     Task<bool> IsProjectForStudentAsync(int projectId, int studentId);
     Task<bool> ProjectExists(int projectId);
+    Task<bool> IsProjectNameDuplicateAsync(int classId, string projectName);
+    Task<List<Project>> GetProjectsByClassIdAsync(int classId);
+
 }

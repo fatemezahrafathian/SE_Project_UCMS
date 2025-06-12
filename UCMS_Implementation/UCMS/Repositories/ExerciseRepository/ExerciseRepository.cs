@@ -44,4 +44,21 @@ public class ExerciseRepository:IExerciseRepository
         _context.Exercises.Remove(exercise);
         await _context.SaveChangesAsync();
     }
+    public async Task<List<Exercise>> GetExercisesByStudentIdAsync(int studentId)
+    {
+        return await _context.Exercises
+            .Include(e => e.Class)
+            .ThenInclude(c => c.ClassStudents)
+            .Where(e => e.Class.ClassStudents.Any(cs => cs.StudentId == studentId))
+            .ToListAsync();
+    }
+
+    public async Task<List<Exercise>> GetExercisesByInstructorIdAsync(int instructorId)
+    {
+        return await _context.Exercises
+            .Include(e => e.Class)
+            .Where(e => e.Class.InstructorId == instructorId)
+            .ToListAsync();
+    }
+    
 }
