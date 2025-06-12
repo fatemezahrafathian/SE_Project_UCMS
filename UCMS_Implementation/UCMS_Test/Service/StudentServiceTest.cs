@@ -6,6 +6,7 @@ using Moq;
 using UCMS.DTOs.Student;
 using UCMS.Models;
 using UCMS.Repositories.StudentRepository.Abstraction;
+using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.StudentService;
 using UCMS.Services.Utils;
@@ -14,6 +15,7 @@ namespace UCMS_Test.Service;
 public class StudentServiceTest
 {
     private readonly Mock<IStudentRepository> _mockStudentRepo = new();
+    private readonly Mock<IUserRepository> _mockUserRepo = new();
     private readonly IMapper _mapper;
     private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor = new();
     private readonly Mock<ILogger<StudentService>> _mockLogger = new();
@@ -33,7 +35,8 @@ public class StudentServiceTest
             _mapper,
             _mockHttpContextAccessor.Object,
             _mockLogger.Object,
-            _urlBuilderMock.Object);
+            _urlBuilderMock.Object,
+            _mockUserRepo.Object);
     }
 
     private void SetHttpContextWithUser(int userId)
