@@ -1,24 +1,19 @@
 # Stage 1: Build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
+WORKDIR /src
 
-# Copy csproj and restore dependencies
-COPY UCMS.csproj ./
-RUN dotnet restore
-
-# Copy the rest of the source code
+# Copy everything including wwwroot
 COPY . .
 
-# Publish the app
-RUN dotnet publish -c Release -o /app/publish --no-restore
+RUN dotnet restore "./UCMS.csproj"
+RUN dotnet publish "./UCMS.csproj" -c Release -o /app/publish
 
 # Stage 2: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
 
-# Optional: Set environment variables (e.g., ASPNETCORE_ENVIRONMENT=Production)
 ENV ASPNETCORE_URLS=http://+:80
 EXPOSE 80
 
-ENTRYPOINT ["dotnet", "UCMS.dll", "migrate"]
+ENTRYPOINT ["dotnet", "UCMS.dll"]
