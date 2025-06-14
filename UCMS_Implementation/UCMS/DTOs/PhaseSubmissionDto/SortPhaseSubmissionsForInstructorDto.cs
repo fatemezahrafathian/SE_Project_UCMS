@@ -1,6 +1,6 @@
 namespace UCMS.DTOs.TeamPhaseDto;
 
-public class SortPhaseSubmissionsForInsrtuctorDto
+public class SortPhaseSubmissionsForInstructorDto
 {
     public int PhaseId { get; set; }
     public SortPhaseSubmissionByForInstructorOption SortBy { get; set; } = SortPhaseSubmissionByForInstructorOption.None;

@@ -12,7 +12,7 @@ using UCMS.Data;
 namespace UCMS.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250611134933_InitialCreate")]
+    [Migration("20250614164205_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -246,6 +246,44 @@ namespace UCMS.Migrations
                     b.HasIndex("ClassId");
 
                     b.ToTable("Exercises");
+                });
+
+            modelBuilder.Entity("UCMS.Models.ExerciseSubmission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<int>("ExerciseId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)");
+
+                    b.Property<bool>("IsFinal")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExerciseId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("ExerciseSubmissions");
                 });
 
             modelBuilder.Entity("UCMS.Models.Instructor", b =>
@@ -689,6 +727,25 @@ namespace UCMS.Migrations
                         .IsRequired();
 
                     b.Navigation("Class");
+                });
+
+            modelBuilder.Entity("UCMS.Models.ExerciseSubmission", b =>
+                {
+                    b.HasOne("UCMS.Models.Exercise", "Exercise")
+                        .WithMany()
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UCMS.Models.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Exercise");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("UCMS.Models.Instructor", b =>

@@ -46,6 +46,8 @@ using UCMS.Services.ExamService;
 using UCMS.Services.ExamService.Abstraction;
 using UCMS.Services.ExerciseService;
 using UCMS.Services.ExerciseService.Abstraction;
+using UCMS.Services.ExerciseSubmissionService;
+using UCMS.Services.ExerciseSubmissionService.Abstraction;
 using UCMS.Services.FileService;
 using UCMS.Services.ImageService;
 using UCMS.Services.PasswordService;
@@ -129,6 +131,7 @@ builder.Services.AddScoped<IStudentClassService, StudentClassService>();
 builder.Services.AddScoped<IPhaseSubmissionRepository, PhaseSubmissionRepository>();
 builder.Services.AddScoped<IPhaseSubmissionService, PhaseSubmissionService>();
 builder.Services.AddScoped<IStudentTeamPhaseRepository, StudentTeamPhaseRepository>();
+builder.Services.AddScoped<IExerciseSubmissionService, ExerciseSubmissionService>();
 
 builder.Services.AddTransient<UrlBuilder>();
 

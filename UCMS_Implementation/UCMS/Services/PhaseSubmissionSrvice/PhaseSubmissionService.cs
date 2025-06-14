@@ -142,19 +142,19 @@ public class PhaseSubmissionService: IPhaseSubmissionService
         return ServiceResponseFactory.Success(validDownloads, Messages.PhaseSubmissionFilesFetchedSuccessfully);
     }
 
-    public async Task<ServiceResponse<List<GetSubmissionPreviewForInstructorDto>>> GetPhaseSubmissionsForInstructor(SortPhaseSubmissionsForInsrtuctorDto dto)
+    public async Task<ServiceResponse<List<GetPhaseSubmissionPreviewForInstructorDto>>> GetPhaseSubmissionsForInstructor(SortPhaseSubmissionsForInstructorDto dto)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
         var phase = await _phaseRepository.GetPhaseByIdAsync(dto.PhaseId);
         if (phase == null || phase.Project.Class.InstructorId != user?.Instructor?.Id)
         {
-            return ServiceResponseFactory.Failure<List<GetSubmissionPreviewForInstructorDto>>(Messages.PhaseCantBeAccessed);
+            return ServiceResponseFactory.Failure<List<GetPhaseSubmissionPreviewForInstructorDto>>(Messages.PhaseCantBeAccessed);
         }
 
         var submissions = await _phaseSubmissionRepository.GetPhaseSubmissionsForInstructorByPhaseIdAsync(dto.PhaseId, dto.SortBy, dto.SortOrder);
 
-        var submissionDtos = _mapper.Map<List<GetSubmissionPreviewForInstructorDto>>(submissions);
+        var submissionDtos = _mapper.Map<List<GetPhaseSubmissionPreviewForInstructorDto>>(submissions);
         
         var submissionDict = submissions.ToDictionary(s => s.Id, s => s.FilePath);
 
@@ -169,19 +169,19 @@ public class PhaseSubmissionService: IPhaseSubmissionService
         return ServiceResponseFactory.Success(submissionDtos, Messages.PhaseSubmissionsFetchedSuccessfully);
     }
 
-    public async Task<ServiceResponse<List<GetSubmissionPreviewForStudentDto>>> GetPhaseSubmissionsForStudent(SortPhaseSubmissionsStudentDto dto)
+    public async Task<ServiceResponse<List<GetPhaseSubmissionPreviewForStudentDto>>> GetPhaseSubmissionsForStudent(SortPhaseSubmissionsStudentDto dto)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
         var studentTeamPhase = await _studentTeamPhaseRepository.GetStudentTeamPhaseWithRelationAsync(user!.Student!.Id, dto.PhaseId);
         if (studentTeamPhase==null)
         {
-            return ServiceResponseFactory.Failure<List<GetSubmissionPreviewForStudentDto>>(Messages.StudentInNoTeamForThisPhase);
+            return ServiceResponseFactory.Failure<List<GetPhaseSubmissionPreviewForStudentDto>>(Messages.StudentInNoTeamForThisPhase);
         }
 
         var submissions = await _phaseSubmissionRepository.GetPhaseSubmissionsForStudentByPhaseIdAsync(studentTeamPhase.StudentTeam.TeamId, dto.PhaseId, dto.SortBy, dto.SortOrder);
 
-        var submissionDtos = _mapper.Map<List<GetSubmissionPreviewForStudentDto>>(submissions);
+        var submissionDtos = _mapper.Map<List<GetPhaseSubmissionPreviewForStudentDto>>(submissions);
         
         var submissionDict = submissions.ToDictionary(s => s.Id, s => s.FilePath);
 

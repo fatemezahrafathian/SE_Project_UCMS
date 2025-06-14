@@ -270,6 +270,36 @@ namespace UCMS.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ExerciseSubmissions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    StudentId = table.Column<int>(type: "integer", nullable: false),
+                    ExerciseId = table.Column<int>(type: "integer", nullable: false),
+                    FilePath = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
+                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    IsFinal = table.Column<bool>(type: "boolean", nullable: false),
+                    SubmittedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExerciseSubmissions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ExerciseSubmissions_Exercises_ExerciseId",
+                        column: x => x.ExerciseId,
+                        principalTable: "Exercises",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ExerciseSubmissions_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Phases",
                 columns: table => new
                 {
@@ -423,6 +453,16 @@ namespace UCMS.Migrations
                 column: "ClassId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ExerciseSubmissions_ExerciseId",
+                table: "ExerciseSubmissions",
+                column: "ExerciseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExerciseSubmissions_StudentId",
+                table: "ExerciseSubmissions",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Instructors_UserId",
                 table: "Instructors",
                 column: "UserId",
@@ -516,10 +556,13 @@ namespace UCMS.Migrations
                 name: "Exams");
 
             migrationBuilder.DropTable(
-                name: "Exercises");
+                name: "ExerciseSubmissions");
 
             migrationBuilder.DropTable(
                 name: "PhaseSubmissions");
+
+            migrationBuilder.DropTable(
+                name: "Exercises");
 
             migrationBuilder.DropTable(
                 name: "StudentTeamPhases");

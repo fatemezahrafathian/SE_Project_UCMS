@@ -4,15 +4,6 @@ using UCMS.DTOs.TeamPhaseDto;
 using UCMS.Services.TeamPhaseSrvice;
 
 namespace UCMS.Controllers;
-// create submission (student)
-// download submission file (student, instructor)
-// download submission files (instructor)
-// get team submissions (student)
-// sort submissions by date (student)
-// get final submisstions (instructor)
-// sort submissions by date or team name (instructor)
-// delete submission (student)
-
 // download template file (instructor)
 // submit scores (student)
 // submit score (student)
@@ -20,11 +11,11 @@ namespace UCMS.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PhaseSubmissionController: ControllerBase
+public class PhaseSubmissionsController: ControllerBase
 {
     private readonly IPhaseSubmissionService _phaseSubmissionService;
 
-    public PhaseSubmissionController(IPhaseSubmissionService phaseSubmissionService)
+    public PhaseSubmissionsController(IPhaseSubmissionService phaseSubmissionService)
     {
         _phaseSubmissionService = phaseSubmissionService;
     }
@@ -42,10 +33,10 @@ public class PhaseSubmissionController: ControllerBase
     }
 
     [RoleBasedAuthorization("Instructor")]
-    [HttpGet("instructor/{submissionId}")]
-    public async Task<IActionResult> GetPhaseSubmissionFileForInstructor(int submissionId)
+    [HttpGet("instructor/{phaseSubmissionId}")]
+    public async Task<IActionResult> GetPhaseSubmissionFileForInstructor(int phaseSubmissionId)
     {
-        var response = await _phaseSubmissionService.GetPhaseSubmissionFileForInstructor(submissionId);
+        var response = await _phaseSubmissionService.GetPhaseSubmissionFileForInstructor(phaseSubmissionId);
         
         if (!response.Success)
             return BadRequest(response);
@@ -54,10 +45,10 @@ public class PhaseSubmissionController: ControllerBase
     }
 
     [RoleBasedAuthorization("Student")]
-    [HttpGet("student/{submissionId}")]
-    public async Task<IActionResult> GetPhaseSubmissionFileForStudent(int submissionId)
+    [HttpGet("student/{phaseSubmissionId}")]
+    public async Task<IActionResult> GetPhaseSubmissionFileForStudent(int phaseSubmissionId)
     {
-        var response = await _phaseSubmissionService.GetPhaseSubmissionFileForStudent(submissionId);
+        var response = await _phaseSubmissionService.GetPhaseSubmissionFileForStudent(phaseSubmissionId);
         
         if (!response.Success)
             return BadRequest(response);
@@ -79,7 +70,7 @@ public class PhaseSubmissionController: ControllerBase
     
     [RoleBasedAuthorization("Instructor")]
     [HttpGet("instructor")]
-    public async Task<IActionResult> GetPhaseSubmissionsForInstructor([FromQuery] SortPhaseSubmissionsForInsrtuctorDto dto)
+    public async Task<IActionResult> GetPhaseSubmissionsForInstructor([FromQuery] SortPhaseSubmissionsForInstructorDto dto)
     {
         var response = await _phaseSubmissionService.GetPhaseSubmissionsForInstructor(dto);
         
@@ -102,10 +93,10 @@ public class PhaseSubmissionController: ControllerBase
     }
 
     [RoleBasedAuthorization("Student")]
-    [HttpPut("{submissionId}")]    
-    public async Task<IActionResult> UpdateFinalSubmission(int submissionId)
+    [HttpPut("{phaseSubmissionId}")]    
+    public async Task<IActionResult> UpdateFinalSubmission(int phaseSubmissionId)
     {
-        var response = await _phaseSubmissionService.UpdateFinalSubmission(submissionId);
+        var response = await _phaseSubmissionService.UpdateFinalSubmission(phaseSubmissionId);
         
         if (!response.Success)
             return BadRequest(response);

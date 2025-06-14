@@ -1,10 +1,10 @@
 namespace UCMS.DTOs.TeamPhaseDto;
 
-public class GetSubmissionPreviewForInstructorDto
+public class GetPhaseSubmissionPreviewForStudentDto
 {
     public int Id { get; set; }
-    public string TeamName { get; set; }
     public DateTime SubmittedAt { get; set; }
+    public bool IsFinal { get; set; }
     public string FileType { get; set; }
     public string? Description { get; set; }
 }
