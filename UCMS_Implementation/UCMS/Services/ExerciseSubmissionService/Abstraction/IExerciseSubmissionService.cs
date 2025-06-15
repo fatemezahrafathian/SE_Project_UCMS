@@ -10,6 +10,10 @@ public interface IExerciseSubmissionService
     Task<ServiceResponse<FileDownloadDto>> GetExerciseSubmissionFileForStudent(int exerciseSubmissionId);
     Task<ServiceResponse<List<FileDownloadDto>>> GetExerciseSubmissionFiles(int exerciseId);
     Task<ServiceResponse<List<GetExerciseSubmissionPreviewForInstructorDto>>> GetExerciseSubmissionsForInstructor(SortExerciseSubmissionsForInstructorDto dto);
-    Task<ServiceResponse<List<GetExerciseSubmissionPreviewForStudentDto>>> GetExerciseSubmissionsForStudent(SortExerciseSubmissionsStudentDto sto);
-    Task<ServiceResponse<string>> UpdateFinalSubmission(int exerciseSubmissionId);
+    Task<ServiceResponse<List<GetExerciseSubmissionPreviewForStudentDto>>> GetExerciseSubmissionsForStudent(SortExerciseSubmissionsStudentDto dto);
+    Task<ServiceResponse<FileDownloadDto>> GetExerciseScoreTemplateFile(int exerciseId);
+    Task<ServiceResponse<string>> UpdateFinalExerciseSubmission(int exerciseSubmissionId);
+    Task<ServiceResponse<string>> UpdateExerciseSubmissionScore(int exerciseSubmissionId, UpdateExerciseSubmissionScoreDto dto);
+    Task<ServiceResponse<string>> UpdateExerciseSubmissionScores(int exerciseId, IFormFile scoreFile);
+
 }

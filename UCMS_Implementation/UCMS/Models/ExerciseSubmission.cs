@@ -17,6 +17,8 @@ public class ExerciseSubmission
     [Required, MaxLength(300)]
     public string FilePath { get; set; }
 
+    public double? Score { get; set; }
+
     [MaxLength(1000)]
     public string? Description { get; set; }
 

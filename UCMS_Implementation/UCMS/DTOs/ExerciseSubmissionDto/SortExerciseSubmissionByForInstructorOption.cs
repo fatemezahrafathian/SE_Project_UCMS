@@ -3,5 +3,5 @@ namespace UCMS.DTOs.ExerciseSubmissionDto;
 public enum SortExerciseSubmissionByForInstructorOption
 {
     None,
-    Date
+    Date // studentNumber or studentName
 }

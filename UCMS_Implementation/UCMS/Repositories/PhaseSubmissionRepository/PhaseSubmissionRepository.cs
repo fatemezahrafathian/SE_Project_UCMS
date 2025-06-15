@@ -1,10 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using UCMS.Data;
-using UCMS.DTOs.TeamPhaseDto;
-using UCMS.Models;
-using UCMS.Repositories.TeamPhaseRepository.Abstraction;
+using UCMS.DTOs.PhaseSubmissionDto;
+using UCMS.Repositories.PhaseSubmissionRepository.Abstraction;
 
-namespace UCMS.Repositories.TeamPhaseRepository;
+namespace UCMS.Repositories.PhaseSubmissionRepository;
 
 public class PhaseSubmissionRepository: IPhaseSubmissionRepository
 {
@@ -21,9 +20,9 @@ public class PhaseSubmissionRepository: IPhaseSubmissionRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<PhaseSubmission?> GetPhaseSubmissionForInstructorByIdAsync(int submissionId)
+    public async Task<PhaseSubmission?> GetPhaseSubmissionForInstructorByIdAsync(int phaseSubmissionId)
     {
-        return await _context.PhaseSubmissions.Where(ps => ps.Id == submissionId)
+        return await _context.PhaseSubmissions.Where(ps => ps.Id == phaseSubmissionId)
             .Include(ps => ps.StudentTeamPhase)
             .ThenInclude(stp => stp.Phase)
             .ThenInclude(p => p.Project)
@@ -31,10 +30,10 @@ public class PhaseSubmissionRepository: IPhaseSubmissionRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<PhaseSubmission?> GetPhaseSubmissionForStudentByIdAsync(int submissionId)
+    public async Task<PhaseSubmission?> GetPhaseSubmissionForStudentByIdAsync(int phaseSubmissionId)
     {
         return await _context.PhaseSubmissions
-            .Where(ps => ps.Id == submissionId)
+            .Where(ps => ps.Id == phaseSubmissionId)
             .Include(ps => ps.StudentTeamPhase)
             .ThenInclude(stp => stp.StudentTeam)
             .FirstOrDefaultAsync();

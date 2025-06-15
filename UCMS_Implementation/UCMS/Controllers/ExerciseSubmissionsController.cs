@@ -87,11 +87,23 @@ public class ExerciseSubmissionsController: ControllerBase
         return Ok(response);
     }
 
-    [RoleBasedAuthorization("Student")]
-    [HttpPut("{exerciseSubmissionId}")]    
-    public async Task<IActionResult> UpdateFinalSubmission(int exerciseSubmissionId)
+    [RoleBasedAuthorization("Instructor")]
+    [HttpGet("template/{exerciseId}")]
+    public async Task<IActionResult> GetExerciseScoreTemplateFile(int exerciseId)
     {
-        var response = await _exerciseSubmissionService.UpdateFinalSubmission(exerciseSubmissionId);
+        var response = await _exerciseSubmissionService.GetExerciseScoreTemplateFile(exerciseId);
+
+        if (!response.Success)
+            return BadRequest(response);
+
+        return Ok(response);
+    }
+
+    [RoleBasedAuthorization("Student")]
+    [HttpPatch("{exerciseSubmissionId}")]    
+    public async Task<IActionResult> UpdateFinalExerciseSubmission(int exerciseSubmissionId)
+    {
+        var response = await _exerciseSubmissionService.UpdateFinalExerciseSubmission(exerciseSubmissionId);
         
         if (!response.Success)
             return BadRequest(response);
@@ -99,4 +111,28 @@ public class ExerciseSubmissionsController: ControllerBase
         return Ok(response);
     }
 
+    [RoleBasedAuthorization("Instructor")]
+    [HttpPatch("{exerciseSubmissionId}")]
+    public async Task<IActionResult> UpdateExerciseSubmissionScore(int exerciseSubmissionId, [FromBody] UpdateExerciseSubmissionScoreDto dto)
+    {
+        var response = await _exerciseSubmissionService.UpdateExerciseSubmissionScore(exerciseSubmissionId, dto);
+        
+        if (!response.Success)
+            return BadRequest(response);
+
+        return Ok(response);
+    }
+
+    [RoleBasedAuthorization("Instructor")]
+    [HttpPut("{exerciseId}")]
+    public async Task<IActionResult> UpdateExerciseSubmissionScores(int exerciseId, [FromForm] IFormFile scoreFile)
+    {
+        var response = await _exerciseSubmissionService.UpdateExerciseSubmissionScores(exerciseId, scoreFile);
+        
+        if (!response.Success)
+            return BadRequest(response);
+
+        return Ok(response);
+    }
+    
 }

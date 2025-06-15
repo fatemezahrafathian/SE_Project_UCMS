@@ -1,16 +1,17 @@
 using AutoMapper;
 using UCMS.DTOs;
-using UCMS.DTOs.TeamPhaseDto;
+using UCMS.DTOs.PhaseSubmissionDto;
 using UCMS.Factories;
 using UCMS.Models;
 using UCMS.Repositories.PhaseRepository.Abstraction;
 using UCMS.Repositories.PhaseSubmissionRepository;
+using UCMS.Repositories.PhaseSubmissionRepository.Abstraction;
 using UCMS.Repositories.StudentTeamPhaseRepository.Abstraction;
-using UCMS.Repositories.TeamPhaseRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.FileService;
+using UCMS.Services.TeamPhaseSrvice;
 
-namespace UCMS.Services.TeamPhaseSrvice;
+namespace UCMS.Services.PhaseSubmissionSrvice;
 
 public class PhaseSubmissionService: IPhaseSubmissionService
 {
@@ -63,18 +64,18 @@ public class PhaseSubmissionService: IPhaseSubmissionService
         var newPhaseSubmission = _mapper.Map<PhaseSubmission>(dto);
         newPhaseSubmission.StudentTeamPhaseId = studentTeamPhase.Id;
         newPhaseSubmission.FilePath = filePath;
-        newPhaseSubmission.IsFinal = true;
+        newPhaseSubmission.IsFinal = true; // make others not final
             
         await _phaseSubmissionRepository.AddPhaseSubmissionAsync(newPhaseSubmission);
         
-        return ServiceResponseFactory.Success<string>(Messages.PhaseSubmissionCreatesSuccessfully);
+        return ServiceResponseFactory.Success<string>(Messages.PhaseSubmissionCreatedSuccessfully);
     }
 
-    public async Task<ServiceResponse<FileDownloadDto>> GetPhaseSubmissionFileForInstructor(int submissionId)
+    public async Task<ServiceResponse<FileDownloadDto>> GetPhaseSubmissionFileForInstructor(int phaseSubmissionId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        var submission = await _phaseSubmissionRepository.GetPhaseSubmissionForInstructorByIdAsync(submissionId);
+        var submission = await _phaseSubmissionRepository.GetPhaseSubmissionForInstructorByIdAsync(phaseSubmissionId);
         if (submission==null)
         {
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.PhaseSubmissionNotFound);
@@ -94,11 +95,11 @@ public class PhaseSubmissionService: IPhaseSubmissionService
         return ServiceResponseFactory.Success(dto, Messages.PhaseSubmissionFileFetchedSuccessfully);
     }
     
-    public async Task<ServiceResponse<FileDownloadDto>> GetPhaseSubmissionFileForStudent(int submissionId)
+    public async Task<ServiceResponse<FileDownloadDto>> GetPhaseSubmissionFileForStudent(int phaseSubmissionId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        var submission = await _phaseSubmissionRepository.GetPhaseSubmissionForStudentByIdAsync(submissionId);
+        var submission = await _phaseSubmissionRepository.GetPhaseSubmissionForStudentByIdAsync(phaseSubmissionId);
         if (submission == null)
         {
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.PhaseSubmissionNotFound);
@@ -196,11 +197,16 @@ public class PhaseSubmissionService: IPhaseSubmissionService
         return ServiceResponseFactory.Success(submissionDtos, Messages.PhaseSubmissionsFetchedSuccessfully);
     }
 
-    public async Task<ServiceResponse<string>> UpdateFinalSubmission(int submissionId)
+    public Task<ServiceResponse<FileDownloadDto>> GetPhaseScoreTemplateFile(int phaseId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<ServiceResponse<string>> UpdateFinalPhaseSubmission(int phaseSubmissionId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        var submission = await _phaseSubmissionRepository.GetPhaseSubmissionForStudentByIdAsync(submissionId);
+        var submission = await _phaseSubmissionRepository.GetPhaseSubmissionForStudentByIdAsync(phaseSubmissionId);
         if (submission == null)
         {
             return ServiceResponseFactory.Failure<string>(Messages.PhaseSubmissionNotFound);
@@ -218,8 +224,7 @@ public class PhaseSubmissionService: IPhaseSubmissionService
         }
         
         var currentFinalPhaseSubmission =
-            await _phaseSubmissionRepository.GetFinalPhaseSubmissionsAsync(studentTeamPhase.PhaseId,
-                studentTeamPhase.StudentTeam.TeamId);
+            await _phaseSubmissionRepository.GetFinalPhaseSubmissionsAsync(studentTeamPhase.StudentTeam.TeamId, studentTeamPhase.PhaseId);
         
         if (currentFinalPhaseSubmission != null)
         {
@@ -231,5 +236,15 @@ public class PhaseSubmissionService: IPhaseSubmissionService
         await _phaseSubmissionRepository.UpdatePhaseSubmissionAsync(submission);
 
         return ServiceResponseFactory.Success<string>(Messages.PhaseSubmissionMarkedAsFinal);
+    }
+
+    public Task<ServiceResponse<string>> UpdatePhaseSubmissionScore(int studentTeamPhaseId, UpdatePhaseSubmissionScoreDto dto)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ServiceResponse<string>> UpdatePhaseSubmissionScores(int phaseIdId, IFormFile scoreFile)
+    {
+        throw new NotImplementedException();
     }
 }

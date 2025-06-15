@@ -1,5 +1,5 @@
 using UCMS.DTOs;
-using UCMS.DTOs.TeamPhaseDto;
+using UCMS.DTOs.PhaseSubmissionDto;
 
 namespace UCMS.Services.TeamPhaseSrvice;
 
@@ -11,6 +11,9 @@ public interface IPhaseSubmissionService
     Task<ServiceResponse<List<FileDownloadDto>>> GetPhaseSubmissionFiles(int phaseId);
     Task<ServiceResponse<List<GetPhaseSubmissionPreviewForInstructorDto>>> GetPhaseSubmissionsForInstructor(SortPhaseSubmissionsForInstructorDto dto);
     Task<ServiceResponse<List<GetPhaseSubmissionPreviewForStudentDto>>> GetPhaseSubmissionsForStudent(SortPhaseSubmissionsStudentDto sto);
-    Task<ServiceResponse<string>> UpdateFinalSubmission(int phaseSubmissionId);
-    
+    Task<ServiceResponse<FileDownloadDto>> GetPhaseScoreTemplateFile(int phaseId);
+    Task<ServiceResponse<string>> UpdateFinalPhaseSubmission(int phaseSubmissionId);
+    Task<ServiceResponse<string>> UpdatePhaseSubmissionScore(int studentTeamPhaseId, UpdatePhaseSubmissionScoreDto dto);
+    Task<ServiceResponse<string>> UpdatePhaseSubmissionScores(int phaseIdId, IFormFile scoreFile);
+
 }

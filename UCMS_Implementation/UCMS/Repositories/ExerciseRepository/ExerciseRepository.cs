@@ -23,6 +23,16 @@ public class ExerciseRepository:IExerciseRepository
             .Include(p => p.Class)
             .FirstOrDefaultAsync(p => p.Id == exerciseId);
     }
+
+    public async Task<Exercise?> GetExerciseWithRelationsByIdAsync(int exerciseId)
+    {
+        return await _context.Exercises
+            .Where(e=>e.Id==exerciseId)
+            .Include(e=>e.Class)
+            .ThenInclude(c=>c.ClassStudents)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<List<Exercise>> GetExercisesByClassIdAsync(int classId)
     {
         return await _context.Exercises

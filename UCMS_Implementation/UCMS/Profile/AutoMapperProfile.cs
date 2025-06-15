@@ -4,10 +4,11 @@ using UCMS.DTOs.ClassDto;
 using UCMS.DTOs.ExerciseDto;
 using UCMS.DTOs.PhaseDto;
 using UCMS.DTOs.ExamDto;
+using UCMS.DTOs.ExerciseSubmissionDto;
+using UCMS.DTOs.PhaseSubmissionDto;
 using UCMS.DTOs.ProjectDto;
 using UCMS.DTOs.RoleDto;
 using UCMS.DTOs.TeamDto;
-using UCMS.DTOs.TeamPhaseDto;
 using UCMS.Models;
 
 namespace UCMS.Profile;
@@ -304,6 +305,16 @@ public class AutoMapperProfile : Profile
         CreateMap<PhaseSubmission, GetPhaseSubmissionPreviewForStudentDto>()
             .ForMember(dest => dest.FileType, opt => opt.Ignore());
 
+        CreateMap<CreateExerciseSubmissionDto, ExerciseSubmission>();
+        
+        CreateMap<ExerciseSubmission, GetExerciseSubmissionPreviewForInstructorDto>()
+            .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src =>  $"{src.Student.User.FirstName} {src.Student.User.LastName}"))
+            .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src =>  src.Student.StudentNumber))
+            .ForMember(dest => dest.FileType, opt => opt.Ignore());
+        
+        CreateMap<ExerciseSubmission, GetExerciseSubmissionPreviewForInstructorDto>()
+            .ForMember(dest => dest.FileType, opt => opt.Ignore());
+        
     }
     private static ExerciseStatus calculateExerciseStatus(DateTime start, DateTime end)
     {

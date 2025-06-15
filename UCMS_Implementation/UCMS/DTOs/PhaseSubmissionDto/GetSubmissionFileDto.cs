@@ -1,4 +1,4 @@
-namespace UCMS.DTOs.TeamPhaseDto;
+namespace UCMS.DTOs.PhaseSubmissionDto;
 
 public class GetSubmissionFileDto
 {

@@ -1,13 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using UCMS.Attributes;
-using UCMS.DTOs.TeamPhaseDto;
+using UCMS.DTOs.PhaseSubmissionDto;
 using UCMS.Services.TeamPhaseSrvice;
 
 namespace UCMS.Controllers;
-// download template file (instructor)
-// submit scores (student)
-// submit score (student)
-// edit scores (instructor)
 
 [ApiController]
 [Route("api/[controller]")]
@@ -91,16 +87,53 @@ public class PhaseSubmissionsController: ControllerBase
 
         return Ok(response);
     }
+    
+    [RoleBasedAuthorization("Instructor")]
+    [HttpGet("template/{phaseId}")]
+    public async Task<IActionResult> GetPhaseScoreTemplateFile(int phaseId)
+    {
+        var response = await _phaseSubmissionService.GetPhaseScoreTemplateFile(phaseId);
+
+        if (!response.Success)
+            return BadRequest(response);
+
+        return Ok(response);
+    }
 
     [RoleBasedAuthorization("Student")]
-    [HttpPut("{phaseSubmissionId}")]    
+    [HttpPatch("{phaseSubmissionId}")]    
     public async Task<IActionResult> UpdateFinalSubmission(int phaseSubmissionId)
     {
-        var response = await _phaseSubmissionService.UpdateFinalSubmission(phaseSubmissionId);
+        var response = await _phaseSubmissionService.UpdateFinalPhaseSubmission(phaseSubmissionId);
         
         if (!response.Success)
             return BadRequest(response);
 
         return Ok(response);
     }
+    
+    [RoleBasedAuthorization("Instructor")]
+    [HttpPatch("{studentTeamPhaseId}")]
+    public async Task<IActionResult> UpdatePhaseSubmissionScore(int studentTeamPhaseId, [FromBody] UpdatePhaseSubmissionScoreDto dto)
+    {
+        var response = await _phaseSubmissionService.UpdatePhaseSubmissionScore(studentTeamPhaseId, dto);
+        
+        if (!response.Success)
+            return BadRequest(response);
+
+        return Ok(response);
+    }
+
+    [RoleBasedAuthorization("Instructor")]
+    [HttpPut("{phaseId}")]
+    public async Task<IActionResult> UpdatePhaseSubmissionScores(int phaseId, [FromForm] IFormFile scoreFile)
+    {
+        var response = await _phaseSubmissionService.UpdatePhaseSubmissionScores(phaseId, scoreFile);
+        
+        if (!response.Success)
+            return BadRequest(response);
+
+        return Ok(response);
+    }
+    
 }

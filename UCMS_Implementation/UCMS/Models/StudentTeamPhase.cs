@@ -15,7 +15,7 @@ public class StudentTeamPhase
     public int PhaseId { get; set; }
     public Phase Phase { get; set; }
 
-    public int? Score { get; set; }
+    public double? Score { get; set; }
     
     public ICollection<PhaseSubmission> Submissions { get; set; } = new List<PhaseSubmission>();
 }

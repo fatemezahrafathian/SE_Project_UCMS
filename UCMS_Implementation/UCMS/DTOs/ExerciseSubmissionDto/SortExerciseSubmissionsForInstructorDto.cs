@@ -1,4 +1,4 @@
-using UCMS.DTOs.TeamPhaseDto;
+using UCMS.DTOs.PhaseSubmissionDto;
 
 namespace UCMS.DTOs.ExerciseSubmissionDto;
 

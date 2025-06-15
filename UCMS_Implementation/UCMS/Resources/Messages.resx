@@ -694,7 +694,7 @@
   <data name="FileIsNeeded" xml:space="preserve">
       <value>FileIsNeeded</value>
   </data>
-  <data name="PhaseSubmissionCreatesSuccessfully" xml:space="preserve">
+  <data name="PhaseSubmissionCreatedSuccessfully" xml:space="preserve">
       <value>PhaseSubmissionCreatesSuccessfully</value>
   </data>
   <data name="PhaseSubmissionNotFound" xml:space="preserve">
@@ -717,5 +717,35 @@
   </data>
   <data name="PhaseSubmissionMarkedAsFinal" xml:space="preserve">
       <value>PhaseSubmissionMarkedAsFinal</value>
+  </data>
+  <data name="ExerciseNotFound" xml:space="preserve">
+      <value>ExerciseNotFound</value>
+  </data>
+  <data name="CanNotaccessExercise" xml:space="preserve">
+      <value>CanNotaccessExercise</value>
+  </data>
+  <data name="ExerciseSubmissionCreatedSuccessfully" xml:space="preserve">
+      <value>ExerciseSubmissionCreatedSuccessfully</value>
+  </data>
+  <data name="ExerciseSubmissionNotFound" xml:space="preserve">
+      <value>ExerciseSubmissionNotFound</value>
+  </data>
+  <data name="ExerciseSubmissionCanNotBeAccessed" xml:space="preserve">
+      <value>ExerciseSubmissionCanNotBeAccessed</value>
+  </data>
+  <data name="ExerciseSubmissionFileFetchedSuccessfully" xml:space="preserve">
+      <value>ExerciseSubmissionFileFetchedSuccessfully</value>
+  </data>
+  <data name="ExerciseSubmissionFilesFetchedSuccessfully" xml:space="preserve">
+      <value>ExerciseSubmissionFilesFetchedSuccessfully</value>
+  </data>
+  <data name="ExerciseSubmissionsFetchedSuccessfully" xml:space="preserve">
+      <value>ExerciseSubmissionsFetchedSuccessfully</value>
+  </data>
+  <data name="ExerciseSubmissionMarkedAsFinalAlready" xml:space="preserve">
+      <value>ExerciseSubmissionMarkedAsFinalAlready</value>
+  </data>
+  <data name="ExerciseSubmissionMarkedAsFinalSuccessfully" xml:space="preserve">
+      <value>ExerciseSubmissionMarkedAsFinal</value>
   </data>
 </root>
