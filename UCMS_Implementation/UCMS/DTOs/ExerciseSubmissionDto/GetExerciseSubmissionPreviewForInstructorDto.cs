@@ -7,5 +7,4 @@ public class GetExerciseSubmissionPreviewForInstructorDto
     public string StudentNumber { get; set; }
     public DateTime SubmittedAt { get; set; }
     public string FileType { get; set; }
-    public string? Description { get; set; }
 }

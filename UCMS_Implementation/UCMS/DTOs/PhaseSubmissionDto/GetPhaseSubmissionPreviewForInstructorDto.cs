@@ -6,6 +6,6 @@ public class GetPhaseSubmissionPreviewForInstructorDto
     public string TeamName { get; set; }
     public int TeamId { get; set; }
     public DateTime SubmittedAt { get; set; }
+    public double? Score { get; set; }
     public string FileType { get; set; }
-    public string? Description { get; set; }
 }

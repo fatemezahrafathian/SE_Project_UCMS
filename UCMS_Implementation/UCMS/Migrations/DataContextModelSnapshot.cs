@@ -30,10 +30,6 @@ namespace UCMS.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
                     b.Property<string>("FilePath")
                         .IsRequired()
                         .HasMaxLength(300)
@@ -253,10 +249,6 @@ namespace UCMS.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
                     b.Property<int>("ExerciseId")
                         .HasColumnType("integer");
 
@@ -267,6 +259,9 @@ namespace UCMS.Migrations
 
                     b.Property<bool>("IsFinal")
                         .HasColumnType("boolean");
+
+                    b.Property<double?>("Score")
+                        .HasColumnType("double precision");
 
                     b.Property<int>("StudentId")
                         .HasColumnType("integer");
@@ -519,8 +514,8 @@ namespace UCMS.Migrations
                     b.Property<int>("PhaseId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("Score")
-                        .HasColumnType("integer");
+                    b.Property<double?>("Score")
+                        .HasColumnType("double precision");
 
                     b.Property<int>("StudentTeamId")
                         .HasColumnType("integer");

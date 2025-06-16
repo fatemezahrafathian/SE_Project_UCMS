@@ -13,9 +13,6 @@ public class CreateExerciseSubmissionDtoValidator : AbstractValidator<CreateExer
 
         RuleFor(x => x.SubmissionFile)
             .NotNull().WithMessage(Messages.FileIsNeeded);
-
-        RuleFor(x => x.Description)
-            .MaximumLength(1000).WithMessage(Messages.DescriptionMaxLength);
     }
     
 }

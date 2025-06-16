@@ -11,10 +11,7 @@ public class PhaseSubmission
 
     [Required, MaxLength(300)]
     public string FilePath { get; set; }
-
-    [MaxLength(1000)]
-    public string? Description { get; set; }
-
+    
     public bool IsFinal { get; set; } = false;
     
     public DateTime SubmittedAt { get; set; } = DateTime.UtcNow;

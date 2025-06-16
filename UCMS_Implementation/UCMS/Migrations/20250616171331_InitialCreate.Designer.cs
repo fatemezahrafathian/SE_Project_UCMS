@@ -12,7 +12,7 @@ using UCMS.Data;
 namespace UCMS.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250614164205_InitialCreate")]
+    [Migration("20250616171331_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -32,10 +32,6 @@ namespace UCMS.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
 
                     b.Property<string>("FilePath")
                         .IsRequired()
@@ -256,10 +252,6 @@ namespace UCMS.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
                     b.Property<int>("ExerciseId")
                         .HasColumnType("integer");
 
@@ -270,6 +262,9 @@ namespace UCMS.Migrations
 
                     b.Property<bool>("IsFinal")
                         .HasColumnType("boolean");
+
+                    b.Property<double?>("Score")
+                        .HasColumnType("double precision");
 
                     b.Property<int>("StudentId")
                         .HasColumnType("integer");
@@ -522,8 +517,8 @@ namespace UCMS.Migrations
                     b.Property<int>("PhaseId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("Score")
-                        .HasColumnType("integer");
+                    b.Property<double?>("Score")
+                        .HasColumnType("double precision");
 
                     b.Property<int>("StudentTeamId")
                         .HasColumnType("integer");

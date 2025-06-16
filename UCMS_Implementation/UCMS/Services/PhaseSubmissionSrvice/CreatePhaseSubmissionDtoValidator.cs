@@ -14,8 +14,6 @@ public class CreatePhaseSubmissionDtoValidator : AbstractValidator<CreatePhaseSu
         RuleFor(x => x.SubmissionFile)
             .NotNull().WithMessage(Messages.FileIsNeeded);
 
-        RuleFor(x => x.Description)
-            .MaximumLength(1000).WithMessage(Messages.DescriptionMaxLength);
     }
     
 }

@@ -4,7 +4,11 @@ using UCMS.DTOs.ExerciseSubmissionDto;
 using UCMS.Services.ExerciseSubmissionService.Abstraction;
 
 namespace UCMS.Controllers;
-
+// description
+// student number
+// sorted by name for student
+// send enum to front
+// report
 [ApiController]
 [Route("api/[controller]")]
 public class ExerciseSubmissionsController: ControllerBase
@@ -22,7 +26,7 @@ public class ExerciseSubmissionsController: ControllerBase
         var response = await _exerciseSubmissionService.CreateExerciseSubmission(exerciseId, dto);
         
         if (!response.Success)
-            return BadRequest(response);
+            return BadRequest(response.Message);
 
         return Ok(response);
     }
@@ -53,9 +57,9 @@ public class ExerciseSubmissionsController: ControllerBase
 
     [RoleBasedAuthorization("Instructor")]
     [HttpGet("{exerciseSubmissionId}")]
-    public async Task<IActionResult> GetExerciseSubmissionFiles(int exerciseSubmissionId)
+    public async Task<IActionResult> GetExerciseSubmissionFiles(int exerciseId)
     {
-        var response = await _exerciseSubmissionService.GetExerciseSubmissionFiles(exerciseSubmissionId);
+        var response = await _exerciseSubmissionService.GetExerciseSubmissionFiles(exerciseId);
         
         if (!response.Success)
             return BadRequest(response);

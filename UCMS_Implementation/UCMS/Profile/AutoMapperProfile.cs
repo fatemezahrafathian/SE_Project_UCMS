@@ -313,9 +313,8 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src =>  src.Student.StudentNumber))
             .ForMember(dest => dest.FileType, opt => opt.Ignore());
         
-        CreateMap<ExerciseSubmission, GetExerciseSubmissionPreviewForInstructorDto>()
+        CreateMap<ExerciseSubmission, GetExerciseSubmissionPreviewForStudentDto>()
             .ForMember(dest => dest.FileType, opt => opt.Ignore());
-        
     }
     private static ExerciseStatus calculateExerciseStatus(DateTime start, DateTime end)
     {

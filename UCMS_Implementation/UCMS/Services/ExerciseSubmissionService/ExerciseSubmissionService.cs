@@ -28,19 +28,19 @@ public class ExerciseSubmissionService: IExerciseSubmissionService
         _mapper = mapper;
     }
 
-    public async Task<ServiceResponse<string>> CreateExerciseSubmission(int exerciseId, CreateExerciseSubmissionDto dto)
+    public async Task<ServiceResponse<GetExerciseSubmissionPreviewForStudentDto>> CreateExerciseSubmission(int exerciseId, CreateExerciseSubmissionDto dto)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
         var exercise = await _exerciseRepository.GetExerciseWithRelationsByIdAsync(exerciseId);
         if (exercise==null)
         {
-            return ServiceResponseFactory.Failure<string>(Messages.ExerciseNotFound);
+            return ServiceResponseFactory.Failure<GetExerciseSubmissionPreviewForStudentDto>(Messages.ExerciseNotFound);
         }
 
         if (exercise.Class.ClassStudents.All(cs => cs.Student.Id != user!.Student!.Id))
         {
-            return ServiceResponseFactory.Failure<string>(Messages.CanNotaccessExercise);
+            return ServiceResponseFactory.Failure<GetExerciseSubmissionPreviewForStudentDto>(Messages.CanNotaccessExercise);
         }
 
         var validator = new CreateExerciseSubmissionDtoValidator();
@@ -48,21 +48,44 @@ public class ExerciseSubmissionService: IExerciseSubmissionService
         if (!result.IsValid)
         {
             var errorMessage = result.Errors.First().ErrorMessage;
-            return ServiceResponseFactory.Failure<string>(errorMessage);
+            return ServiceResponseFactory.Failure<GetExerciseSubmissionPreviewForStudentDto>(errorMessage);
+        }
+
+        if (!_fileService.IsValidExtension(dto.SubmissionFile!, exercise.FileFormats))
+        {
+            return ServiceResponseFactory.Failure<GetExerciseSubmissionPreviewForStudentDto>(Messages.InvalidFormat);
+        }
+
+        if (!_fileService.IsValidFileSize(dto.SubmissionFile!))
+        {
+            return ServiceResponseFactory.Failure<GetExerciseSubmissionPreviewForStudentDto>(Messages.InvalidSize);
         }
         
-        _fileService.IsValidExtension(dto.SubmissionFile!, exercise.FileFormats);
-        _fileService.IsValidFileSize(dto.SubmissionFile!);
         var filePath = await _fileService.SaveFileAsync(dto.SubmissionFile!, "exercise-submissions");
 
-        var newExerciseSubmission = _mapper.Map<ExerciseSubmission>(dto);
-        newExerciseSubmission.StudentId = user.Student.Id;
-        newExerciseSubmission.FilePath = filePath;
-        newExerciseSubmission.IsFinal = true; // make others not final
+        var currentFinalExerciseSubmission =
+            await _exerciseSubmissionRepository.GetFinalExerciseSubmissionsAsync(exerciseId,
+                user!.Student!.Id);
+        
+        if (currentFinalExerciseSubmission != null)
+        {
+            currentFinalExerciseSubmission.IsFinal = false;
+            await _exerciseSubmissionRepository.UpdateExerciseSubmissionAsync(currentFinalExerciseSubmission);
+        }
+
+        var newExerciseSubmission = new ExerciseSubmission()
+        {
+            ExerciseId = exerciseId,
+            StudentId = user.Student!.Id,
+            FilePath = filePath
+        };
         
         await _exerciseSubmissionRepository.AddExerciseSubmissionAsync(newExerciseSubmission);
-        
-        return ServiceResponseFactory.Success<string>(Messages.ExerciseSubmissionCreatedSuccessfully);
+
+        var newExerciseSubmissionDto = _mapper.Map<GetExerciseSubmissionPreviewForStudentDto>(newExerciseSubmission);
+        newExerciseSubmissionDto.FileType = Path.GetExtension((string?) filePath)?.TrimStart('.').ToLower() ?? "unknown";
+
+        return ServiceResponseFactory.Success(newExerciseSubmissionDto, Messages.ExerciseSubmissionCreatedSuccessfully);
         
     }
 
