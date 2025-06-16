@@ -100,7 +100,7 @@ public class ExerciseSubmissionsController: ControllerBase
     }
 
     [RoleBasedAuthorization("Student")]
-    [HttpPatch("{exerciseSubmissionId}")]    
+    [HttpPatch("final/{exerciseSubmissionId}")]    
     public async Task<IActionResult> UpdateFinalExerciseSubmission(int exerciseSubmissionId)
     {
         var response = await _exerciseSubmissionService.UpdateFinalExerciseSubmission(exerciseSubmissionId);
@@ -112,7 +112,7 @@ public class ExerciseSubmissionsController: ControllerBase
     }
 
     [RoleBasedAuthorization("Instructor")]
-    [HttpPatch("{exerciseSubmissionId}")]
+    [HttpPatch("score/{exerciseSubmissionId}")]
     public async Task<IActionResult> UpdateExerciseSubmissionScore(int exerciseSubmissionId, [FromBody] UpdateExerciseSubmissionScoreDto dto)
     {
         var response = await _exerciseSubmissionService.UpdateExerciseSubmissionScore(exerciseSubmissionId, dto);
@@ -124,7 +124,7 @@ public class ExerciseSubmissionsController: ControllerBase
     }
 
     [RoleBasedAuthorization("Instructor")]
-    [HttpPut("{exerciseId}")]
+    [HttpPatch("{exerciseId}/scores")]
     public async Task<IActionResult> UpdateExerciseSubmissionScores(int exerciseId, [FromForm] IFormFile scoreFile)
     {
         var response = await _exerciseSubmissionService.UpdateExerciseSubmissionScores(exerciseId, scoreFile);

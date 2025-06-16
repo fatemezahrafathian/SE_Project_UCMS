@@ -16,6 +16,8 @@ using UCMS.Repositories.ExerciseRepository;
 using UCMS.Repositories.ExerciseRepository.Abstraction;
 using UCMS.Repositories.ExamRepository;
 using UCMS.Repositories.ExamRepository.Abstraction;
+using UCMS.Repositories.ExerciseSubmissionRepository;
+using UCMS.Repositories.ExerciseSubmissionRepository.Abstraction;
 using UCMS.Repositories.InstructorRepository;
 using UCMS.Repositories.InstructorRepository.Abstraction;
 using UCMS.Repositories.PhaseRepository;
@@ -30,7 +32,6 @@ using UCMS.Repositories.StudentRepository;
 using UCMS.Repositories.StudentRepository.Abstraction;
 using UCMS.Repositories.StudentTeamPhaseRepository;
 using UCMS.Repositories.StudentTeamPhaseRepository.Abstraction;
-using UCMS.Repositories.TeamPhaseRepository;
 using UCMS.Repositories.TeamRepository;
 using UCMS.Repositories.TeamRepository.Abstraction;
 using UCMS.Repositories.UserRepository;
@@ -134,6 +135,7 @@ builder.Services.AddScoped<IPhaseSubmissionRepository, PhaseSubmissionRepository
 builder.Services.AddScoped<IPhaseSubmissionService, PhaseSubmissionService>();
 builder.Services.AddScoped<IStudentTeamPhaseRepository, StudentTeamPhaseRepository>();
 builder.Services.AddScoped<IExerciseSubmissionService, ExerciseSubmissionService>();
+builder.Services.AddScoped<IExerciseSubmissionRepository, ExerciseSubmissionRepository>();
 
 builder.Services.AddTransient<UrlBuilder>();
 

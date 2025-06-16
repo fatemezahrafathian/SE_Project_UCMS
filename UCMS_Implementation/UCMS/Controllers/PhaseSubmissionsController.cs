@@ -101,7 +101,7 @@ public class PhaseSubmissionsController: ControllerBase
     }
 
     [RoleBasedAuthorization("Student")]
-    [HttpPatch("{phaseSubmissionId}")]    
+    [HttpPatch("final/{phaseSubmissionId}")]    
     public async Task<IActionResult> UpdateFinalSubmission(int phaseSubmissionId)
     {
         var response = await _phaseSubmissionService.UpdateFinalPhaseSubmission(phaseSubmissionId);
@@ -113,7 +113,7 @@ public class PhaseSubmissionsController: ControllerBase
     }
     
     [RoleBasedAuthorization("Instructor")]
-    [HttpPatch("{studentTeamPhaseId}")]
+    [HttpPatch("score/{studentTeamPhaseId}")]
     public async Task<IActionResult> UpdatePhaseSubmissionScore(int studentTeamPhaseId, [FromBody] UpdatePhaseSubmissionScoreDto dto)
     {
         var response = await _phaseSubmissionService.UpdatePhaseSubmissionScore(studentTeamPhaseId, dto);
@@ -125,7 +125,7 @@ public class PhaseSubmissionsController: ControllerBase
     }
 
     [RoleBasedAuthorization("Instructor")]
-    [HttpPut("{phaseId}")]
+    [HttpPatch("{phaseId}/scores")]
     public async Task<IActionResult> UpdatePhaseSubmissionScores(int phaseId, [FromForm] IFormFile scoreFile)
     {
         var response = await _phaseSubmissionService.UpdatePhaseSubmissionScores(phaseId, scoreFile);
