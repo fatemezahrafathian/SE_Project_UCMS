@@ -45,6 +45,7 @@ public class ExamService:IExamService
         //     DateTime.SpecifyKind(dto.Date, DateTimeKind.Unspecified),
         //     tehranZone
         // );
+        DateTime.SpecifyKind(dto.Date, DateTimeKind.Unspecified);
         
         if (currentClass.EndDate.HasValue)
         {
@@ -100,6 +101,7 @@ public class ExamService:IExamService
             //     DateTime.SpecifyKind(dto.Date.Value, DateTimeKind.Unspecified),
             //     tehranZone
             // );
+            DateTime.SpecifyKind(dto.Date.Value, DateTimeKind.Unspecified);
             if (existingExam.Class.EndDate.HasValue)
             {
                 if (existingExam.Class.EndDate.Value < DateOnly.FromDateTime(dto.Date.Value.Date))
