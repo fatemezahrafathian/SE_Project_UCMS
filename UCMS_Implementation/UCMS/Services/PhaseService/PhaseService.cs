@@ -54,6 +54,8 @@ public class PhaseService:IPhaseService
         //     DateTime.SpecifyKind(dto.EndDate, DateTimeKind.Unspecified),
         //     tehranZone
         // );
+        DateTime.SpecifyKind(dto.StartDate, DateTimeKind.Unspecified);
+        DateTime.SpecifyKind(dto.EndDate, DateTimeKind.Unspecified);
 
         if (currentProject.StartDate > dto.StartDate)
         {
@@ -122,6 +124,7 @@ public class PhaseService:IPhaseService
             //     DateTime.SpecifyKind(dto.StartDate.Value, DateTimeKind.Unspecified),
             //     tehranZone
             // );
+            DateTime.SpecifyKind(dto.StartDate.Value, DateTimeKind.Unspecified);
             if (existingPhase.Project.StartDate > dto.StartDate)
             {
                 return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseStartTimeCannotBeBeforeProjectStartTime);
@@ -133,6 +136,7 @@ public class PhaseService:IPhaseService
             //     DateTime.SpecifyKind(dto.EndDate.Value, DateTimeKind.Unspecified),
             //     tehranZone
             // );
+            DateTime.SpecifyKind(dto.EndDate.Value, DateTimeKind.Unspecified);
             if (existingPhase.Project.EndDate < dto.EndDate)
             {
                 return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseEndTimeCannotBeAfterProjectEndTime);

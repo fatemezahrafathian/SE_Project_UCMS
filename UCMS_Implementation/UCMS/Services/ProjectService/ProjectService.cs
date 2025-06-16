@@ -54,7 +54,8 @@ public class ProjectService: IProjectService
         //     DateTime.SpecifyKind(dto.EndDate, DateTimeKind.Unspecified),
         //     tehranZone
         // );
-
+        DateTime.SpecifyKind(dto.StartDate, DateTimeKind.Unspecified);
+        DateTime.SpecifyKind(dto.EndDate, DateTimeKind.Unspecified);
         if (currentClass.StartDate.HasValue)
         {
             if (currentClass.StartDate.Value > DateOnly.FromDateTime(dto.StartDate.Date))
@@ -108,6 +109,8 @@ public class ProjectService: IProjectService
             return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.InvalidIstructorForThisClass);
         
         // var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
+        
+        
 
         if (dto.StartDate.HasValue)
         {
@@ -115,6 +118,7 @@ public class ProjectService: IProjectService
             //     DateTime.SpecifyKind(dto.StartDate.Value, DateTimeKind.Unspecified),
             //     tehranZone
             // );
+            DateTime.SpecifyKind(dto.StartDate.Value, DateTimeKind.Unspecified);
             if (existingProject.Class.StartDate.HasValue)
             {
                 if (existingProject.Class.StartDate.Value > DateOnly.FromDateTime(dto.StartDate.Value.Date))
@@ -129,6 +133,7 @@ public class ProjectService: IProjectService
             //     DateTime.SpecifyKind(dto.EndDate.Value, DateTimeKind.Unspecified),
             //     tehranZone
             // );
+            DateTime.SpecifyKind(dto.EndDate.Value, DateTimeKind.Unspecified);
             if (existingProject.Class.EndDate.HasValue)
             {
                 if (existingProject.Class.EndDate.Value < DateOnly.FromDateTime(dto.EndDate.Value.Date))

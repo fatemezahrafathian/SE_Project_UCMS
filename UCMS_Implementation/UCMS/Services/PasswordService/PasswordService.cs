@@ -84,7 +84,7 @@ public class PasswordService: IPasswordService
         user.OneTimeCode = _oneTimeCodeService.Generate(2);
         await _userRepository.UpdateUserAsync(user);
 
-        await _emailService.SendVerificationEmail(user.Email, $"کد شما: {user.OneTimeCode.Code}");
+        await _emailService.SendOneTimeCode(user.Email, user.OneTimeCode.Code);
 
         return new ServiceResponse<string> {Success = true , Message = Resources.Messages.OneTimeCodeSent};
 
@@ -105,7 +105,7 @@ public class PasswordService: IPasswordService
         var claims = new List<Claim>()
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Role, user.Role.ToString()),
+            // new Claim(ClaimTypes.Role, user.Role.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
         _cookieService.CreateCookie(_tokenService.GenerateToken(claims));

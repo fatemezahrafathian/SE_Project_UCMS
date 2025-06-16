@@ -12,4 +12,7 @@ public interface IExerciseRepository
     Task DeleteAsync(Exercise exercise);
     Task<List<Exercise>> GetExercisesByStudentIdAsync(int studentId);
     Task<List<Exercise>> GetExercisesByInstructorIdAsync(int instructorId);
+    Task<List<Exercise>> GetExercisesCloseDeadLines(DateTime lowerBound, DateTime upperBound,CancellationToken stoppingToken);
+    Task<List<Exercise>> GetExercisesCloseStartDate(DateTime lowerBound, DateTime upperBound,CancellationToken stoppingToken);
+
 }
