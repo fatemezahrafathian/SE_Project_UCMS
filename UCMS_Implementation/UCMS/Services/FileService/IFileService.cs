@@ -13,4 +13,5 @@ public interface IFileService
     string? GetContentTypeFromPath(string? filePath); 
     Task<List<FileDownloadDto?>> DownloadFiles(List<string> relativePaths); 
     Task<FileDownloadDto?> DownloadFile2(string relativePath);
+    Task<FileDownloadDto?> ZipFiles(List<string> relativePath);
 }

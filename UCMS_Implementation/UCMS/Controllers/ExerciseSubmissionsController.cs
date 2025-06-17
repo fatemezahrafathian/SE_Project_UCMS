@@ -4,11 +4,12 @@ using UCMS.DTOs.ExerciseSubmissionDto;
 using UCMS.Services.ExerciseSubmissionService.Abstraction;
 
 namespace UCMS.Controllers;
-// description
 // student number
 // sorted by name for student
 // send enum to front
 // report
+// name of files
+// filter by final
 [ApiController]
 [Route("api/[controller]")]
 public class ExerciseSubmissionsController: ControllerBase
@@ -26,7 +27,7 @@ public class ExerciseSubmissionsController: ControllerBase
         var response = await _exerciseSubmissionService.CreateExerciseSubmission(exerciseId, dto);
         
         if (!response.Success)
-            return BadRequest(response.Message);
+            return BadRequest(response);
 
         return Ok(response);
     }
@@ -40,9 +41,9 @@ public class ExerciseSubmissionsController: ControllerBase
         if (!response.Success)
             return BadRequest(response);
 
-        return Ok(response);
+        return File(response.Data.FileBytes, response.Data.ContentType, response.Data.FileName);
     }
-
+    
     [RoleBasedAuthorization("Student")]
     [HttpGet("student/{exerciseSubmissionId}")]
     public async Task<IActionResult> GetExerciseSubmissionFileForStudent(int exerciseSubmissionId)
@@ -51,12 +52,12 @@ public class ExerciseSubmissionsController: ControllerBase
         
         if (!response.Success)
             return BadRequest(response);
-
-        return Ok(response);
+        
+        return File(response.Data.FileBytes, response.Data.ContentType, response.Data.FileName);
     }
 
     [RoleBasedAuthorization("Instructor")]
-    [HttpGet("{exerciseSubmissionId}")]
+    [HttpGet("{exerciseId}")]
     public async Task<IActionResult> GetExerciseSubmissionFiles(int exerciseId)
     {
         var response = await _exerciseSubmissionService.GetExerciseSubmissionFiles(exerciseId);
@@ -64,7 +65,7 @@ public class ExerciseSubmissionsController: ControllerBase
         if (!response.Success)
             return BadRequest(response);
 
-        return Ok(response);
+        return File(response.Data.FileBytes, response.Data.ContentType, response.Data.FileName);
     }
     
     [RoleBasedAuthorization("Instructor")]

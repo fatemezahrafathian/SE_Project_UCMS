@@ -30,13 +30,9 @@ public class ExerciseSubmissionRepository: IExerciseSubmissionRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<ExerciseSubmission?> GetExerciseSubmissionForStudentByIdAsync(int exerciseSubmissionId)
+    public async Task<ExerciseSubmission?> GetExerciseSubmissionByIdAsync(int exerciseSubmissionId)
     {
-        return await _context.ExerciseSubmissions.Where(es => es.Id == exerciseSubmissionId)
-            .Include(es => es.Exercise)
-            .ThenInclude(e => e.Class)
-            .ThenInclude(c=>c.ClassStudents)
-            .FirstOrDefaultAsync();
+        return await _context.ExerciseSubmissions.FirstOrDefaultAsync(es => es.Id == exerciseSubmissionId);
     }
 
     public async Task<List<ExerciseSubmission>> GetExerciseSubmissionsAsync(int exerciseId)
@@ -44,7 +40,7 @@ public class ExerciseSubmissionRepository: IExerciseSubmissionRepository
         return await _context.ExerciseSubmissions.Where(es => es.ExerciseId == exerciseId).ToListAsync();
     }
 
-    public async Task<List<ExerciseSubmission>> GetExerciseSubmissionsForInstructorByPhaseIdAsync(int exerciseId,
+    public async Task<List<ExerciseSubmission>> GetExerciseSubmissionsForInstructorByExerciseIdAsync(int exerciseId,
         SortExerciseSubmissionByForInstructorOption sortBy, SortOrderOption sortOrder)
     {
         IQueryable<ExerciseSubmission> query = _context.ExerciseSubmissions
@@ -62,6 +58,18 @@ public class ExerciseSubmissionRepository: IExerciseSubmissionRepository
                     : query.OrderByDescending(ps => ps.SubmittedAt);
                 break;
             
+            case SortExerciseSubmissionByForInstructorOption.StudentName:
+                query = ascending 
+                    ? query.OrderBy(ps =>ps.Student.User.LastName + " " + ps.Student.User.FirstName)
+                    : query.OrderByDescending(ps => ps.Student.User.LastName + " " + ps.Student.User.FirstName);
+                break;
+
+            case SortExerciseSubmissionByForInstructorOption.StudentNumber:
+                query = ascending 
+                    ? query.OrderBy(ps => ps.Student.StudentNumber)
+                    : query.OrderByDescending(ps => ps.Student.StudentNumber);
+                break;
+
             case SortExerciseSubmissionByForInstructorOption.None:
             default:
                 break;
@@ -70,11 +78,11 @@ public class ExerciseSubmissionRepository: IExerciseSubmissionRepository
         return await query.ToListAsync();
     }
 
-    public async Task<List<ExerciseSubmission>> GetExerciseSubmissionsForStudentByPhaseIdAsync(int exerciseId, SortExerciseSubmissionByForStudentOption sortBy,
+    public async Task<List<ExerciseSubmission>> GetExerciseSubmissionsForStudentByExerciseIdAsync(int studentId, int exerciseId, SortExerciseSubmissionByForStudentOption sortBy,
         SortOrderOption sortOrder)
     {
         IQueryable<ExerciseSubmission> query = _context.ExerciseSubmissions
-            .Where(e => e.ExerciseId == exerciseId && e.IsFinal)
+            .Where(e => e.ExerciseId == exerciseId && e.StudentId==studentId)
             .Include(e => e.Student)
             .ThenInclude(s => s.User);
 
@@ -88,7 +96,7 @@ public class ExerciseSubmissionRepository: IExerciseSubmissionRepository
                     : query.OrderByDescending(ps => ps.SubmittedAt);
                 break;
             
-            case SortExerciseSubmissionByForStudentOption.None: // based on final
+            case SortExerciseSubmissionByForStudentOption.None:
             default:
                 break;
         }
@@ -99,7 +107,7 @@ public class ExerciseSubmissionRepository: IExerciseSubmissionRepository
     public async Task<ExerciseSubmission?> GetFinalExerciseSubmissionsAsync(int studentId, int exerciseId)
     {
         return await _context.ExerciseSubmissions.FirstOrDefaultAsync(es =>
-            es.StudentId == studentId && es.ExerciseId == exerciseId && es.IsFinal);
+            es.StudentId == studentId && es.ExerciseId == exerciseId && es.IsFinal==true);
     }
 
     public async Task UpdateExerciseSubmissionAsync(ExerciseSubmission exerciseSubmission)

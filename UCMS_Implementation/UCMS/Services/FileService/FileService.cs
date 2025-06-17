@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using UCMS.DTOs;
 using UCMS.Factories;
 using UCMS.Models;
@@ -114,7 +115,56 @@ public class FileService: IFileService
         return dto;
     }
 
-    
+
+    public async Task<FileDownloadDto?> ZipFiles(List<string> relativePaths)
+    {
+        var fileList = new List<(byte[] FileContent, string FileName)>();
+
+        foreach (var relativePath in relativePaths)
+        {
+            var fullPath = Path.Combine(_env.WebRootPath, relativePath.TrimStart('/'));
+            
+            if (!File.Exists(fullPath))
+                continue;
+
+            var fileBytes = await File.ReadAllBytesAsync(fullPath);
+            var fileName = Path.GetFileName(fullPath);
+            fileList.Add((fileBytes, fileName));
+        }
+
+        if (!fileList.Any())
+        {
+            throw null;
+        }
+
+        var zipBytes = CreateZipFromFiles(fileList);
+
+        return new FileDownloadDto
+        {
+            FileBytes = zipBytes,
+            ContentType = "application/zip",
+            FileName = $"files_{DateTime.Now:yyyyMMdd_HHmmss}.zip"
+        };
+    }
+
+    private byte[] CreateZipFromFiles(List<(byte[] FileContent, string FileName)> files)
+    {
+        using var memoryStream = new MemoryStream();
+
+        using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+        {
+            foreach (var file in files)
+            {
+                var entry = archive.CreateEntry(file.FileName, CompressionLevel.Fastest);
+                using var entryStream = entry.Open();
+                using var fileStream = new MemoryStream(file.FileContent);
+                fileStream.CopyTo(entryStream);
+            }
+        }
+
+        return memoryStream.ToArray();
+    }
+
     // public string? GetContentTypeFromPath(string? filePath)
     // {
     //     if (string.IsNullOrEmpty(filePath)) return null;
@@ -172,5 +222,6 @@ public class FileService: IFileService
         return results;
     }
 
+    
 }
 

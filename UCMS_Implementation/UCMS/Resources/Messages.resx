@@ -746,6 +746,15 @@
       <value>ExerciseSubmissionMarkedAsFinalAlready</value>
   </data>
   <data name="ExerciseSubmissionMarkedAsFinalSuccessfully" xml:space="preserve">
-      <value>ExerciseSubmissionMarkedAsFinal</value>
+      <value>ExerciseSubmissionMarkedAsFinalSuccessfully</value>
+  </data>
+  <data name="NoExerciseSubmissionFound" xml:space="preserve">
+      <value>NoSubmissionFound</value>
+  </data>
+  <data name="SortOrderOptionCanNotBeNone" xml:space="preserve">
+      <value>SortOrderOptionCanNotBeNone</value>
+  </data>
+  <data name="SortOrderOptionMustBeNone" xml:space="preserve">
+      <value>SortOrderOptionMustBeNone</value>
   </data>
 </root>

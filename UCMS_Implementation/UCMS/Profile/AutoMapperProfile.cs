@@ -309,8 +309,8 @@ public class AutoMapperProfile : Profile
         CreateMap<CreateExerciseSubmissionDto, ExerciseSubmission>();
         
         CreateMap<ExerciseSubmission, GetExerciseSubmissionPreviewForInstructorDto>()
-            .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src =>  $"{src.Student.User.FirstName} {src.Student.User.LastName}"))
-            .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src =>  src.Student.StudentNumber))
+            .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src =>  $"{src.Student.User.LastName} {src.Student.User.FirstName}"))
+            .ForMember(dest => dest.StudentNumber, opt => opt.MapFrom(src =>  src.Student.StudentNumber))
             .ForMember(dest => dest.FileType, opt => opt.Ignore());
         
         CreateMap<ExerciseSubmission, GetExerciseSubmissionPreviewForStudentDto>()

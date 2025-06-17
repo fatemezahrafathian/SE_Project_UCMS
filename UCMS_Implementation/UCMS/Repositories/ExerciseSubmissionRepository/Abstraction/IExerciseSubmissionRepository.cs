@@ -8,12 +8,12 @@ public interface IExerciseSubmissionRepository
 {
     Task AddExerciseSubmissionAsync(ExerciseSubmission exerciseSubmission);
     Task<ExerciseSubmission?> GetExerciseSubmissionForInstructorByIdAsync(int exerciseSubmissionId);
-    Task<ExerciseSubmission?> GetExerciseSubmissionForStudentByIdAsync(int exerciseSubmissionId);
+    Task<ExerciseSubmission?> GetExerciseSubmissionByIdAsync(int exerciseSubmissionId);
     Task<List<ExerciseSubmission>> GetExerciseSubmissionsAsync(int exerciseId); 
-    Task<List<ExerciseSubmission>> GetExerciseSubmissionsForInstructorByPhaseIdAsync(int exerciseId,
+    Task<List<ExerciseSubmission>> GetExerciseSubmissionsForInstructorByExerciseIdAsync(int exerciseId,
         SortExerciseSubmissionByForInstructorOption sortBy,
         SortOrderOption sortOrder);
-    Task<List<ExerciseSubmission>> GetExerciseSubmissionsForStudentByPhaseIdAsync(int exerciseId,
+    Task<List<ExerciseSubmission>> GetExerciseSubmissionsForStudentByExerciseIdAsync(int studentId, int exerciseId,
         SortExerciseSubmissionByForStudentOption sortBy,
         SortOrderOption sortOrder);
     Task<ExerciseSubmission?> GetFinalExerciseSubmissionsAsync(int studentId, int exerciseId);

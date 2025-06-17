@@ -64,8 +64,8 @@ public class ExerciseSubmissionService: IExerciseSubmissionService
         var filePath = await _fileService.SaveFileAsync(dto.SubmissionFile!, "exercise-submissions");
 
         var currentFinalExerciseSubmission =
-            await _exerciseSubmissionRepository.GetFinalExerciseSubmissionsAsync(exerciseId,
-                user!.Student!.Id);
+            await _exerciseSubmissionRepository.GetFinalExerciseSubmissionsAsync(
+                user!.Student!.Id, exerciseId);
         
         if (currentFinalExerciseSubmission != null)
         {
@@ -99,12 +99,12 @@ public class ExerciseSubmissionService: IExerciseSubmissionService
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.ExerciseSubmissionNotFound);
         }
         
-        if (exerciseSubmission.Exercise.Class.InstructorId!=user!.Instructor!.Id)
+        if (exerciseSubmission.Exercise.Class.InstructorId!=user!.Instructor!.Id || !exerciseSubmission.IsFinal)
         {
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.ExerciseSubmissionCanNotBeAccessed);
         }
 
-        var dto = await _fileService.DownloadFile(exerciseSubmission.FilePath);
+        var dto = await _fileService.DownloadFile2(exerciseSubmission.FilePath);
         if (dto == null)
         {
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileDoesNotExist);
@@ -118,18 +118,18 @@ public class ExerciseSubmissionService: IExerciseSubmissionService
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         
-        var exerciseSubmission = await _exerciseSubmissionRepository.GetExerciseSubmissionForStudentByIdAsync(exerciseSubmissionId);
+        var exerciseSubmission = await _exerciseSubmissionRepository.GetExerciseSubmissionByIdAsync(exerciseSubmissionId);
         if (exerciseSubmission==null)
         {
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.ExerciseSubmissionNotFound);
         }
 
-        if (exerciseSubmission.Exercise.Class.ClassStudents.All(cs => cs.Student.Id != user!.Student!.Id))
+        if (exerciseSubmission.StudentId != user!.Student!.Id)
         {
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.ExerciseSubmissionCanNotBeAccessed);
         }
 
-        var dto = await _fileService.DownloadFile(exerciseSubmission.FilePath);
+        var dto = await _fileService.DownloadFile2(exerciseSubmission.FilePath);
         if (dto == null)
         {
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileDoesNotExist);
@@ -139,32 +139,38 @@ public class ExerciseSubmissionService: IExerciseSubmissionService
         
     }
 
-    public async Task<ServiceResponse<List<FileDownloadDto>>> GetExerciseSubmissionFiles(int exerciseId)
+    public async Task<ServiceResponse<FileDownloadDto>> GetExerciseSubmissionFiles(int exerciseId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        var exercise = await _exerciseRepository.GetExerciseWithRelationsByIdAsync(exerciseId);
+        var exercise = await _exerciseRepository.GetExerciseByIdAsync(exerciseId);
         if (exercise==null)
         {
-            return ServiceResponseFactory.Failure<List<FileDownloadDto>>(Messages.ExerciseNotFound);
+            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.ExerciseNotFound);
         }
         
         if (exercise.Class.InstructorId!=user!.Instructor!.Id)
         {
-            return ServiceResponseFactory.Failure<List<FileDownloadDto>>(Messages.CanNotaccessExercise);
+            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.CanNotaccessExercise);
         }
         
         var submissions = await _exerciseSubmissionRepository.GetExerciseSubmissionsAsync(exerciseId);
-
+        if (submissions.Count == 0)
+        {
+            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.NoExerciseSubmissionFound);
+        }
+        
         var filePaths = submissions
             .Select(s => s.FilePath)
             .ToList();
+        
+        var zipFile = await _fileService.ZipFiles(filePaths);
+        if (zipFile==null)
+        {
+            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileDoesNotExist);
+        }
 
-        var downloadDtos = await _fileService.DownloadFiles(filePaths);
-
-        var validDownloads = downloadDtos.Where(f => f != null).Cast<FileDownloadDto>().ToList();
-
-        return ServiceResponseFactory.Success(validDownloads, Messages.ExerciseSubmissionFilesFetchedSuccessfully);
+        return ServiceResponseFactory.Success(zipFile, Messages.ExerciseSubmissionFilesFetchedSuccessfully);
         
     }
 
@@ -172,7 +178,7 @@ public class ExerciseSubmissionService: IExerciseSubmissionService
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        var exercise = await _exerciseRepository.GetExerciseWithRelationsByIdAsync(dto.ExerciseId);
+        var exercise = await _exerciseRepository.GetExerciseByIdAsync(dto.ExerciseId);
         if (exercise==null)
         {
             return ServiceResponseFactory.Failure<List<GetExerciseSubmissionPreviewForInstructorDto>>(Messages.ExerciseNotFound);
@@ -183,7 +189,15 @@ public class ExerciseSubmissionService: IExerciseSubmissionService
             return ServiceResponseFactory.Failure<List<GetExerciseSubmissionPreviewForInstructorDto>>(Messages.CanNotaccessExercise);
         }
         
-        var submissions = await _exerciseSubmissionRepository.GetExerciseSubmissionsForInstructorByPhaseIdAsync(dto.ExerciseId, dto.SortBy, dto.SortOrder);
+        var validator = new SortExerciseSubmissionForInstructorDtoValidator();
+        var result = await validator.ValidateAsync(dto);
+        if (!result.IsValid)
+        {
+            var errorMessage = result.Errors.First().ErrorMessage;
+            return ServiceResponseFactory.Failure<List<GetExerciseSubmissionPreviewForInstructorDto>>(errorMessage);
+        }
+
+        var submissions = await _exerciseSubmissionRepository.GetExerciseSubmissionsForInstructorByExerciseIdAsync(dto.ExerciseId, dto.SortBy, dto.SortOrder);
 
         var submissionDtos = _mapper.Map<List<GetExerciseSubmissionPreviewForInstructorDto>>(submissions);
         
@@ -215,8 +229,16 @@ public class ExerciseSubmissionService: IExerciseSubmissionService
         {
             return ServiceResponseFactory.Failure<List<GetExerciseSubmissionPreviewForStudentDto>>(Messages.CanNotaccessExercise);
         }
+        
+        var validator = new SortExerciseSubmissionForStudentDtoValidator();
+        var result = await validator.ValidateAsync(dto);
+        if (!result.IsValid)
+        {
+            var errorMessage = result.Errors.First().ErrorMessage;
+            return ServiceResponseFactory.Failure<List<GetExerciseSubmissionPreviewForStudentDto>>(errorMessage);
+        }
 
-        var submissions = await _exerciseSubmissionRepository.GetExerciseSubmissionsForStudentByPhaseIdAsync(dto.ExerciseId, dto.SortBy, dto.SortOrder);
+        var submissions = await _exerciseSubmissionRepository.GetExerciseSubmissionsForStudentByExerciseIdAsync(user!.Student!.Id, dto.ExerciseId, dto.SortBy, dto.SortOrder);
 
         var submissionDtos = _mapper.Map<List<GetExerciseSubmissionPreviewForStudentDto>>(submissions);
         
@@ -243,25 +265,25 @@ public class ExerciseSubmissionService: IExerciseSubmissionService
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         
-        var exerciseSubmission = await _exerciseSubmissionRepository.GetExerciseSubmissionForStudentByIdAsync(exerciseSubmissionId);
+        var exerciseSubmission = await _exerciseSubmissionRepository.GetExerciseSubmissionByIdAsync(exerciseSubmissionId);
         if (exerciseSubmission==null)
         {
             return ServiceResponseFactory.Failure<string>(Messages.ExerciseSubmissionNotFound);
         }
-
-        if (exerciseSubmission.Exercise.Class.ClassStudents.All(cs => cs.Student.Id != user!.Student!.Id))
+        
+        if (exerciseSubmission.StudentId!=user!.Student!.Id)
         {
             return ServiceResponseFactory.Failure<string>(Messages.ExerciseSubmissionCanNotBeAccessed);
         }
         
         if (exerciseSubmission.IsFinal)
         {
-            return ServiceResponseFactory.Success<string>(Messages.ExerciseSubmissionMarkedAsFinalAlready);
+            return ServiceResponseFactory.Failure<string>(Messages.ExerciseSubmissionMarkedAsFinalAlready);
         }
         
         var currentFinalExerciseSubmission =
-            await _exerciseSubmissionRepository.GetFinalExerciseSubmissionsAsync(exerciseSubmission.ExerciseId,
-                user!.Student!.Id);
+            await _exerciseSubmissionRepository.GetFinalExerciseSubmissionsAsync(
+                user!.Student!.Id, exerciseSubmission.ExerciseId);
         
         if (currentFinalExerciseSubmission != null)
         {

@@ -529,7 +529,7 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ExerciseSubmissionMarkedAsFinal.
+        ///   Looks up a localized string similar to ExerciseSubmissionMarkedAsFinalSuccessfully.
         /// </summary>
         public static string ExerciseSubmissionMarkedAsFinalSuccessfully {
             get {
@@ -795,6 +795,15 @@ namespace UCMS.Resources {
         public static string MustSpecifyNewLeaderWhenDeletingCurrentLeader {
             get {
                 return ResourceManager.GetString("MustSpecifyNewLeaderWhenDeletingCurrentLeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NoSubmissionFound.
+        /// </summary>
+        public static string NoExerciseSubmissionFound {
+            get {
+                return ResourceManager.GetString("NoExerciseSubmissionFound", resourceCulture);
             }
         }
         
@@ -1209,6 +1218,24 @@ namespace UCMS.Resources {
         public static string SomeStudentsNotInClass {
             get {
                 return ResourceManager.GetString("SomeStudentsNotInClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SortOrderOptionCanNotBeNone.
+        /// </summary>
+        public static string SortOrderOptionCanNotBeNone {
+            get {
+                return ResourceManager.GetString("SortOrderOptionCanNotBeNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SortOrderOptionMustBeNone.
+        /// </summary>
+        public static string SortOrderOptionMustBeNone {
+            get {
+                return ResourceManager.GetString("SortOrderOptionMustBeNone", resourceCulture);
             }
         }
         
