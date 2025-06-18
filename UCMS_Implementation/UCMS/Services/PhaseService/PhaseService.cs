@@ -43,20 +43,6 @@ public class PhaseService:IPhaseService
         {
             return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.InvalidIstructorForThisProject);
         }
-        // var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
-        //
-        // dto.StartDate = TimeZoneInfo.ConvertTimeToUtc(
-        //     DateTime.SpecifyKind(dto.StartDate, DateTimeKind.Unspecified),
-        //     tehranZone
-        // );
-        //
-        // dto.EndDate = TimeZoneInfo.ConvertTimeToUtc(
-        //     DateTime.SpecifyKind(dto.EndDate, DateTimeKind.Unspecified),
-        //     tehranZone
-        // );
-        DateTime.SpecifyKind(dto.StartDate, DateTimeKind.Unspecified);
-        DateTime.SpecifyKind(dto.EndDate, DateTimeKind.Unspecified);
-
         if (currentProject.StartDate > dto.StartDate)
         {
             return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseStartTimeCannotBeBeforeProjectStartTime);
@@ -278,5 +264,5 @@ public class PhaseService:IPhaseService
         dto.ContentType = GetContentTypeFromPath(project.PhaseFilePath);
         return ServiceResponseFactory.Success(dto,Messages.PhaseFileDownloadedSuccessfully);
     }
-
+    
 }
