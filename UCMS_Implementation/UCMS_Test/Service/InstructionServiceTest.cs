@@ -17,6 +17,7 @@ namespace UCMS_Test.Service;
 public class InstructorServiceTest
 {
     private readonly Mock<IInstructorRepository> _mockInstructorRepo = new();
+    private readonly Mock<IUserRepository> _mockUserRepo = new();
     private readonly IMapper _mapper;
     private readonly Mock<ILogger<InstructorService>> _logger = new();
     private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor = new();

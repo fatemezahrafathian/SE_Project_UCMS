@@ -15,6 +15,7 @@ namespace UCMS_Test.Service;
 public class StudentServiceTest
 {
     private readonly Mock<IStudentRepository> _mockStudentRepo = new();
+    private readonly Mock<IUserRepository> _mockUserRepo = new();
     private readonly IMapper _mapper;
     private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor = new();
     private readonly Mock<ILogger<StudentService>> _mockLogger = new();
@@ -37,7 +38,7 @@ public class StudentServiceTest
             _mockLogger.Object,
             _urlBuilderMock.Object,
             _mockUserRepo.Object
-            );
+        );
     }
 
     private void SetHttpContextWithUser(int userId)
