@@ -29,11 +29,25 @@ public class ExamRepository:IExamRepository
             .Where(p => p.ClassId == classId)
             .ToListAsync();
     }
+
+    public async Task<StudentExam?> GetStudentExamsByStudentNumberAsync(int examId, string studentNumber)
+    {
+        return await _context.StudentExams.FirstOrDefaultAsync(se =>
+            se.ExamId == examId && se.Student.StudentNumber == studentNumber);
+    }
+
     public async Task UpdateAsync(Exam exam)
     {
         _context.Exams.Update(exam);
         await _context.SaveChangesAsync();
     }
+
+    public async Task UpdateRangeStudentExamAsync(List<StudentExam> studentExams)
+    {
+        _context.StudentExams.UpdateRange(studentExams);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task<bool> ExistsWithTitleExceptIdAsync(string title, int classId, int examIdToExclude)
     {
         return await _context.Exams

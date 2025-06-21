@@ -300,7 +300,6 @@ public class AutoMapperProfile : Profile
 
         CreateMap<PhaseSubmission, GetPhaseSubmissionPreviewForInstructorDto>()
             .ForMember(dest => dest.TeamName, opt => opt.MapFrom(src => src.StudentTeamPhase.StudentTeam.Team.Name))
-            .ForMember(dest => dest.TeamId, opt => opt.MapFrom(src => src.StudentTeamPhase.StudentTeam.Team.Id))
             .ForMember(dest => dest.FileType, opt => opt.Ignore());
         
         CreateMap<PhaseSubmission, GetPhaseSubmissionPreviewForStudentDto>()
@@ -315,6 +314,10 @@ public class AutoMapperProfile : Profile
         
         CreateMap<ExerciseSubmission, GetExerciseSubmissionPreviewForStudentDto>()
             .ForMember(dest => dest.FileType, opt => opt.Ignore());
+
+        CreateMap<StudentTeamPhase, GetStudentTeamPhasePreviewDto>()
+            .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src => $"{src.StudentTeam.Student.User.LastName} {src.StudentTeam.Student.User.FirstName}"))
+            .ForMember(dest => dest.StudentNumber, opt => opt.MapFrom(src => src.StudentTeam.Student.StudentNumber));
     }
     private static ExerciseStatus calculateExerciseStatus(DateTime start, DateTime end)
     {

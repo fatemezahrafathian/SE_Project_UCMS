@@ -22,7 +22,7 @@ public class DataContext : DbContext
     public DbSet<StudentTeamPhase> StudentTeamPhases { get; set; }
     public DbSet<PhaseSubmission> PhaseSubmissions { get; set; }
     public DbSet<ExerciseSubmission> ExerciseSubmissions { get; set; }
-    
+    public DbSet<StudentExam> StudentExams { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

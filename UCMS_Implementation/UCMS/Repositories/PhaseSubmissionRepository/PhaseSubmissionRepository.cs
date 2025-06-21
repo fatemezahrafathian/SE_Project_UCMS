@@ -43,7 +43,7 @@ public class PhaseSubmissionRepository: IPhaseSubmissionRepository
         SortOrderOption sortOrder)
     {
         IQueryable<PhaseSubmission> query = _context.PhaseSubmissions
-            .Where(ps => ps.StudentTeamPhase.PhaseId == phaseId && ps.IsFinal==true)
+            .Where(ps => ps.StudentTeamPhase.PhaseId == phaseId && ps.IsFinal)
             .Include(ps => ps.StudentTeamPhase)
             .ThenInclude(stp => stp.StudentTeam)
             .ThenInclude(st => st.Team);
@@ -99,10 +99,10 @@ public class PhaseSubmissionRepository: IPhaseSubmissionRepository
     public async Task<List<PhaseSubmission>> GetPhaseSubmissionsAsync(int phaseId)
     {
         return await _context.PhaseSubmissions
-            .Where(ps => ps.StudentTeamPhase.PhaseId == phaseId).ToListAsync();
+            .Where(ps => ps.StudentTeamPhase.PhaseId == phaseId && ps.IsFinal).ToListAsync();
     }
 
-    public async Task<PhaseSubmission?> GetFinalPhaseSubmissionsAsync(int phaseId, int teamId)
+    public async Task<PhaseSubmission?> GetFinalPhaseSubmissionsAsync(int teamId, int phaseId)
     {
         return await _context.PhaseSubmissions.FirstOrDefaultAsync(ps =>
             ps.StudentTeamPhase.PhaseId == phaseId && 
@@ -114,5 +114,10 @@ public class PhaseSubmissionRepository: IPhaseSubmissionRepository
     {
         _context.PhaseSubmissions.Update(phaseSubmission);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<bool> AnyPhaseSubmissionForTeam(int teamId)
+    {
+        return await _context.PhaseSubmissions.AnyAsync(ps => ps.StudentTeamPhase.StudentTeam.TeamId == teamId);
     }
 }

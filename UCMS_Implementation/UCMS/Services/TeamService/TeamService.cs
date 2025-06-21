@@ -272,7 +272,7 @@ public async Task<ServiceResponse<List<GetTeamFileValidationResultDto>>> CreateT
     return ServiceResponseFactory.Success(validationResults, Messages.TeamsCreatedSuccessfully);
 }
 
-    public async Task<ServiceResponse<GetTeamTemplateFileDto>> GetTeamTemplateFile(int projectId)
+    public async Task<ServiceResponse<GetTeamTemplateFileDto>> GetTeamTemplateFile(int projectId) 
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 

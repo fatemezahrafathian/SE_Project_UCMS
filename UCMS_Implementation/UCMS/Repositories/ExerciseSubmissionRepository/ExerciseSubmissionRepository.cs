@@ -37,7 +37,7 @@ public class ExerciseSubmissionRepository: IExerciseSubmissionRepository
 
     public async Task<List<ExerciseSubmission>> GetExerciseSubmissionsAsync(int exerciseId)
     {
-        return await _context.ExerciseSubmissions.Where(es => es.ExerciseId == exerciseId).ToListAsync();
+        return await _context.ExerciseSubmissions.Where(es => es.ExerciseId == exerciseId && es.IsFinal).ToListAsync();
     }
 
     public async Task<List<ExerciseSubmission>> GetExerciseSubmissionsForInstructorByExerciseIdAsync(int exerciseId,
@@ -114,5 +114,19 @@ public class ExerciseSubmissionRepository: IExerciseSubmissionRepository
     {
         _context.ExerciseSubmissions.Update(exerciseSubmission);
         await _context.SaveChangesAsync();
+    }
+
+    public async Task UpdateRangeExerciseSubmissionAsync(List<ExerciseSubmission> exerciseSubmissions)
+    {
+        _context.ExerciseSubmissions.UpdateRange(exerciseSubmissions);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<ExerciseSubmission?> GetExerciseSubmissionByStudentNumber(int exerciseId, string studentNumber)
+    {
+        return await _context.ExerciseSubmissions.Where(es => es.ExerciseId==exerciseId && es.Student.StudentNumber == studentNumber && es.IsFinal)
+            .Include(es=>es.Student)
+            .ThenInclude(s=>s.User)
+            .FirstOrDefaultAsync();
     }
 }

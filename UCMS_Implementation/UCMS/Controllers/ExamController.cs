@@ -3,7 +3,7 @@ using UCMS.Attributes;
 using UCMS.Data;
 using UCMS.DTOs.ExamDto;
 using UCMS.Services.ExamService.Abstraction;
-
+// test update scores
 namespace UCMS.Controllers;
 [Route("api/[controller]")]
 [ApiController]
@@ -95,4 +95,17 @@ public class ExamController:ControllerBase
 
         return Ok(response.Data);
     }
+    
+    [RoleBasedAuthorization("Instructor")]
+    [HttpPatch("{examId}/scores")]
+    public async Task<IActionResult> UpdateExerciseSubmissionScores(int examId, [FromForm] IFormFile scoreFile)
+    {
+        var response = await _ExamService.UpdateExamScores(examId, scoreFile);
+        
+        if (!response.Success)
+            return BadRequest(response);
+
+        return Ok(response);
+    }
+
 }

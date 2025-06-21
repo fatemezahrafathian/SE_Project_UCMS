@@ -14,6 +14,6 @@ public interface IExerciseSubmissionService
     Task<ServiceResponse<FileDownloadDto>> GetExerciseScoreTemplateFile(int exerciseId);
     Task<ServiceResponse<string>> UpdateFinalExerciseSubmission(int exerciseSubmissionId);
     Task<ServiceResponse<string>> UpdateExerciseSubmissionScore(int exerciseSubmissionId, UpdateExerciseSubmissionScoreDto dto);
-    Task<ServiceResponse<string>> UpdateExerciseSubmissionScores(int exerciseId, IFormFile scoreFile);
+    Task<ServiceResponse<List<GetScoreFileValidationResultDto>>> UpdateExerciseSubmissionScores(int exerciseId, IFormFile scoreFile);
 
 }

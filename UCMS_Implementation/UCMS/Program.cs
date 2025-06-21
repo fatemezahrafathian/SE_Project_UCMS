@@ -91,6 +91,12 @@ builder.Services.Configure<ImageUploadSettings>(
 builder.Services.Configure<TeamTemplateSettings>(
     builder.Configuration.GetSection("TeamTemplateSettings"));
 
+builder.Services.Configure<ExerciseScoreTemplateSettings>(
+    builder.Configuration.GetSection("ExerciseScoreTemplateSettings"));
+
+builder.Services.Configure<PhaseScoreTemplateSettings>(
+    builder.Configuration.GetSection("PhaseScoreTemplateSettings"));
+
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 // var mapperConfig = new MapperConfiguration(cfg =>
 // {

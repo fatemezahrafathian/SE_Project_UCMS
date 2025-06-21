@@ -12,4 +12,7 @@ public interface IPhaseSubmissionRepository
     Task<List<PhaseSubmission>> GetPhaseSubmissionsAsync(int phaseId);
     Task<PhaseSubmission?> GetFinalPhaseSubmissionsAsync(int teamId, int phaseId);
     Task UpdatePhaseSubmissionAsync(PhaseSubmission phaseSubmission);
+    Task<bool> AnyPhaseSubmissionForTeam(int teamId);
+    
+    
 }

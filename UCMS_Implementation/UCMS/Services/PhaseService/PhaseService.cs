@@ -9,6 +9,7 @@ using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Repositories.PhaseRepository.Abstraction;
 using UCMS.Repositories.PhaseSubmissionRepository.Abstraction;
 using UCMS.Repositories.ProjectRepository.Abstarction;
+using UCMS.Repositories.StudentTeamPhaseRepository.Abstraction;
 using UCMS.Repositories.TeamRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.FileService;
@@ -27,8 +28,9 @@ public class PhaseService:IPhaseService
     private readonly IStudentClassRepository _studentClassRepository;
     private readonly ITeamRepository _teamRepository;
     private readonly IPhaseSubmissionRepository _phaseSubmissionRepository;
+    private readonly IStudentTeamPhaseRepository _studentTeamPhaseRepository;
 
-    public PhaseService(IPhaseRepository repository, IMapper mapper,IHttpContextAccessor httpContextAccessor,IClassRepository classRepository,IProjectRepository projectRepository,IFileService fileService,IStudentClassRepository studentClassRepository, ITeamRepository teamRepository, IPhaseSubmissionRepository phaseSubmissionRepository)
+    public PhaseService(IPhaseRepository repository, IMapper mapper,IHttpContextAccessor httpContextAccessor,IClassRepository classRepository,IProjectRepository projectRepository,IFileService fileService,IStudentClassRepository studentClassRepository, ITeamRepository teamRepository, IPhaseSubmissionRepository phaseSubmissionRepository, IStudentTeamPhaseRepository studentTeamPhaseRepository)
     {
         _repository = repository;
         _mapper = mapper;
@@ -39,6 +41,7 @@ public class PhaseService:IPhaseService
         _studentClassRepository = studentClassRepository;
         _teamRepository = teamRepository;
         _phaseSubmissionRepository = phaseSubmissionRepository;
+        _studentTeamPhaseRepository = studentTeamPhaseRepository;
     }
 
     public async Task<ServiceResponse<GetPhaseForInstructorDto>> CreatePhaseAsync(int projectId,CreatePhaseDto dto)
@@ -80,21 +83,23 @@ public class PhaseService:IPhaseService
         newPhase.PhaseFilePath = filePath;
         await _repository.AddAsync(newPhase);
 
-        // var teams = await _teamRepository.GetTeamsByProjectIdAsync(newPhase.ProjectId); // change function to join with stdTeam
-        // foreach (var team in teams)
-        // {
-        //     var newTeamPhase = new TeamPhase()
-        //     {
-        //         TeamId = team.Id,
-        //         PhaseId = newPhase.Id
-        //     };
-        //     foreach (var stdTeam in team.StudentTeams)
-        //     {
-        //         newTeamPhase.StudentTeamPhases.Add();
-        //     }
-        //     _teamPhaseRepository.AddTeamPhaseAsync(newTeamPhase);
-        // }
-        
+        var newStudentTeamPhases = new List<StudentTeamPhase>();
+        var teams = await _teamRepository.GetTeamsWithRelationsByProjectIdAsync(newPhase.ProjectId); // to be done on active teams
+        foreach (var team in teams)
+        {
+            foreach (var stdTeam in team.StudentTeams)
+            {
+                var newStudentTeamPhase = new StudentTeamPhase()
+                {
+                    StudentTeamId = stdTeam.Id,
+                    PhaseId = newPhase.Id
+                };
+
+                newStudentTeamPhases.Add(newStudentTeamPhase);
+            }
+        }
+        await _studentTeamPhaseRepository.AddRangeStudentTeamPhaseAsync(newStudentTeamPhases);
+
         var phaseDto = _mapper.Map<GetPhaseForInstructorDto>(newPhase);
         return ServiceResponseFactory.Success(phaseDto, Messages.PhaseCreatedSuccessfully);
     }

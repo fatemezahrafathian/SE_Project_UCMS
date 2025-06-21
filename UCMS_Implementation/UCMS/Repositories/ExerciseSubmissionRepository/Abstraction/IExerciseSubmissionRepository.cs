@@ -18,5 +18,7 @@ public interface IExerciseSubmissionRepository
         SortOrderOption sortOrder);
     Task<ExerciseSubmission?> GetFinalExerciseSubmissionsAsync(int studentId, int exerciseId);
     Task UpdateExerciseSubmissionAsync(ExerciseSubmission exerciseSubmission);
-
+    Task UpdateRangeExerciseSubmissionAsync(List<ExerciseSubmission> exerciseSubmissions);
+    Task<ExerciseSubmission?> GetExerciseSubmissionByStudentNumber(int exerciseId, string studentNumber);
+    
 }

@@ -27,7 +27,22 @@ public class PhaseRepository:IPhaseRepository
 
     public async Task<Phase?> GetPhaseSimpleByIdAsync(int phaseId)
     {
-        return await _context.Phases.FirstOrDefaultAsync(p => p.Id == phaseId);
+        return await _context.Phases.Where(p => p.Id == phaseId)
+            .Include(p=>p.StudentTeamPhases)
+            .ThenInclude(stp=>stp.StudentTeam)
+            .ThenInclude(st=>st.Student)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<Phase?> GetPhaseWithRelationsByIdAsync(int phaseId)
+    {
+        return await _context.Phases.Where(p => p.Id == phaseId)
+            .Include(p => p.Project)
+            .ThenInclude(p => p.Class)
+            .ThenInclude(c => c.ClassStudents)
+            .ThenInclude(cs=>cs.Student)
+            .ThenInclude(s=>s.User)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<List<Phase>> GetPhasesByProjectIdAsync(int projectId)

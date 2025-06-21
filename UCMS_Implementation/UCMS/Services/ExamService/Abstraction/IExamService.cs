@@ -1,5 +1,6 @@
 using UCMS.DTOs;
 using UCMS.DTOs.ExamDto;
+using UCMS.DTOs.ExerciseSubmissionDto;
 
 namespace UCMS.Services.ExamService.Abstraction;
 
@@ -12,5 +13,7 @@ public interface IExamService
     Task<ServiceResponse<List<GetExamForInstructorDto>>> GetExamsForInstructor(int classId);
     Task<ServiceResponse<GetExamForStudentDto>> GetExamByIdForStudentAsync(int examId);
     Task<ServiceResponse<List<GetExamForStudentDto>>> GetExamsForStudent(int classId);
+    Task<ServiceResponse<List<GetScoreFileValidationResultDto>>> UpdateExamScores(int examId, IFormFile scoreFile);
+
 
 }

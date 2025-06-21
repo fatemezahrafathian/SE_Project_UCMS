@@ -101,7 +101,7 @@ public class ExerciseSubmissionsController: ControllerBase
         if (!response.Success)
             return BadRequest(response);
 
-        return Ok(response);
+        return File(response.Data.FileBytes, response.Data.ContentType, response.Data.FileName);
     }
 
     [RoleBasedAuthorization("Student")]
@@ -130,7 +130,7 @@ public class ExerciseSubmissionsController: ControllerBase
 
     [RoleBasedAuthorization("Instructor")]
     [HttpPatch("{exerciseId}/scores")]
-    public async Task<IActionResult> UpdateExerciseSubmissionScores(int exerciseId, [FromForm] IFormFile scoreFile)
+    public async Task<IActionResult> UpdateExerciseSubmissionScores(int exerciseId, IFormFile scoreFile)
     {
         var response = await _exerciseSubmissionService.UpdateExerciseSubmissionScores(exerciseId, scoreFile);
         

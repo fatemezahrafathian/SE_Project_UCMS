@@ -1,4 +1,6 @@
 using AutoMapper;
+using ClosedXML.Excel;
+using Microsoft.Extensions.Options;
 using UCMS.DTOs;
 using UCMS.DTOs.ExerciseSubmissionDto;
 using UCMS.Factories;
@@ -17,15 +19,17 @@ public class ExerciseSubmissionService: IExerciseSubmissionService
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IFileService _fileService;
     private readonly IExerciseRepository _exerciseRepository;
+    private readonly ExerciseScoreTemplateSettings _exerciseScoreTemplateSettings;
     private readonly IMapper _mapper;
     
-    public ExerciseSubmissionService(IExerciseSubmissionRepository exerciseSubmissionRepository, IHttpContextAccessor httpContextAccessor, IFileService fileService, IExerciseRepository exerciseRepository, IMapper mapper)
+    public ExerciseSubmissionService(IExerciseSubmissionRepository exerciseSubmissionRepository, IHttpContextAccessor httpContextAccessor, IFileService fileService, IExerciseRepository exerciseRepository, IMapper mapper, IOptions<ExerciseScoreTemplateSettings> templateSettingsOptions)
     {
         _exerciseSubmissionRepository = exerciseSubmissionRepository;
         _httpContextAccessor = httpContextAccessor;
         _fileService = fileService;
         _exerciseRepository = exerciseRepository;
         _mapper = mapper;
+        _exerciseScoreTemplateSettings = templateSettingsOptions.Value;
     }
 
     public async Task<ServiceResponse<GetExerciseSubmissionPreviewForStudentDto>> CreateExerciseSubmission(int exerciseId, CreateExerciseSubmissionDto dto)
@@ -256,9 +260,58 @@ public class ExerciseSubmissionService: IExerciseSubmissionService
         
     }
 
-    public Task<ServiceResponse<FileDownloadDto>> GetExerciseScoreTemplateFile(int exerciseId)
+    public async Task<ServiceResponse<FileDownloadDto>> GetExerciseScoreTemplateFile(int exerciseId)
     {
-        throw new NotImplementedException();
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+
+        var exercise = await _exerciseRepository.GetExerciseWithClassRelationsByIdAsync(exerciseId);
+        if (exercise==null)
+        {
+            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.ExerciseNotFound);
+        }
+        
+        if (exercise.Class.InstructorId!=user!.Instructor!.Id)
+        {
+            return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.CanNotaccessExercise);
+        }
+
+        using var workbook = new XLWorkbook();
+        var worksheet = workbook.Worksheets.Add(_exerciseScoreTemplateSettings.WorksheetName);
+        worksheet.RightToLeft = true;
+    
+        worksheet.Cell(1, 1).Value = _exerciseScoreTemplateSettings.ColumnHeaders[0];
+        worksheet.Cell(1, 2).Value = _exerciseScoreTemplateSettings.ColumnHeaders[1];
+        worksheet.Cell(1, 3).Value = _exerciseScoreTemplateSettings.ColumnHeaders[2];
+
+        var students = exercise.Class.ClassStudents
+            .OrderBy(cs=>cs.Student.User.LastName + " " + cs.Student.User.FirstName);
+        
+        int row = 2;
+        foreach (var classStudent in students)
+        {
+            var student = classStudent.Student;
+            var userInfo = student.User;
+
+            worksheet.Cell(row, 1).Value = $"{userInfo.LastName} {userInfo.FirstName}";
+            worksheet.Cell(row, 2).Value = student.StudentNumber;
+            row++;
+        }
+        
+        await using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+        stream.Seek(0, SeekOrigin.Begin);
+
+        var fileBytes = stream.ToArray();
+
+        var result = new FileDownloadDto()
+        {
+            FileName = _exerciseScoreTemplateSettings.FileName,
+            ContentType = _exerciseScoreTemplateSettings.ContentType,
+            FileBytes = fileBytes
+        };
+
+        return ServiceResponseFactory.Success(result, Messages.ExerciseScoreTemplateFileGeneratedSuccessfully);
+        
     }
 
     public async Task<ServiceResponse<string>> UpdateFinalExerciseSubmission(int exerciseSubmissionId)
@@ -298,13 +351,134 @@ public class ExerciseSubmissionService: IExerciseSubmissionService
 
     }
 
-    public Task<ServiceResponse<string>> UpdateExerciseSubmissionScore(int exerciseSubmissionId, UpdateExerciseSubmissionScoreDto dto)
+    public async Task<ServiceResponse<string>> UpdateExerciseSubmissionScore(int exerciseSubmissionId,
+        UpdateExerciseSubmissionScoreDto dto)
     {
-        throw new NotImplementedException();
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+
+        var exerciseSubmission = await _exerciseSubmissionRepository.GetExerciseSubmissionForInstructorByIdAsync(exerciseSubmissionId);
+        if (exerciseSubmission==null)
+        {
+            return ServiceResponseFactory.Failure<string>(Messages.ExerciseSubmissionNotFound);
+        }
+        
+        if (exerciseSubmission.Exercise.Class.InstructorId!=user!.Instructor!.Id || !exerciseSubmission.IsFinal)
+        {
+            return ServiceResponseFactory.Failure<string>(Messages.ExerciseSubmissionCanNotBeAccessed);
+        }
+
+        if (dto.Score < 0 || dto.Score > exerciseSubmission.Exercise.ExerciseScore)
+        {
+            return ServiceResponseFactory.Failure<string>(Messages.InvalidScore);
+        }
+
+        exerciseSubmission.Score = dto.Score;
+        await _exerciseSubmissionRepository.UpdateExerciseSubmissionAsync(exerciseSubmission);
+
+        return ServiceResponseFactory.Success<string>(Messages.ExerciseSubmissionScoreUpdatedSuccessfully);
+
     }
 
-    public Task<ServiceResponse<string>> UpdateExerciseSubmissionScores(int exerciseId, IFormFile scoreFile)
+    // read all once
+    public async Task<ServiceResponse<List<GetScoreFileValidationResultDto>>> UpdateExerciseSubmissionScores(int exerciseId, IFormFile scoreFile) // move code to excel file service
     {
-        throw new NotImplementedException();
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+    
+        var exercise = await _exerciseRepository.GetExerciseByIdAsync(exerciseId);
+        if (exercise==null)
+        {
+            return ServiceResponseFactory.Failure<List<GetScoreFileValidationResultDto>>(Messages.ExerciseNotFound);
+        }
+        
+        if (exercise.Class.InstructorId!=user!.Instructor!.Id)
+        {
+            return ServiceResponseFactory.Failure<List<GetScoreFileValidationResultDto>>(Messages.CanNotaccessExercise);
+        }
+    
+        XLWorkbook workbook;
+        IXLWorksheet worksheet;
+    
+        try
+        {
+            workbook = new XLWorkbook(scoreFile.OpenReadStream());
+            worksheet = workbook.Worksheet(_exerciseScoreTemplateSettings.WorksheetName);
+        }
+        catch
+        {
+            return ServiceResponseFactory.Failure<List<GetScoreFileValidationResultDto>>(Messages.InvalidTemplateFileFormat);
+        }
+    
+        worksheet.RightToLeft = true;
+    
+        for (int i = 1; i <= 3; i++)
+        {
+            var expectedHeader = i switch
+            {
+                1 => _exerciseScoreTemplateSettings.ColumnHeaders[0],
+                2 => _exerciseScoreTemplateSettings.ColumnHeaders[1],
+                _ => _exerciseScoreTemplateSettings.ColumnHeaders[2]
+            };
+    
+            var actualHeader = worksheet.Cell(1, i).GetString().Trim();
+    
+            if (actualHeader != expectedHeader)
+            {
+                return ServiceResponseFactory.Failure<List<GetScoreFileValidationResultDto>>(Messages.InvalidTemplateFileFormat);
+            }
+        }
+    
+        var validationResults = new List<GetScoreFileValidationResultDto>();
+        var exerciseSubmissions = new List<ExerciseSubmission>();
+    
+        int totalColumns = 3; // not nullable
+        int row = 2;
+    
+        bool RowHasAnyData(IXLWorksheet sheet, int rowNum, int totalCols)
+        {
+            return Enumerable.Range(1, totalCols)
+                .Any(col => !string.IsNullOrWhiteSpace(sheet.Cell(rowNum, col).GetString()));
+        }
+        
+        while (RowHasAnyData(worksheet, row, totalColumns))
+        {
+            // var studentName = worksheet.Cell(row, 1).GetString().Trim();
+            var studentNumber = worksheet.Cell(row, 2).GetString().Trim();
+            var score = worksheet.Cell(row, 3).GetDouble();
+            
+            var errors = new List<string>();
+    
+            // check student not in class
+            
+            var exerciseSubmission = await _exerciseSubmissionRepository.GetExerciseSubmissionByStudentNumber(exerciseId, studentNumber);
+            if (exerciseSubmission == null && score > 0 || score < 0 || score > exercise.ExerciseScore)
+            {
+                errors.Add(Messages.InvalidScore);
+            }
+            
+            validationResults.Add(new GetScoreFileValidationResultDto
+            {
+                RowNumber = row,
+                IsValid = !errors.Any(),
+                Errors = errors
+            });
+    
+            if (exerciseSubmission != null)
+            {
+                exerciseSubmission.Score = score;
+                exerciseSubmissions.Add(exerciseSubmission);
+            }
+            
+            row++;
+        }
+        
+        if (validationResults.Any(r => !r.IsValid))
+        {
+            return ServiceResponseFactory.Failure(validationResults, Messages.ExerciseSubmissionScoresCanNotBeUpdated);
+        }
+        
+        await _exerciseSubmissionRepository.UpdateRangeExerciseSubmissionAsync(exerciseSubmissions);
+    
+        return ServiceResponseFactory.Success<List<GetScoreFileValidationResultDto>>(Messages.ExerciseSubmissionScoresUpdatedSuccessfully);
+    
     }
 }

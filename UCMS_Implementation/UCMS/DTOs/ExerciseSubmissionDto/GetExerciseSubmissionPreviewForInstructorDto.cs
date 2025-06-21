@@ -6,5 +6,6 @@ public class GetExerciseSubmissionPreviewForInstructorDto
     public string StudentName { get; set; }
     public string StudentNumber { get; set; }
     public DateTime SubmittedAt { get; set; }
+    public double? Score { get; set; }
     public string FileType { get; set; }
 }

@@ -715,7 +715,7 @@
   <data name="PhaseSubmissionMarkedAsFinalAlready" xml:space="preserve">
       <value>PhaseSubmissionMarkedAsFinalAlready</value>
   </data>
-  <data name="PhaseSubmissionMarkedAsFinal" xml:space="preserve">
+  <data name="PhaseSubmissionMarkedAsFinalSuccessfully" xml:space="preserve">
       <value>PhaseSubmissionMarkedAsFinal</value>
   </data>
   <data name="ExerciseNotFound" xml:space="preserve">
@@ -756,5 +756,47 @@
   </data>
   <data name="SortOrderOptionMustBeNone" xml:space="preserve">
       <value>SortOrderOptionMustBeNone</value>
+  </data>
+  <data name="ExerciseScoreTemplateFileGeneratedSuccessfully" xml:space="preserve">
+      <value>ExerciseScoreTemplateFileGeneratedSuccessfully</value>
+  </data>
+  <data name="InvalidScore" xml:space="preserve">
+      <value>InvalidScore</value>
+  </data>
+  <data name="ExerciseSubmissionScoreUpdatedSuccessfully" xml:space="preserve">
+      <value>ExerciseSubmissionScoreUpdatedSuccessfully</value>
+  </data>
+  <data name="InvalidExerciseSubmission" xml:space="preserve">
+      <value>InvalidExerciseSubmission</value>
+  </data>
+  <data name="ExerciseSubmissionScoresCanNotBeUpdated" xml:space="preserve">
+      <value>ScoresCanNotBeCreated</value>
+  </data>
+  <data name="ExerciseSubmissionScoresUpdatedSuccessfully" xml:space="preserve">
+      <value>ExerciseSubmissionScoresUpdatedSuccessfully</value>
+  </data>
+  <data name="PhaseScoreTemplateFileGeneratedSuccessfully" xml:space="preserve">
+      <value>PhaseScoreTemplateFileGeneratedSuccessfully</value>
+  </data>
+  <data name="StudentTeamPhaseScoreUpdatedSuccessfully" xml:space="preserve">
+      <value>StudentTeamPhaseScoreUpdatedSuccessfully</value>
+  </data>
+  <data name="NoSuchTeamForThisPhase" xml:space="preserve">
+      <value>NoSuchTeamForThisPhase</value>
+  </data>
+  <data name="StudentTeamPhasesFetchedSuccessfully" xml:space="preserve">
+      <value>StudentTeamPhasesFetchedSuccessfully</value>
+  </data>
+  <data name="PhaseSubmissionScoresCanNotBeUpdated" xml:space="preserve">
+      <value>ScoresCanNotBeCreated</value>
+  </data>
+  <data name="ExamNotFound" xml:space="preserve">
+      <value>ExamNotFound</value>
+  </data>
+  <data name="ExamScoresCanNotBeUpdated" xml:space="preserve">
+      <value>ExamScoresCanNotBeUpdated</value>
+  </data>
+  <data name="ExamScoresUpdatedSuccessfully" xml:space="preserve">
+      <value>ExamScoresUpdatedSuccessfully</value>
   </data>
 </root>

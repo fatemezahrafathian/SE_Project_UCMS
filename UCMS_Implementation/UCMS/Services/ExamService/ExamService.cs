@@ -1,12 +1,16 @@
 using AutoMapper;
+using ClosedXML.Excel;
+using Microsoft.Extensions.Options;
 using UCMS.DTOs;
 using UCMS.DTOs.ExamDto;
+using UCMS.DTOs.ExerciseSubmissionDto;
 using UCMS.Factories;
 using UCMS.Models;
 using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Repositories.ExamRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.ExamService.Abstraction;
+using UCMS.Services.ExerciseSubmissionService;
 using UCMS.Services.FileService;
 
 namespace UCMS.Services.ExamService;
@@ -19,8 +23,9 @@ public class ExamService:IExamService
     private readonly IClassRepository _classRepository;
     private readonly IFileService _fileService;
     private readonly IStudentClassRepository _studentClassRepository;
+    private readonly ExerciseScoreTemplateSettings _exerciseScoreTemplateSettings;
 
-    public ExamService(IExamRepository repository, IMapper mapper,IHttpContextAccessor httpContextAccessor,IClassRepository classRepository,IFileService fileService,IStudentClassRepository studentClassRepository)
+    public ExamService(IExamRepository repository, IMapper mapper,IHttpContextAccessor httpContextAccessor,IClassRepository classRepository,IFileService fileService,IStudentClassRepository studentClassRepository, IOptions<ExerciseScoreTemplateSettings> templateSettingsOptions)
     {
         _repository = repository;
         _mapper = mapper;
@@ -28,6 +33,7 @@ public class ExamService:IExamService
         _classRepository = classRepository;
         _fileService = fileService;
         _studentClassRepository = studentClassRepository;
+        _exerciseScoreTemplateSettings = templateSettingsOptions.Value;
     }
 
     public async Task<ServiceResponse<GetExamForInstructorDto>> CreateExamAsync(int classId,CreateExamDto dto)
@@ -153,6 +159,106 @@ public class ExamService:IExamService
         var exams = await _repository.GetExamsByClassIdAsync(classId);
         var dto =  _mapper.Map<List<GetExamForStudentDto>>(exams);
         return ServiceResponseFactory.Success(dto,Messages.ExamsRetrievedSuccessfully);
+    }
+    
+    public async Task<ServiceResponse<List<GetScoreFileValidationResultDto>>> UpdateExamScores(int examId, IFormFile scoreFile)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+    
+        var exam = await _repository.GetExamByIdAsync(examId);
+        if (exam==null)
+        {
+            return ServiceResponseFactory.Failure<List<GetScoreFileValidationResultDto>>(Messages.ExamNotFound);
+        }
+        
+        if (exam.Class.InstructorId!=user!.Instructor!.Id)
+        {
+            return ServiceResponseFactory.Failure<List<GetScoreFileValidationResultDto>>(Messages.ExamCantBeAccessed);
+        }
+    
+        XLWorkbook workbook;
+        IXLWorksheet worksheet;
+    
+        try
+        {
+            workbook = new XLWorkbook(scoreFile.OpenReadStream());
+            worksheet = workbook.Worksheet(_exerciseScoreTemplateSettings.WorksheetName);
+        }
+        catch
+        {
+            return ServiceResponseFactory.Failure<List<GetScoreFileValidationResultDto>>(Messages.InvalidTemplateFileFormat);
+        }
+    
+        worksheet.RightToLeft = true;
+    
+        for (int i = 1; i <= 3; i++)
+        {
+            var expectedHeader = i switch
+            {
+                1 => _exerciseScoreTemplateSettings.ColumnHeaders[0],
+                2 => _exerciseScoreTemplateSettings.ColumnHeaders[1],
+                _ => _exerciseScoreTemplateSettings.ColumnHeaders[2]
+            };
+    
+            var actualHeader = worksheet.Cell(1, i).GetString().Trim();
+    
+            if (actualHeader != expectedHeader)
+            {
+                return ServiceResponseFactory.Failure<List<GetScoreFileValidationResultDto>>(Messages.InvalidTemplateFileFormat);
+            }
+        }
+    
+        var validationResults = new List<GetScoreFileValidationResultDto>();
+        var studentExams = new List<StudentExam>();
+    
+        int totalColumns = 3; // not nullable
+        int row = 2;
+    
+        bool RowHasAnyData(IXLWorksheet sheet, int rowNum, int totalCols)
+        {
+            return Enumerable.Range(1, totalCols)
+                .Any(col => !string.IsNullOrWhiteSpace(sheet.Cell(rowNum, col).GetString()));
+        }
+        
+        while (RowHasAnyData(worksheet, row, totalColumns))
+        {
+            // var studentName = worksheet.Cell(row, 1).GetString().Trim();
+            var studentNumber = worksheet.Cell(row, 2).GetString().Trim();
+            var score = worksheet.Cell(row, 3).GetDouble();
+            
+            var errors = new List<string>();
+    
+            var studentExam = await _repository.GetStudentExamsByStudentNumberAsync(examId, studentNumber);
+            if (studentExam==null && score>0 || score < 0 || score > exam.ExamScore)
+            {
+                errors.Add(Messages.InvalidScore);
+            }
+            
+            validationResults.Add(new GetScoreFileValidationResultDto
+            {
+                RowNumber = row,
+                IsValid = !errors.Any(),
+                Errors = errors
+            });
+    
+            if (studentExam != null)
+            {
+                studentExam.Score = score;
+                studentExams.Add(studentExam);
+            }
+            
+            row++;
+        }
+        
+        if (validationResults.Any(r => !r.IsValid))
+        {
+            return ServiceResponseFactory.Failure(validationResults, Messages.ExamScoresCanNotBeUpdated);
+        }
+        
+        await _repository.UpdateRangeStudentExamAsync(studentExams);
+    
+        return ServiceResponseFactory.Success<List<GetScoreFileValidationResultDto>>(Messages.ExamScoresUpdatedSuccessfully);
+    
     }
 }
    

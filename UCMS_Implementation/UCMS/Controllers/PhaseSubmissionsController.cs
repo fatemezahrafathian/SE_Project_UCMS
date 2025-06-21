@@ -4,7 +4,11 @@ using UCMS.DTOs.PhaseSubmissionDto;
 using UCMS.Services.TeamPhaseSrvice;
 
 namespace UCMS.Controllers;
-
+// add api to get studentPhaseSubmissions
+// return score in phase submissions for student
+// check submission existence in score studentTeamPhase
+// merge excels in one service
+// just add names who have been in a team for the phase to the template file
 [ApiController]
 [Route("api/[controller]")]
 public class PhaseSubmissionsController: ControllerBase
@@ -25,7 +29,7 @@ public class PhaseSubmissionsController: ControllerBase
         if (!response.Success)
             return BadRequest(response);
 
-        return Ok(response);  // message
+        return Ok(response);
     }
 
     [RoleBasedAuthorization("Instructor")]
@@ -37,7 +41,7 @@ public class PhaseSubmissionsController: ControllerBase
         if (!response.Success)
             return BadRequest(response);
 
-        return Ok(response);
+        return File(response.Data.FileBytes, response.Data.ContentType, response.Data.FileName);
     }
 
     [RoleBasedAuthorization("Student")]
@@ -49,7 +53,7 @@ public class PhaseSubmissionsController: ControllerBase
         if (!response.Success)
             return BadRequest(response);
 
-        return Ok(response);
+        return File(response.Data.FileBytes, response.Data.ContentType, response.Data.FileName);
     }
 
     [RoleBasedAuthorization("Instructor")]
@@ -61,7 +65,7 @@ public class PhaseSubmissionsController: ControllerBase
         if (!response.Success)
             return BadRequest(response);
 
-        return Ok(response);
+        return File(response.Data.FileBytes, response.Data.ContentType, response.Data.FileName);
     }
     
     [RoleBasedAuthorization("Instructor")]
@@ -89,6 +93,18 @@ public class PhaseSubmissionsController: ControllerBase
     }
     
     [RoleBasedAuthorization("Instructor")]
+    [HttpGet("{phaseId}/{teamId}/members")]
+    public async Task<IActionResult> GetTeamPhaseMembers(int phaseId, int teamId)
+    {
+        var response = await _phaseSubmissionService.GetTeamPhaseMembers(phaseId, teamId);
+
+        if (!response.Success)
+            return BadRequest(response);
+
+        return Ok(response);
+    }
+
+    [RoleBasedAuthorization("Instructor")]
     [HttpGet("template/{phaseId}")]
     public async Task<IActionResult> GetPhaseScoreTemplateFile(int phaseId)
     {
@@ -97,7 +113,7 @@ public class PhaseSubmissionsController: ControllerBase
         if (!response.Success)
             return BadRequest(response);
 
-        return Ok(response);
+        return File(response.Data.FileBytes, response.Data.ContentType, response.Data.FileName);
     }
 
     [RoleBasedAuthorization("Student")]
@@ -126,7 +142,7 @@ public class PhaseSubmissionsController: ControllerBase
 
     [RoleBasedAuthorization("Instructor")]
     [HttpPatch("{phaseId}/scores")]
-    public async Task<IActionResult> UpdatePhaseSubmissionScores(int phaseId, [FromForm] IFormFile scoreFile)
+    public async Task<IActionResult> UpdatePhaseSubmissionScores(int phaseId, IFormFile scoreFile)
     {
         var response = await _phaseSubmissionService.UpdatePhaseSubmissionScores(phaseId, scoreFile);
         

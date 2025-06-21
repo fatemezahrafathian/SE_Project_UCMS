@@ -358,6 +358,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ExamNotFound.
+        /// </summary>
+        public static string ExamNotFound {
+            get {
+                return ResourceManager.GetString("ExamNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ExamRetrievedSuccessfully.
         /// </summary>
         public static string ExamRetrievedSuccessfully {
@@ -372,6 +381,24 @@ namespace UCMS.Resources {
         public static string ExamScoreMustBePositive {
             get {
                 return ResourceManager.GetString("ExamScoreMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExamScoresCanNotBeUpdated.
+        /// </summary>
+        public static string ExamScoresCanNotBeUpdated {
+            get {
+                return ResourceManager.GetString("ExamScoresCanNotBeUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExamScoresUpdatedSuccessfully.
+        /// </summary>
+        public static string ExamScoresUpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("ExamScoresUpdatedSuccessfully", resourceCulture);
             }
         }
         
@@ -475,6 +502,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ExerciseScoreTemplateFileGeneratedSuccessfully.
+        /// </summary>
+        public static string ExerciseScoreTemplateFileGeneratedSuccessfully {
+            get {
+                return ResourceManager.GetString("ExerciseScoreTemplateFileGeneratedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ExercisesRetrievedSuccessfully.
         /// </summary>
         public static string ExercisesRetrievedSuccessfully {
@@ -543,6 +579,33 @@ namespace UCMS.Resources {
         public static string ExerciseSubmissionNotFound {
             get {
                 return ResourceManager.GetString("ExerciseSubmissionNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ScoresCanNotBeCreated.
+        /// </summary>
+        public static string ExerciseSubmissionScoresCanNotBeUpdated {
+            get {
+                return ResourceManager.GetString("ExerciseSubmissionScoresCanNotBeUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExerciseSubmissionScoresUpdatedSuccessfully.
+        /// </summary>
+        public static string ExerciseSubmissionScoresUpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("ExerciseSubmissionScoresUpdatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ExerciseSubmissionScoreUpdatedSuccessfully.
+        /// </summary>
+        public static string ExerciseSubmissionScoreUpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("ExerciseSubmissionScoreUpdatedSuccessfully", resourceCulture);
             }
         }
         
@@ -619,6 +682,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to InvalidExerciseSubmission.
+        /// </summary>
+        public static string InvalidExerciseSubmission {
+            get {
+                return ResourceManager.GetString("InvalidExerciseSubmission", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to File format is not valid..
         /// </summary>
         public static string InvalidFormat {
@@ -678,6 +750,15 @@ namespace UCMS.Resources {
         public static string InvalidProjectTypeSelected {
             get {
                 return ResourceManager.GetString("InvalidProjectTypeSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to InvalidScore.
+        /// </summary>
+        public static string InvalidScore {
+            get {
+                return ResourceManager.GetString("InvalidScore", resourceCulture);
             }
         }
         
@@ -804,6 +885,15 @@ namespace UCMS.Resources {
         public static string NoExerciseSubmissionFound {
             get {
                 return ResourceManager.GetString("NoExerciseSubmissionFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NoSuchTeamForThisPhase.
+        /// </summary>
+        public static string NoSuchTeamForThisPhase {
+            get {
+                return ResourceManager.GetString("NoSuchTeamForThisPhase", resourceCulture);
             }
         }
         
@@ -961,6 +1051,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to PhaseScoreTemplateFileGeneratedSuccessfully.
+        /// </summary>
+        public static string PhaseScoreTemplateFileGeneratedSuccessfully {
+            get {
+                return ResourceManager.GetString("PhaseScoreTemplateFileGeneratedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to PhasesRetrievedSuccessfully.
         /// </summary>
         public static string PhasesRetrievedSuccessfully {
@@ -1006,15 +1105,6 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PhaseSubmissionMarkedAsFinal.
-        /// </summary>
-        public static string PhaseSubmissionMarkedAsFinal {
-            get {
-                return ResourceManager.GetString("PhaseSubmissionMarkedAsFinal", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to PhaseSubmissionMarkedAsFinalAlready.
         /// </summary>
         public static string PhaseSubmissionMarkedAsFinalAlready {
@@ -1024,11 +1114,29 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to PhaseSubmissionMarkedAsFinal.
+        /// </summary>
+        public static string PhaseSubmissionMarkedAsFinalSuccessfully {
+            get {
+                return ResourceManager.GetString("PhaseSubmissionMarkedAsFinalSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to PhaseSubmissionNotFound.
         /// </summary>
         public static string PhaseSubmissionNotFound {
             get {
                 return ResourceManager.GetString("PhaseSubmissionNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ScoresCanNotBeCreated.
+        /// </summary>
+        public static string PhaseSubmissionScoresCanNotBeUpdated {
+            get {
+                return ResourceManager.GetString("PhaseSubmissionScoresCanNotBeUpdated", resourceCulture);
             }
         }
         
@@ -1299,6 +1407,24 @@ namespace UCMS.Resources {
         public static string StudentNumbersIsRequired {
             get {
                 return ResourceManager.GetString("StudentNumbersIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to StudentTeamPhaseScoreUpdatedSuccessfully.
+        /// </summary>
+        public static string StudentTeamPhaseScoreUpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("StudentTeamPhaseScoreUpdatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to StudentTeamPhasesFetchedSuccessfully.
+        /// </summary>
+        public static string StudentTeamPhasesFetchedSuccessfully {
+            get {
+                return ResourceManager.GetString("StudentTeamPhasesFetchedSuccessfully", resourceCulture);
             }
         }
         

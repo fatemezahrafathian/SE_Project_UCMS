@@ -69,6 +69,14 @@ public class TeamRepository: ITeamRepository
             .ToListAsync();
     }
 
+    public async Task<List<Team>> GetTeamsWithRelationsByProjectIdAsync(int projectId)
+    {
+        return await _context.Teams
+            .Where(t => t.ProjectId == projectId)
+            .Include(t=>t.StudentTeams)
+            .ToListAsync();
+    }
+
     public async Task DeleteTeamAsync(Team team)
     {
         _context.Teams.Remove(team);
