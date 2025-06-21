@@ -42,18 +42,6 @@ public class ExerciseService:IExerciseService
         {
             return ServiceResponseFactory.Failure<GetExerciseForInstructorDto>(Messages.InvalidInstructorForThisClass);
         }
-        // var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
-        //
-        // dto.StartDate = TimeZoneInfo.ConvertTimeToUtc(
-        //     DateTime.SpecifyKind(dto.StartDate, DateTimeKind.Unspecified),
-        //     tehranZone
-        // );
-        //
-        // dto.EndDate = TimeZoneInfo.ConvertTimeToUtc(
-        //     DateTime.SpecifyKind(dto.EndDate, DateTimeKind.Unspecified),
-        //     tehranZone
-        // );
-
         if (currentClass.StartDate.HasValue)
         {
             if (currentClass.StartDate.Value > DateOnly.FromDateTime(dto.StartDate.Date))
@@ -92,7 +80,6 @@ public class ExerciseService:IExerciseService
         var phaseDto = _mapper.Map<GetExerciseForInstructorDto>(newExercise);
         return ServiceResponseFactory.Success(phaseDto, Messages.ExerciseCreatedSuccessfully);
     }
-
     public async Task<ServiceResponse<GetExerciseForInstructorDto>> GetExerciseByIdForInstructorAsync(int exerciseId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
@@ -113,14 +100,8 @@ public class ExerciseService:IExerciseService
         var existingExercise = await _repository.GetExerciseByIdAsync(exerciseId);
         if (existingExercise == null || existingExercise.Class.InstructorId !=  user?.Instructor?.Id)
             return ServiceResponseFactory.Failure<GetExerciseForInstructorDto>(Messages.ExerciseCantBeAccessed);
-        // var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
-
         if (dto.StartDate.HasValue)
         {
-            // dto.StartDate = TimeZoneInfo.ConvertTimeToUtc(
-            //     DateTime.SpecifyKind(dto.StartDate.Value, DateTimeKind.Unspecified),
-            //     tehranZone
-            // );
             if (existingExercise.Class.StartDate.HasValue)
             {
                 if (existingExercise.Class.StartDate.Value > DateOnly.FromDateTime(dto.StartDate.Value.Date))
@@ -131,10 +112,7 @@ public class ExerciseService:IExerciseService
         }
         if (dto.EndDate.HasValue)
         {
-            // dto.EndDate = TimeZoneInfo.ConvertTimeToUtc(
-            //     DateTime.SpecifyKind(dto.EndDate.Value, DateTimeKind.Unspecified),
-            //     tehranZone
-            // );
+
             if (existingExercise.Class.EndDate.HasValue)
             {
                 if (existingExercise.Class.EndDate.Value < DateOnly.FromDateTime(dto.EndDate.Value.Date))
@@ -171,7 +149,6 @@ public class ExerciseService:IExerciseService
         var phaseDto = _mapper.Map<GetExerciseForInstructorDto>(existingExercise);
         return ServiceResponseFactory.Success(phaseDto, Messages.ExerciseUpdatedSuccessfully);
     }
-
     public async Task<ServiceResponse<string>>  DeleteExerciseAsync(int exerciseId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
