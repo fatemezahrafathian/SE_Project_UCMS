@@ -58,4 +58,12 @@ public class ExamRepository:IExamRepository
             .Where(e => e.Class.InstructorId == instructorId)
             .ToListAsync();
     }
+    public async Task<List<Exam>> GetExamsCloseDeadLines(DateTime lowerBound, DateTime upperBound,CancellationToken stoppingToken)
+    {
+        return await _context.Exams
+            .Include(e => e.Class.ClassStudents)
+            .ThenInclude(cs => cs.Student.User)
+            .Where(p => p.Date >= lowerBound && p.Date <= upperBound)
+            .ToListAsync(stoppingToken);
+    }
 }

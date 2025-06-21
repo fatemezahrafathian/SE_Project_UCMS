@@ -576,4 +576,7 @@
   <data name="AuthorizedMessage" xml:space="preserve">
       <value>AuthorizedMessage</value>
   </data>
+  <data name="InvalidFormatType" xml:space="preserve">
+      <value>InvalidFormatType</value>
+  </data>
 </root>

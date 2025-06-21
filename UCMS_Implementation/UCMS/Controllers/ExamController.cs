@@ -40,7 +40,7 @@ public class ExamController:ControllerBase
     }
     [RoleBasedAuthorization("Instructor")]
     [HttpPatch("{examId}")]
-    public async Task<IActionResult> UpdateExam(int classId,int examId, [FromForm] PatchExamDto dto)
+    public async Task<IActionResult> UpdateExam(int examId, [FromForm] PatchExamDto dto)
     {
         var response = await _examService.UpdateExamAsync(examId, dto);
 
@@ -51,7 +51,7 @@ public class ExamController:ControllerBase
     }
     [RoleBasedAuthorization("Instructor")]
     [HttpDelete("{examId}")]
-    public async Task<IActionResult> DeleteExam(int classId, int examId)
+    public async Task<IActionResult> DeleteExam(int examId)
     {
         var response = await _examService.DeleteExamAsync(examId);
         if (!response.Success)

@@ -61,9 +61,9 @@ public class ExerciseController:ControllerBase
     }
     [RoleBasedAuthorization("Instructor")]
     [HttpGet("Instructor/class/{classId}")]
-    public async Task<IActionResult> GetExercisesForInstructor(int classId)
+    public async Task<IActionResult> GetExercisesOfClassForInstructor(int classId)
     {
-        var response = await _exerciseService.GetExercisesForInstructor(classId);
+        var response = await _exerciseService.GetExercisesOfClassForInstructor(classId);
 
         if (!response.Success)
             return NotFound(response.Message);
@@ -93,9 +93,9 @@ public class ExerciseController:ControllerBase
     }
     [RoleBasedAuthorization("Student")]
     [HttpGet("Student/class/{classId}")]
-    public async Task<IActionResult> GetExercisesForStudent(int classId)
+    public async Task<IActionResult> GetExercisesOfClassForStudent(int classId)
     {
-        var response = await _exerciseService.GetExercisesForStudent(classId);
+        var response = await _exerciseService.GetExercisesOfClassForStudent(classId);
 
         if (!response.Success)
             return NotFound(response.Message);
@@ -114,9 +114,9 @@ public class ExerciseController:ControllerBase
     }
     [RoleBasedAuthorization("Student")]
     [HttpGet("/api/Exercises/Student")]
-    public async Task<IActionResult> GetExercisesOfClassForStudent()
+    public async Task<IActionResult> GetExercisesForStudent()
     {
-        var response = await _exerciseService.GetExercisesOfClassForStudent();
+        var response = await _exerciseService.GetExercisesForStudent();
 
         if (!response.Success)
             return NotFound(response.Message);
@@ -125,9 +125,9 @@ public class ExerciseController:ControllerBase
     }
     [RoleBasedAuthorization("Instructor")]
     [HttpGet("/api/Exercises/instructor")]
-    public async Task<IActionResult> GetExercisesOfClassForInstructor()
+    public async Task<IActionResult> GetExercisesForInstructor()
     {
-        var response = await _exerciseService.GetExercisesOfClassForInstructor();
+        var response = await _exerciseService.GetExercisesForInstructor();
 
         if (!response.Success)
             return NotFound(response.Message);

@@ -42,18 +42,6 @@ public class ExerciseService:IExerciseService
         {
             return ServiceResponseFactory.Failure<GetExerciseForInstructorDto>(Messages.InvalidInstructorForThisClass);
         }
-        var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
-
-        dto.StartDate = TimeZoneInfo.ConvertTimeToUtc(
-            DateTime.SpecifyKind(dto.StartDate, DateTimeKind.Unspecified),
-            tehranZone
-        );
-
-        dto.EndDate = TimeZoneInfo.ConvertTimeToUtc(
-            DateTime.SpecifyKind(dto.EndDate, DateTimeKind.Unspecified),
-            tehranZone
-        );
-
         if (currentClass.StartDate.HasValue)
         {
             if (currentClass.StartDate.Value > DateOnly.FromDateTime(dto.StartDate.Date))
@@ -92,7 +80,6 @@ public class ExerciseService:IExerciseService
         var phaseDto = _mapper.Map<GetExerciseForInstructorDto>(newExercise);
         return ServiceResponseFactory.Success(phaseDto, Messages.ExerciseCreatedSuccessfully);
     }
-
     public async Task<ServiceResponse<GetExerciseForInstructorDto>> GetExerciseByIdForInstructorAsync(int exerciseId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
@@ -113,14 +100,8 @@ public class ExerciseService:IExerciseService
         var existingExercise = await _repository.GetExerciseByIdAsync(exerciseId);
         if (existingExercise == null || existingExercise.Class.InstructorId !=  user?.Instructor?.Id)
             return ServiceResponseFactory.Failure<GetExerciseForInstructorDto>(Messages.ExerciseCantBeAccessed);
-        var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
-
         if (dto.StartDate.HasValue)
         {
-            dto.StartDate = TimeZoneInfo.ConvertTimeToUtc(
-                DateTime.SpecifyKind(dto.StartDate.Value, DateTimeKind.Unspecified),
-                tehranZone
-            );
             if (existingExercise.Class.StartDate.HasValue)
             {
                 if (existingExercise.Class.StartDate.Value > DateOnly.FromDateTime(dto.StartDate.Value.Date))
@@ -131,10 +112,7 @@ public class ExerciseService:IExerciseService
         }
         if (dto.EndDate.HasValue)
         {
-            dto.EndDate = TimeZoneInfo.ConvertTimeToUtc(
-                DateTime.SpecifyKind(dto.EndDate.Value, DateTimeKind.Unspecified),
-                tehranZone
-            );
+
             if (existingExercise.Class.EndDate.HasValue)
             {
                 if (existingExercise.Class.EndDate.Value < DateOnly.FromDateTime(dto.EndDate.Value.Date))
@@ -171,7 +149,6 @@ public class ExerciseService:IExerciseService
         var phaseDto = _mapper.Map<GetExerciseForInstructorDto>(existingExercise);
         return ServiceResponseFactory.Success(phaseDto, Messages.ExerciseUpdatedSuccessfully);
     }
-
     public async Task<ServiceResponse<string>>  DeleteExerciseAsync(int exerciseId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
@@ -185,7 +162,7 @@ public class ExerciseService:IExerciseService
         }
         return ServiceResponseFactory.Success("Exercise deleted successfully", Messages.ExerciseDeletedSuccessfully);
     }
-    public async Task<ServiceResponse<List<GetExercisesForInstructorDto>>> GetExercisesForInstructor(int classId)
+    public async Task<ServiceResponse<List<GetExercisesForInstructorDto>>> GetExercisesOfClassForInstructor(int classId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var currentclass = await _classRepository.GetClassByIdAsync(classId);
@@ -246,7 +223,7 @@ public class ExerciseService:IExerciseService
 
         return ServiceResponseFactory.Success(dto, Messages.ExerciseRetrievedSuccessfully);
     }
-    public async Task<ServiceResponse<List<GetExercisesForStudentDto>>> GetExercisesForStudent(int classId)
+    public async Task<ServiceResponse<List<GetExercisesForStudentDto>>> GetExercisesOfClassForStudent(int classId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var currentClass = await _classRepository.GetClassByIdAsync(classId);
@@ -275,17 +252,17 @@ public class ExerciseService:IExerciseService
         dto.ContentType = GetContentTypeFromPath(exercise.ExerciseFilePath);
         return ServiceResponseFactory.Success(dto,Messages.ExerciseFileDownloadedSuccessfully);
     }
-    public async Task<ServiceResponse<List<GetExercisesForInstructorDto>>> GetExercisesOfClassForInstructor()
+    public async Task<ServiceResponse<List<GetExercisesForInstructorDto>>> GetExercisesForInstructor()
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var exercises = await _repository.GetExercisesByInstructorIdAsync(user!.Instructor!.Id);
         var dto =  _mapper.Map<List<GetExercisesForInstructorDto>>(exercises);
         return ServiceResponseFactory.Success(dto,Messages.ExercisesRetrievedSuccessfully);
     }
-    public async Task<ServiceResponse<List<GetExercisesForStudentDto>>> GetExercisesOfClassForStudent()
+    public async Task<ServiceResponse<List<GetExercisesForStudentDto>>> GetExercisesForStudent()
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
-        var exercises = await _repository.GetExercisesByClassIdAsync(user!.Instructor!.Id);
+        var exercises = await _repository.GetExercisesByStudentIdAsync(user!.Student!.Id);
         var dto =  _mapper.Map<List<GetExercisesForStudentDto>>(exercises);
         return ServiceResponseFactory.Success(dto,Messages.ExercisesRetrievedSuccessfully);
     }

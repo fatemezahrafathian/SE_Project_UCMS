@@ -30,7 +30,6 @@ public class PhaseService:IPhaseService
         _fileService = fileService;
         _studentClassRepository = studentClassRepository;
     }
-
     public async Task<ServiceResponse<GetPhaseForInstructorDto>> CreatePhaseAsync(int projectId,CreatePhaseDto dto)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
@@ -43,18 +42,6 @@ public class PhaseService:IPhaseService
         {
             return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.InvalidIstructorForThisProject);
         }
-        var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
-
-        dto.StartDate = TimeZoneInfo.ConvertTimeToUtc(
-            DateTime.SpecifyKind(dto.StartDate, DateTimeKind.Unspecified),
-            tehranZone
-        );
-
-        dto.EndDate = TimeZoneInfo.ConvertTimeToUtc(
-            DateTime.SpecifyKind(dto.EndDate, DateTimeKind.Unspecified),
-            tehranZone
-        );
-
         if (currentProject.StartDate > dto.StartDate)
         {
             return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseStartTimeCannotBeBeforeProjectStartTime);
@@ -85,7 +72,7 @@ public class PhaseService:IPhaseService
         newPhase.PhaseFilePath = filePath;
         await _repository.AddAsync(newPhase);
         var phaseDto = _mapper.Map<GetPhaseForInstructorDto>(newPhase);
-        return ServiceResponseFactory.Success(phaseDto, Messages.PhaseCreatedSuccessfully);
+        return ServiceResponseFactory.Success(phaseDto, Messages.PhaseCreatedSuccessfully); 
     }
 
     public async Task<ServiceResponse<GetPhaseForInstructorDto>> GetPhaseByIdForInstructorAsync(int phaseId)
@@ -113,15 +100,9 @@ public class PhaseService:IPhaseService
 
         if (existingPhase.Project.Class.InstructorId != user?.Instructor?.Id)
             return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.InvalidIstructorForThisPhase);
-        
-        var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
 
         if (dto.StartDate.HasValue)
         {
-            dto.StartDate = TimeZoneInfo.ConvertTimeToUtc(
-                DateTime.SpecifyKind(dto.StartDate.Value, DateTimeKind.Unspecified),
-                tehranZone
-            );
             if (existingPhase.Project.StartDate > dto.StartDate)
             {
                 return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseStartTimeCannotBeBeforeProjectStartTime);
@@ -129,10 +110,6 @@ public class PhaseService:IPhaseService
         }
         if (dto.EndDate.HasValue)
         {
-            dto.EndDate = TimeZoneInfo.ConvertTimeToUtc(
-                DateTime.SpecifyKind(dto.EndDate.Value, DateTimeKind.Unspecified),
-                tehranZone
-            );
             if (existingPhase.Project.EndDate < dto.EndDate)
             {
                 return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseEndTimeCannotBeAfterProjectEndTime);
@@ -155,7 +132,7 @@ public class PhaseService:IPhaseService
         if (dto.PhaseFile != null)
         {
             if (existingPhase.PhaseFilePath != null)
-                _fileService.DeleteFile(existingPhase.PhaseFilePath);
+                 _fileService.DeleteFile(existingPhase.PhaseFilePath);
             existingPhase.PhaseFilePath = await _fileService.SaveFileAsync(dto.PhaseFile, "phases");
         }
 
@@ -274,5 +251,5 @@ public class PhaseService:IPhaseService
         dto.ContentType = GetContentTypeFromPath(project.PhaseFilePath);
         return ServiceResponseFactory.Success(dto,Messages.PhaseFileDownloadedSuccessfully);
     }
-
+    
 }

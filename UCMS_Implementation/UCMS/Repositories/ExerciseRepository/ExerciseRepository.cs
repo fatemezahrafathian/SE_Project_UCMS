@@ -60,5 +60,21 @@ public class ExerciseRepository:IExerciseRepository
             .Where(e => e.Class.InstructorId == instructorId)
             .ToListAsync();
     }
+    public async Task<List<Exercise>> GetExercisesCloseDeadLines(DateTime lowerBound, DateTime upperBound,CancellationToken stoppingToken)
+    {
+        return await _context.Exercises
+            .Include(e => e.Class.ClassStudents)
+            .ThenInclude(cs => cs.Student.User)
+            .Where(p => p.EndDate >= lowerBound && p.EndDate <= upperBound)
+            .ToListAsync(stoppingToken);
+    }
+    public async Task<List<Exercise>> GetExercisesCloseStartDate(DateTime lowerBound, DateTime upperBound,CancellationToken stoppingToken)
+    {
+        return await _context.Exercises
+            .Include(e => e.Class.ClassStudents)
+            .ThenInclude(cs => cs.Student.User)
+            .Where(p => p.StartDate >= lowerBound && p.StartDate <= upperBound)
+            .ToListAsync(stoppingToken);
+    }
     
 }

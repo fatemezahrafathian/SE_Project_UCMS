@@ -35,6 +35,7 @@ using UCMS.Services.ClassService;
 using UCMS.Services.ClassService.Abstraction;
 using UCMS.Services.CookieService;
 using UCMS.Services.CookieService.Abstraction;
+using UCMS.Services.DeadlineNotifierService;
 using UCMS.Services.EmailService;
 using UCMS.Services.EmailService.Abstraction;
 using UCMS.Services.ExamService;
@@ -140,6 +141,8 @@ builder.Services.AddScoped<IExerciseService, ExerciseService>();
 
 builder.Services.AddScoped<IExamRepository, ExamRepository>();
 builder.Services.AddScoped<IExamService, ExamService>();
+builder.Services.AddHostedService<DeadlineNotifierService>();
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(options =>
 {
