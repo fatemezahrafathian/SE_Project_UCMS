@@ -21,7 +21,6 @@ public class StudentServiceTest
     private readonly Mock<ILogger<StudentService>> _mockLogger = new();
     private readonly Mock<UrlBuilder> _urlBuilderMock = new();
     private readonly StudentService _sut;
-    private readonly Mock<IUserRepository> _mockUserRepo = new();
 
     public StudentServiceTest()
     {

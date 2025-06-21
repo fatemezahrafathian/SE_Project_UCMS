@@ -23,7 +23,7 @@ public class InstructorServiceTest
     private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor = new();
     private readonly Mock<UrlBuilder> _urlBuilderMock = new();
     private readonly InstructorService _sut;
-    private readonly Mock<IUserRepository> _mockUserRepo = new();
+
 
     public InstructorServiceTest()
     {
