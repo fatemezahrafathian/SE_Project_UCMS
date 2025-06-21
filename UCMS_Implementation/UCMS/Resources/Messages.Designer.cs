@@ -573,6 +573,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to InvalidFormatType.
+        /// </summary>
+        public static string InvalidFormatType {
+            get {
+                return ResourceManager.GetString("InvalidFormatType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to InvalidGroupSize.
         /// </summary>
         public static string InvalidGroupSize {

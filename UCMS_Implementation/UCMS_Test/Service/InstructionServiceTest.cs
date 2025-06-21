@@ -6,6 +6,7 @@ using Moq;
 using UCMS.DTOs.Instructor;
 using UCMS.Models;
 using UCMS.Repositories.InstructorRepository.Abstraction;
+using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Services.InstructorService;
 using UCMS.Services.UserService;
 using UCMS.Services.Utils;
@@ -21,6 +22,7 @@ public class InstructorServiceTest
     private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor = new();
     private readonly Mock<UrlBuilder> _urlBuilderMock = new();
     private readonly InstructorService _sut;
+    private readonly Mock<IUserRepository> _mockUserRepo = new();
 
     public InstructorServiceTest()
     {
@@ -34,7 +36,8 @@ public class InstructorServiceTest
             _mapper,
             _mockHttpContextAccessor.Object,
             _logger.Object,
-            _urlBuilderMock.Object
+            _urlBuilderMock.Object,
+            _mockUserRepo.Object
             );
     }
 
