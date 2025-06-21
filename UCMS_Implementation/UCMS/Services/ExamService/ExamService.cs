@@ -12,7 +12,7 @@ namespace UCMS.Services.ExamService;
 
 public class ExamService:IExamService
 {
-     private readonly IExamRepository  _repository;
+    private readonly IExamRepository  _repository;
     private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IClassRepository _classRepository;
@@ -39,13 +39,6 @@ public class ExamService:IExamService
         {
             return ServiceResponseFactory.Failure<GetExamForInstructorDto>(Messages.InvalidInstructorForThisClass);
         }
-        // var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
-        //
-        // dto.Date = TimeZoneInfo.ConvertTimeToUtc(
-        //     DateTime.SpecifyKind(dto.Date, DateTimeKind.Unspecified),
-        //     tehranZone
-        // );
-        DateTime.SpecifyKind(dto.Date, DateTimeKind.Unspecified);
         
         if (currentClass.EndDate.HasValue)
         {
@@ -72,7 +65,6 @@ public class ExamService:IExamService
         var phaseDto = _mapper.Map<GetExamForInstructorDto>(newExam);
         return ServiceResponseFactory.Success(phaseDto, Messages.ExamCreatedSuccessfully);
     }
-
     public async Task<ServiceResponse<GetExamForInstructorDto>> GetExamByIdForInstructorAsync(int examId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
@@ -93,20 +85,15 @@ public class ExamService:IExamService
         var existingExam = await _repository.GetExamByIdAsync(examId);
         if (existingExam == null || existingExam.Class.InstructorId !=  user?.Instructor?.Id)
             return ServiceResponseFactory.Failure<GetExamForInstructorDto>(Messages.ExamCantBeAccessed);
-        // var tehranZone = TimeZoneInfo.FindSystemTimeZoneById("Asia/Tehran");
         
         if (dto.Date.HasValue)
         {
-            // dto.Date = TimeZoneInfo.ConvertTimeToUtc(
-            //     DateTime.SpecifyKind(dto.Date.Value, DateTimeKind.Unspecified),
-            //     tehranZone
-            // );
             DateTime.SpecifyKind(dto.Date.Value, DateTimeKind.Unspecified);
             if (existingExam.Class.EndDate.HasValue)
             {
                 if (existingExam.Class.EndDate.Value < DateOnly.FromDateTime(dto.Date.Value.Date))
                 {
-                    return ServiceResponseFactory.Failure<GetExamForInstructorDto>(Messages.ExerciseEndDateCannotBeAfterClassEndDate);
+                    return ServiceResponseFactory.Failure<GetExamForInstructorDto>(Messages.ExamEndDateCannotBeAfterClassEndDate);
                 }
             }
         }
@@ -116,9 +103,9 @@ public class ExamService:IExamService
             return ServiceResponseFactory.Failure<GetExamForInstructorDto>(validationResult.Errors.First().ErrorMessage);
         if (dto.Title != null)
         {
-                   var isDuplicate = await _repository.ExistsWithTitleExceptIdAsync(dto.Title, existingExam.ClassId, examId);
-                   if (isDuplicate)
-                       return ServiceResponseFactory.Failure<GetExamForInstructorDto>(Messages.ExamAlreadyExists); 
+           var isDuplicate = await _repository.ExistsWithTitleExceptIdAsync(dto.Title, existingExam.ClassId, examId);
+           if (isDuplicate)
+               return ServiceResponseFactory.Failure<GetExamForInstructorDto>(Messages.ExamAlreadyExists); 
         }
 
 
@@ -130,7 +117,6 @@ public class ExamService:IExamService
         var phaseDto = _mapper.Map<GetExamForInstructorDto>(existingExam);
         return ServiceResponseFactory.Success(phaseDto, Messages.ExamUpdatedSuccessfully);
     }
-
     public async Task<ServiceResponse<string>>  DeleteExamAsync(int examId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
