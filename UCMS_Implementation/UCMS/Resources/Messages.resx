@@ -468,12 +468,6 @@
   <data name="TeamsCanNotBeCreated" xml:space="preserve">
       <value>Teams can not be created.</value>
   </data>
-  <data name="InvalidInstructorForThisClass" xml:space="preserve">
-    <value>InvalidInstructorForThisClass</value>
-
-      <value>TeamsCanNotBeCreated</value>
-
-  </data>
   <data name="ExerciseAlreadyExists" xml:space="preserve">
     <value>ExerciseAlreadyExists</value>
   </data>
@@ -515,9 +509,6 @@
   </data>
   <data name="ExamLocationMaxLength" xml:space="preserve">
     <value>ExamLocationMaxLength</value>
-  </data>
-  <data name="InvalidInstructorForThisClass" xml:space="preserve">
-    <value>InvalidInstructorForThisClass</value>
   </data>
   <data name="ExamAlreadyExists" xml:space="preserve">
     <value>ExamAlreadyExists</value>
@@ -695,5 +686,8 @@
   </data>
   <data name="ExamScoresUpdatedSuccessfully" xml:space="preserve">
       <value>ExamScoresUpdatedSuccessfully</value>
+  </data>
+  <data name="InvalidInstructorForThisClass" xml:space="preserve">
+      <value>InvalidInstructorForThisClass</value>
   </data>
 </root>

@@ -1,12 +1,15 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Moq;
 using UCMS.DTOs.ExamDto;
 using UCMS.Models;
 using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Repositories.ExamRepository.Abstraction;
+using UCMS.Repositories.StudentRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.ExamService;
+using UCMS.Services.ExerciseSubmissionService;
 using Xunit.Abstractions;
 
 namespace UCMS_Test.Service;
@@ -19,6 +22,7 @@ public class ExamServiceTest
     private readonly ExamService _service;
     private readonly Mock<IStudentClassRepository> _studentClassRepositoryMock = new();
     private readonly Mock<IClassRepository> _classRepositoryMock = new();
+    private readonly Mock<IOptions<ExerciseScoreTemplateSettings>> _templateSettingsOptionsMock = new();
     private readonly ITestOutputHelper _output;
 
     public ExamServiceTest( ITestOutputHelper output)
@@ -29,7 +33,8 @@ public class ExamServiceTest
             _mapperMock.Object,
             _httpContextMock.Object,
             _classRepositoryMock.Object,
-            _studentClassRepositoryMock.Object
+            _studentClassRepositoryMock.Object,
+            _templateSettingsOptionsMock.Object
         );
         _output = output;
     }

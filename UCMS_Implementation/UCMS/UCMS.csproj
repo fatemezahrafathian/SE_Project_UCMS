@@ -60,9 +60,16 @@
     </ItemGroup>
 
     <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\exercises\7dc40877-97d8-4809-a9e1-708f9f8d90a9.pdf" />
+      <_ContentIncludedByDefault Remove="wwwroot\images\classes\4725498a-964d-438c-86ad-a28ae21b84a3.jpg" />
+      <_ContentIncludedByDefault Remove="wwwroot\phases\c23a3c40-66f3-4730-b4d2-bd7065d7e8b3.pdf" />
+      <_ContentIncludedByDefault Remove="wwwroot\projects\334e19f2-eccb-4676-b2c8-1edc9fa50544.pdf" />
+      <_ContentIncludedByDefault Remove="wwwroot\projects\9ced85ea-64b1-49d8-b097-6f985a63f968.pdf" />
 
-      <Folder Include="wwwroot\NewFolder\" />
+    </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="wwwroot\phases\" />
     </ItemGroup>
     
 </Project>

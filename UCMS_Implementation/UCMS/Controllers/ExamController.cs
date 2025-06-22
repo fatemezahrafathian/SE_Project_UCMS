@@ -120,7 +120,7 @@ public class ExamController:ControllerBase
     [HttpPatch("{examId}/scores")]
     public async Task<IActionResult> UpdateExerciseSubmissionScores(int examId, [FromForm] IFormFile scoreFile)
     {
-        var response = await _ExamService.UpdateExamScores(examId, scoreFile);
+        var response = await _examService.UpdateExamScores(examId, scoreFile);
         
         if (!response.Success)
             return BadRequest(response);

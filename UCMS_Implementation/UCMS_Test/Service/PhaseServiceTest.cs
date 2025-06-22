@@ -1,6 +1,9 @@
 using System.Text;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using UCMS.DTOs;
+using UCMS.Repositories.PhaseSubmissionRepository.Abstraction;
+using UCMS.Repositories.StudentTeamPhaseRepository.Abstraction;
+using UCMS.Repositories.TeamRepository.Abstraction;
 using Xunit.Abstractions;
 
 namespace UCMS_Test.Service;
@@ -25,6 +28,9 @@ public class PhaseServiceTest
     private readonly PhaseService _service;
     private readonly Mock<IProjectRepository> _projectRepoMock = new();
     private readonly Mock<IStudentClassRepository> _studentClassRepositoryMock = new();
+    private readonly Mock<ITeamRepository> _teamRepositoryMock = new();
+    private readonly Mock<IPhaseSubmissionRepository> _phaseSubmissionRepositoryMock = new();
+    private readonly Mock<IStudentTeamPhaseRepository> _studentTeamPhaseRepositoryMock = new();
     private readonly ITestOutputHelper _output;
     
 
@@ -37,7 +43,10 @@ public class PhaseServiceTest
             _httpContextMock.Object,
             _projectRepoMock.Object,
             _fileServiceMock.Object,
-            _studentClassRepositoryMock.Object
+            _studentClassRepositoryMock.Object,
+            _teamRepositoryMock.Object,
+            _phaseSubmissionRepositoryMock.Object,
+            _studentTeamPhaseRepositoryMock.Object
         );
         _output = output;
     }
@@ -251,7 +260,7 @@ public class PhaseServiceTest
         
         _httpContextMock.Setup(x => x.HttpContext!.Items["User"]).Returns(user);
         _projectRepoMock.Setup(x => x.GetProjectByIdAsync(1)).ReturnsAsync(project);
-
+        
         _phaseRepoMock.Setup(x => x.GetPhasesByProjectIdAsync(It.IsAny<int>())).ReturnsAsync(new List<Phase>());
         _phaseRepoMock.Setup(x => x.AddAsync(It.IsAny<Phase>())).Returns(Task.CompletedTask);
         
@@ -319,7 +328,8 @@ public class PhaseServiceTest
             Title = "Valid Title",
             StartDate = DateTime.UtcNow.AddDays(1),
             EndDate = DateTime.UtcNow.AddDays(2),
-            PhaseScore = 10
+            PhaseScore = 10,
+            PhaseFile = new Mock<IFormFile>().Object
         };
 
         var project = new Project
@@ -337,15 +347,28 @@ public class PhaseServiceTest
         _phaseRepoMock.Setup(r => r.GetPhasesByProjectIdAsync(project.Id)).ReturnsAsync(new List<Phase>());
         _fileServiceMock.Setup(f => f.SaveFileAsync(It.IsAny<IFormFile>(), "phases"))
             .ReturnsAsync("saved/file/path.pdf");
-
         _mapperMock.Setup(m => m.Map<Phase>(It.IsAny<CreatePhaseDto>())).Returns(new Phase());
         _mapperMock.Setup(m => m.Map<GetPhaseForInstructorDto>(It.IsAny<Phase>())).Returns(new GetPhaseForInstructorDto());
+        _phaseRepoMock.Setup(r => r.AddAsync(It.IsAny<Phase>())).Returns(Task.CompletedTask);
+        _studentTeamPhaseRepositoryMock.Setup(r => r.AddRangeStudentTeamPhaseAsync(It.IsAny<List<StudentTeamPhase>>())).Returns(Task.CompletedTask);
+        _teamRepositoryMock.Setup(r => r.GetTeamsWithRelationsByProjectIdAsync(It.IsAny<int>()))
+            .ReturnsAsync(new List<Team>
+            {
+                new Team { StudentTeams = new List<StudentTeam> { new StudentTeam { Id = 1 } } }
+            });
+        _fileServiceMock.Setup(f => f.IsValidExtension(It.IsAny<IFormFile>())).Returns(true);
+        _fileServiceMock.Setup(f => f.IsValidFileSize(It.IsAny<IFormFile>())).Returns(true);
 
         var result = await _service.CreatePhaseAsync(1, dto);
+        _output.WriteLine(result.Message);
 
         Assert.True(result.Success);
         Assert.Equal(Messages.PhaseCreatedSuccessfully, result.Message);
+
+        _phaseRepoMock.Verify(r => r.AddAsync(It.IsAny<Phase>()), Times.Once);
+        _studentTeamPhaseRepositoryMock.Verify(r => r.AddRangeStudentTeamPhaseAsync(It.IsAny<List<StudentTeamPhase>>()), Times.Once);
     }
+
     [Fact]
     public async Task GetPhaseByIdForInstructorAsync_Should_Return_Failure_When_Phase_Not_Found()
     {
@@ -1166,26 +1189,28 @@ public class PhaseServiceTest
             }
         };
         var user = new User { Instructor = new Instructor { Id = 1 } };
-    
+
         var fileDto = new FileDownloadDto
         {
             FileBytes = new byte[] { 1, 2, 3 },
-            ContentType = null
+            ContentType = null // will be set in service
         };
-    
+
         _httpContextMock.Setup(x => x.HttpContext!.Items["User"]).Returns(user);
         _phaseRepoMock.Setup(r => r.GetPhaseByIdAsync(phaseId)).ReturnsAsync(phase);
         _fileServiceMock.Setup(f => f.DownloadFile(phase.PhaseFilePath)).ReturnsAsync(fileDto);
-        
+        _fileServiceMock.Setup(f => f.GetContentTypeFromPath(phase.PhaseFilePath)).Returns("application/pdf");
+
         // Act
         var result = await _service.HandleDownloadPhaseFileForInstructorAsync(phaseId);
-    
+
         // Assert
         Assert.True(result.Success);
         Assert.Equal(Messages.PhaseFileDownloadedSuccessfully, result.Message);
         Assert.NotNull(result.Data);
         Assert.Equal("application/pdf", result.Data.ContentType);
     }
+
     [Fact]
     public async Task GetPhaseByIdForStudentAsync_Should_Return_Failure_When_Phase_Not_Found()
     {
@@ -1431,9 +1456,11 @@ public class PhaseServiceTest
 
         _httpContextMock.Setup(x => x.HttpContext!.Items["User"]).Returns(user);
         _phaseRepoMock.Setup(r => r.GetPhaseByIdAsync(phaseId)).ReturnsAsync(phase);
-        _studentClassRepositoryMock.Setup(r => r.IsStudentOfClassAsync(phase.Project.ClassId, user.Student.Id))
-                             .ReturnsAsync(true);
+        _studentClassRepositoryMock
+            .Setup(r => r.IsStudentOfClassAsync(phase.Project.ClassId, user.Student.Id))
+            .ReturnsAsync(true);
         _fileServiceMock.Setup(f => f.DownloadFile(phase.PhaseFilePath)).ReturnsAsync(fileDto);
+        _fileServiceMock.Setup(f => f.GetContentTypeFromPath(phase.PhaseFilePath)).Returns("application/pdf");
 
         // Act
         var result = await _service.HandleDownloadPhaseFileForStudentAsync(phaseId);
@@ -1445,4 +1472,5 @@ public class PhaseServiceTest
         Assert.Equal(fileDto, result.Data);
         Assert.Equal("application/pdf", result.Data.ContentType); 
     }
+
 }

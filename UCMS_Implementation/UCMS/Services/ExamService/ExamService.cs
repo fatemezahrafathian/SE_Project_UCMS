@@ -27,7 +27,7 @@ public class ExamService:IExamService
     private readonly ExerciseScoreTemplateSettings _exerciseScoreTemplateSettings;
 
 
-    public ExamService(IExamRepository repository, IMapper mapper,IHttpContextAccessor httpContextAccessor,IClassRepository classRepository,IFileService fileService,IStudentClassRepository studentClassRepository, IOptions<ExerciseScoreTemplateSettings> templateSettingsOptions)
+    public ExamService(IExamRepository repository, IMapper mapper,IHttpContextAccessor httpContextAccessor,IClassRepository classRepository,IStudentClassRepository studentClassRepository, IOptions<ExerciseScoreTemplateSettings> templateSettingsOptions)
 
     {
         _repository = repository;

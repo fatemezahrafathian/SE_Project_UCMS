@@ -7,7 +7,7 @@ namespace UCMS.Services.PhaseService;
 
 public class CreatePhaseDtoValidator: AbstractValidator<CreatePhaseDto>
 {
-    private readonly List<string> _allowedFormats = new() { ".pdf", ".zip", ".rar", ".txt" };
+    private readonly List<string> _allowedFormats = new() { "pdf", "zip", "rar", "txt" };
     public CreatePhaseDtoValidator(IFileService fileService)
     {
         ClassLevelCascadeMode = CascadeMode.Stop;

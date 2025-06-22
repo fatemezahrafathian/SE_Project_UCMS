@@ -29,7 +29,7 @@ public class PhaseService:IPhaseService
     private readonly IPhaseSubmissionRepository _phaseSubmissionRepository;
     private readonly IStudentTeamPhaseRepository _studentTeamPhaseRepository;
 
-    public PhaseService(IPhaseRepository repository, IMapper mapper,IHttpContextAccessor httpContextAccessor,IClassRepository classRepository,IProjectRepository projectRepository,IFileService fileService,IStudentClassRepository studentClassRepository, ITeamRepository teamRepository, IPhaseSubmissionRepository phaseSubmissionRepository, IStudentTeamPhaseRepository studentTeamPhaseRepository)
+    public PhaseService(IPhaseRepository repository, IMapper mapper,IHttpContextAccessor httpContextAccessor,IProjectRepository projectRepository,IFileService fileService,IStudentClassRepository studentClassRepository, ITeamRepository teamRepository, IPhaseSubmissionRepository phaseSubmissionRepository, IStudentTeamPhaseRepository studentTeamPhaseRepository)
 
     {
         _repository = repository;
@@ -42,67 +42,145 @@ public class PhaseService:IPhaseService
         _phaseSubmissionRepository = phaseSubmissionRepository;
         _studentTeamPhaseRepository = studentTeamPhaseRepository;
     }
-    public async Task<ServiceResponse<GetPhaseForInstructorDto>> CreatePhaseAsync(int projectId,CreatePhaseDto dto)
+    // public async Task<ServiceResponse<GetPhaseForInstructorDto>> CreatePhaseAsync(int projectId,CreatePhaseDto dto)
+    // {
+    //     var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+    //     var currentProject = await _projectRepository.GetProjectByIdAsync(projectId);
+    //     if (currentProject == null)
+    //     {
+    //         return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.ProjectNotFound);
+    //     }
+    //     if (currentProject.Class.InstructorId != user!.Instructor!.Id)
+    //     {
+    //         return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.InvalidIstructorForThisProject);
+    //     }
+    //     if (currentProject.StartDate > dto.StartDate)
+    //     {
+    //         return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseStartTimeCannotBeBeforeProjectStartTime);
+    //     }
+    //     if (currentProject.EndDate < dto.EndDate)
+    //     {
+    //         return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseEndTimeCannotBeAfterProjectEndTime);
+    //     }
+    //     var validator = new CreatePhaseDtoValidator(_fileService);
+    //     var result = await validator.ValidateAsync(dto);
+    //     var existingPhases = await _repository.GetPhasesByProjectIdAsync(currentProject.Id);
+    //     if (existingPhases.Any(p => p.Title.Trim().ToLower() == dto.Title.Trim().ToLower()))
+    //     {
+    //         return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseAlreadyExists);
+    //     }
+    //     string? filePath = null;
+    //     if (dto.PhaseFile != null)
+    //     {
+    //         filePath = await _fileService.SaveFileAsync(dto.PhaseFile, "phases");
+    //     }
+    //     if (!result.IsValid)
+    //     {
+    //         var errorMessage = result.Errors.First().ErrorMessage;
+    //         return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(errorMessage);
+    //     }
+    //     var newPhase = _mapper.Map<Phase>(dto);
+    //     newPhase.ProjectId=currentProject.Id;
+    //     newPhase.PhaseFilePath = filePath;
+    //     await _repository.AddAsync(newPhase);
+    //
+    //     var newStudentTeamPhases = new List<StudentTeamPhase>();
+    //     var teams = await _teamRepository.GetTeamsWithRelationsByProjectIdAsync(newPhase.ProjectId); // to be done on active teams
+    //     foreach (var team in teams)
+    //     {
+    //         foreach (var stdTeam in team.StudentTeams)
+    //         {
+    //             var newStudentTeamPhase = new StudentTeamPhase()
+    //             {
+    //                 StudentTeamId = stdTeam.Id,
+    //                 PhaseId = newPhase.Id
+    //             };
+    //
+    //             newStudentTeamPhases.Add(newStudentTeamPhase);
+    //         }
+    //     }
+    //     await _studentTeamPhaseRepository.AddRangeStudentTeamPhaseAsync(newStudentTeamPhases);
+    //
+    //     var phaseDto = _mapper.Map<GetPhaseForInstructorDto>(newPhase);
+    //     return ServiceResponseFactory.Success(phaseDto, Messages.PhaseCreatedSuccessfully); 
+    // }
+    public async Task<ServiceResponse<GetPhaseForInstructorDto>> CreatePhaseAsync(int projectId, CreatePhaseDto dto)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var currentProject = await _projectRepository.GetProjectByIdAsync(projectId);
+
         if (currentProject == null)
-        {
             return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.ProjectNotFound);
-        }
+
         if (currentProject.Class.InstructorId != user!.Instructor!.Id)
-        {
             return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.InvalidIstructorForThisProject);
-        }
+
         if (currentProject.StartDate > dto.StartDate)
-        {
             return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseStartTimeCannotBeBeforeProjectStartTime);
-        }
+
         if (currentProject.EndDate < dto.EndDate)
-        {
             return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseEndTimeCannotBeAfterProjectEndTime);
-        }
+
         var validator = new CreatePhaseDtoValidator(_fileService);
         var result = await validator.ValidateAsync(dto);
-        var existingPhases = await _repository.GetPhasesByProjectIdAsync(currentProject.Id);
-        if (existingPhases.Any(p => p.Title.Trim().ToLower() == dto.Title.Trim().ToLower()))
-        {
-            return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseAlreadyExists);
-        }
-        string? filePath = null;
-        if (dto.PhaseFile != null)
-        {
-            filePath = await _fileService.SaveFileAsync(dto.PhaseFile, "phases");
-        }
+
         if (!result.IsValid)
         {
             var errorMessage = result.Errors.First().ErrorMessage;
             return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(errorMessage);
         }
+
+        var existingPhases = await _repository.GetPhasesByProjectIdAsync(currentProject.Id);
+        if (existingPhases.Any(p => p.Title.Trim().ToLower() == dto.Title.Trim().ToLower()))
+            return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseAlreadyExists);
+
+        string? filePath = null;
+        if (dto.PhaseFile != null)
+        {
+            filePath = await _fileService.SaveFileAsync(dto.PhaseFile, "phases");
+        }
+        
+
         var newPhase = _mapper.Map<Phase>(dto);
-        newPhase.ProjectId=currentProject.Id;
+        newPhase.ProjectId = currentProject.Id;
         newPhase.PhaseFilePath = filePath;
         await _repository.AddAsync(newPhase);
 
+        // Attach phase to all student teams
+        // var newStudentTeamPhases = new List<StudentTeamPhase>();
+        // var teams = await _teamRepository.GetTeamsWithRelationsByProjectIdAsync(newPhase.ProjectId);
+        //
+        // foreach (var team in teams)
+        // {
+        //     foreach (var stdTeam in team.StudentTeams)
+        //     {
+        //         newStudentTeamPhases.Add(new StudentTeamPhase
+        //         {
+        //             StudentTeamId = stdTeam.Id,
+        //             PhaseId = newPhase.Id
+        //         });
+        //     }
+        // }
         var newStudentTeamPhases = new List<StudentTeamPhase>();
-        var teams = await _teamRepository.GetTeamsWithRelationsByProjectIdAsync(newPhase.ProjectId); // to be done on active teams
-        foreach (var team in teams)
+        var teams = await _teamRepository.GetTeamsWithRelationsByProjectIdAsync(newPhase.ProjectId);
+
+        foreach (var team in teams ?? Enumerable.Empty<Team>())
         {
-            foreach (var stdTeam in team.StudentTeams)
+            foreach (var stdTeam in team.StudentTeams ?? Enumerable.Empty<StudentTeam>())
             {
-                var newStudentTeamPhase = new StudentTeamPhase()
+                newStudentTeamPhases.Add(new StudentTeamPhase
                 {
                     StudentTeamId = stdTeam.Id,
                     PhaseId = newPhase.Id
-                };
-
-                newStudentTeamPhases.Add(newStudentTeamPhase);
+                });
             }
         }
+
+
         await _studentTeamPhaseRepository.AddRangeStudentTeamPhaseAsync(newStudentTeamPhases);
 
         var phaseDto = _mapper.Map<GetPhaseForInstructorDto>(newPhase);
-        return ServiceResponseFactory.Success(phaseDto, Messages.PhaseCreatedSuccessfully); 
+        return ServiceResponseFactory.Success(phaseDto, Messages.PhaseCreatedSuccessfully);
     }
 
     public async Task<ServiceResponse<GetPhaseForInstructorDto>> GetPhaseByIdForInstructorAsync(int phaseId)
@@ -218,7 +296,7 @@ public class PhaseService:IPhaseService
         if (dto==null)
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileDoesNotExist);
 
-        dto.ContentType = _fileService.GetContentTypeFromPath(project.PhaseFilePath);
+        dto.ContentType = _fileService.GetContentTypeFromPath(phase.PhaseFilePath);
 
         return ServiceResponseFactory.Success(dto,Messages.PhaseFileDownloadedSuccessfully);
     }
