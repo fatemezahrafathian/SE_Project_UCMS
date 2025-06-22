@@ -24,4 +24,23 @@
     <data name="ConfirmationEmail_body" xml:space="preserve">
         <value>Click the link to confirm your account: &lt;a href='{0}'&gt;Confirm your email&lt;/a&gt;</value>
     </data>
+    <data name="OneTimeCode_subject" xml:space="preserve">
+        <value>your one time code</value>
+    </data>
+    <data name="OneTimeCode_body" xml:space="preserve">
+        <value>کاربر گرامی،
+درخواست شما برای دریافت کد تأیید دریافت شد.
+
+کد یک‌بار مصرف شما:
+
+{0}
+
+این کد فقط به مدت 2 دقیقه معتبر است و تنها یک‌بار قابل استفاده می‌باشد.
+
+در صورتی که شما این درخواست را ارسال نکرده‌اید، لطفاً این ایمیل را نادیده بگیرید.
+
+با احترام،
+تیم پشتیبانی UCMS
+</value>
+    </data>
 </root>

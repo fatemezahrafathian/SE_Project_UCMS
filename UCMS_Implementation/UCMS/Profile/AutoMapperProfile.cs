@@ -126,12 +126,14 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));
 
         CreateMap<Student, GetStudentsOfClassforInstructorDto>()
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
             .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))
             .ForMember(dest => dest.ProfileImagePath, opt => opt.MapFrom(src => src.User.ProfileImagePath))
             .ForMember(dest => dest.StudentNumber, opt => opt.MapFrom(src => src.StudentNumber));
 
         CreateMap<Student, GetStudentsOfClassforStudentDto>()
+            .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
             .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.User.FirstName))
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.User.LastName))
             .ForMember(dest => dest.ProfileImagePath, opt => opt.MapFrom(src => src.User.ProfileImagePath));
@@ -151,8 +153,8 @@ public class AutoMapperProfile : Profile
 
         CreateMap<CreateProjectDto, Project>()
             .ForMember(dest => dest.ProjectType, opt => opt.MapFrom(src => (ProjectType)src.ProjectType))
-            .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.ToUniversalTime()))
-            .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.ToUniversalTime()))
+            .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
+            .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate))
             .ForMember(dest => dest.ProjectFilePath, opt => opt.Ignore()) 
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
             .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
@@ -182,10 +184,18 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.DueDate, opt => opt.MapFrom(src => src.EndDate.Date))  
             .ForMember(dest => dest.DueTime, opt => opt.MapFrom(src => src.EndDate.TimeOfDay))  
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.EndDate < DateTime.UtcNow ? ProjectStatus.Completed : (src.StartDate > DateTime.UtcNow ? ProjectStatus.NotStarted : ProjectStatus.InProgress)))
-            .ForMember(dest => dest.ClassTitle, opt => opt.MapFrom(src => src.Class.Title)); 
+            .ForMember(dest => dest.ClassTitle, opt => opt.MapFrom(src => src.Class.Title));
+        CreateMap<Project, GetProjectsOfClassDto>()
+            .ForMember(dest => dest.DueDate, opt => opt.MapFrom(src => src.EndDate.Date))
+            .ForMember(dest => dest.DueTime, opt => opt.MapFrom(src => src.EndDate.TimeOfDay))
+            .ForMember(dest => dest.Status,
+                opt => opt.MapFrom(src =>
+                    src.EndDate < DateTime.UtcNow
+                        ? ProjectStatus.Completed
+                        : (src.StartDate > DateTime.UtcNow ? ProjectStatus.NotStarted : ProjectStatus.InProgress)));
         CreateMap<CreateExerciseDto, Exercise>()
-            .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.ToUniversalTime()))
-            .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.ToUniversalTime()))
+            .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
+            .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate))
             .ForMember(dest => dest.ExerciseFilePath, opt => opt.Ignore()) // File should be handled separately
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
             .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
@@ -212,8 +222,8 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.Status, 
                 opt => opt.MapFrom(src => calculateExerciseStatus(src.StartDate, src.EndDate)));
         CreateMap<CreatePhaseDto, Phase>()
-            .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate.ToUniversalTime()))
-            .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate.ToUniversalTime()))
+            .ForMember(dest => dest.StartDate, opt => opt.MapFrom(src => src.StartDate))
+            .ForMember(dest => dest.EndDate, opt => opt.MapFrom(src => src.EndDate))
             .ForMember(dest => dest.PhaseFilePath, opt => opt.Ignore()) // File should be handled separately
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
             .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
@@ -267,11 +277,11 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.Name,
                 opt => opt.Condition(src => !string.IsNullOrWhiteSpace(src.Name)));
         CreateMap<CreateExamDto, Exam>()
-            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date.ToUniversalTime()))
+            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
             .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow))
             .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(_ => DateTime.UtcNow));
         CreateMap<Exam, GetExamForInstructorDto>()
-            .ForMember(dest => dest.examId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.ExamId, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
             .ForMember(dest => dest.classTitle, opt => opt.MapFrom(src => src.Class.Title))
             .ForMember(dest => dest.ExamLocation, opt => opt.MapFrom(src => src.ExamLocation))

@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using UCMS.Attributes;
-using UCMS.Data;
 using UCMS.DTOs.ExerciseDto;
 using UCMS.Services.ExerciseService.Abstraction;
 
@@ -9,19 +8,17 @@ namespace UCMS.Controllers;
 [ApiController]
 public class ExerciseController:ControllerBase
 {
-    private readonly DataContext _context;
-    private readonly IExerciseService _ExerciseService;
+    private readonly IExerciseService _exerciseService;
 
-    public ExerciseController(DataContext context, IExerciseService ExerciseService)
+    public ExerciseController(IExerciseService exerciseService)
     {
-        _context = context;
-        _ExerciseService = ExerciseService;
+        _exerciseService = exerciseService;
     }
     [RoleBasedAuthorization("Instructor")]
     [HttpPost("")]
     public async Task<IActionResult> CreateExercise(int classId,[FromForm] CreateExerciseDto dto)
     {
-        var response = await _ExerciseService.CreateExerciseAsync(classId,dto);
+        var response = await _exerciseService.CreateExerciseAsync(classId,dto);
     
         if (response.Success)
         {
@@ -35,7 +32,7 @@ public class ExerciseController:ControllerBase
     [HttpGet("Instructor/{exerciseId}")]
     public async Task<IActionResult> GetExerciseForInstructor(int exerciseId)
     {
-        var response = await _ExerciseService.GetExerciseByIdForInstructorAsync(exerciseId);
+        var response = await _exerciseService.GetExerciseByIdForInstructorAsync(exerciseId);
         if (!response.Success)
             return NotFound(response.Message);
 
@@ -43,9 +40,9 @@ public class ExerciseController:ControllerBase
     }
     [RoleBasedAuthorization("Instructor")]
     [HttpPatch("{exerciseId}")]
-    public async Task<IActionResult> UpdateExercise(int classId, int exerciseId, [FromForm] PatchExerciseDto dto)
+    public async Task<IActionResult> UpdateExercise(int exerciseId, [FromForm] PatchExerciseDto dto)
     {
-        var response = await _ExerciseService.UpdateExerciseAsync(exerciseId, dto);
+        var response = await _exerciseService.UpdateExerciseAsync(exerciseId, dto);
 
         if (response.Success)
             return Ok(response);
@@ -54,19 +51,19 @@ public class ExerciseController:ControllerBase
     }
     [RoleBasedAuthorization("Instructor")]
     [HttpDelete("{exerciseId}")]
-    public async Task<IActionResult> DeleteExercise(int classId, int exerciseId)
+    public async Task<IActionResult> DeleteExercise( int exerciseId)
     {
-        var response = await _ExerciseService.DeleteExerciseAsync(exerciseId);
+        var response = await _exerciseService.DeleteExerciseAsync(exerciseId);
         if (!response.Success)
             return NotFound(response.Message);
 
         return Ok(response.Message);
     }
     [RoleBasedAuthorization("Instructor")]
-    [HttpGet("instructor")]
-    public async Task<IActionResult> GetExercisesForInstructor(int classId)
+    [HttpGet("Instructor/class/{classId}")]
+    public async Task<IActionResult> GetExercisesOfClassForInstructor(int classId)
     {
-        var response = await _ExerciseService.GetExercisesForInstructor(classId);
+        var response = await _exerciseService.GetExercisesOfClassForInstructor(classId);
 
         if (!response.Success)
             return NotFound(response.Message);
@@ -77,7 +74,7 @@ public class ExerciseController:ControllerBase
     [HttpGet("{exerciseId}/downloadForInstructor")]
     public async Task<IActionResult> DownloadExerciseFileForInstructor(int exerciseId)
     {
-        var response = await _ExerciseService.HandleDownloadExerciseFileForInstructorAsync(exerciseId);
+        var response = await _exerciseService.HandleDownloadExerciseFileForInstructorAsync(exerciseId);
         if (!response.Success)
             return NotFound(response.Message);
     
@@ -88,17 +85,17 @@ public class ExerciseController:ControllerBase
     [HttpGet("Student/{exerciseId}")]
     public async Task<IActionResult> GetExerciseForStudent(int exerciseId)
     {
-        var response = await _ExerciseService.GetExerciseByIdForStudentAsync(exerciseId);
+        var response = await _exerciseService.GetExerciseByIdForStudentAsync(exerciseId);
         if (!response.Success)
             return NotFound(response.Message);
 
         return Ok(response.Data);
     }
     [RoleBasedAuthorization("Student")]
-    [HttpGet("Student")]
-    public async Task<IActionResult> GetExercisesForStudent(int classId)
+    [HttpGet("Student/class/{classId}")]
+    public async Task<IActionResult> GetExercisesOfClassForStudent(int classId)
     {
-        var response = await _ExerciseService.GetExercisesForStudent(classId);
+        var response = await _exerciseService.GetExercisesOfClassForStudent(classId);
 
         if (!response.Success)
             return NotFound(response.Message);
@@ -109,10 +106,32 @@ public class ExerciseController:ControllerBase
     [HttpGet("{exerciseId}/downloadForStudent")]
     public async Task<IActionResult> DownloadExerciseFileForStudent(int exerciseId)
     {
-        var response = await _ExerciseService.HandleDownloadExerciseFileForStudentAsync(exerciseId);
+        var response = await _exerciseService.HandleDownloadExerciseFileForStudentAsync(exerciseId);
         if (!response.Success)
             return NotFound(response.Message);
     
         return File(response.Data.FileBytes, response.Data.ContentType, response.Data.FileName);
+    }
+    [RoleBasedAuthorization("Student")]
+    [HttpGet("/api/Exercises/Student")]
+    public async Task<IActionResult> GetExercisesForStudent()
+    {
+        var response = await _exerciseService.GetExercisesForStudent();
+
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Data);
+    }
+    [RoleBasedAuthorization("Instructor")]
+    [HttpGet("/api/Exercises/instructor")]
+    public async Task<IActionResult> GetExercisesForInstructor()
+    {
+        var response = await _exerciseService.GetExercisesForInstructor();
+
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Data);
     }
 }

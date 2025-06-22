@@ -12,4 +12,7 @@ public interface IExamRepository
     Task UpdateRangeStudentExamAsync(List<StudentExam> studentExams);
     Task<bool> ExistsWithTitleExceptIdAsync(string title, int classId, int examIdToExclude);
     Task DeleteAsync(Exam exam);
+    Task<List<Exam>> GetExamsByStudentIdAsync(int studentId);
+    Task<List<Exam>> GetExamsByInstructorIdAsync(int instructorId);
+    Task<List<Exam>> GetExamsCloseDeadLines(DateTime lowerBound, DateTime upperBound, CancellationToken stoppingToken);
 }

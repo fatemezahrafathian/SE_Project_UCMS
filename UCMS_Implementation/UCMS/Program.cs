@@ -42,6 +42,7 @@ using UCMS.Services.ClassService;
 using UCMS.Services.ClassService.Abstraction;
 using UCMS.Services.CookieService;
 using UCMS.Services.CookieService.Abstraction;
+using UCMS.Services.DeadlineNotifierService;
 using UCMS.Services.EmailService;
 using UCMS.Services.EmailService.Abstraction;
 using UCMS.Services.ExamService;
@@ -79,7 +80,7 @@ var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
                        ?? builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<DataContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(connectionString));
 
 builder.Services.Configure<MimeTypeOptions>(
     builder.Configuration.GetSection("MimeTypes"));
@@ -165,6 +166,8 @@ builder.Services.AddScoped<IExerciseService, ExerciseService>();
 
 builder.Services.AddScoped<IExamRepository, ExamRepository>();
 builder.Services.AddScoped<IExamService, ExamService>();
+builder.Services.AddHostedService<DeadlineNotifierService>();
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAuthentication(options =>
 {
@@ -200,11 +203,13 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
+var allowUrls = Environment.GetEnvironmentVariable("ORIGIN_URL") ?? "";
+                     
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowLocalhost5173", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "https://localhost:5173")
+        policy.WithOrigins("http://localhost:5173", "https://localhost:5173", allowUrls)
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -228,7 +233,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-    //db.Database.Migrate(); // Ensures schema is created before anything else
+    db.Database.Migrate(); // Ensures schema is created before anything else
 
     var roleService = scope.ServiceProvider.GetRequiredService<IRoleService>();
     await SeedData.Initialize(scope.ServiceProvider, roleService); // Seed roles etc.

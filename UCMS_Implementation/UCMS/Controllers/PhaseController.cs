@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using UCMS.Attributes;
-using UCMS.Data;
 using UCMS.DTOs.PhaseDto;
-using UCMS.DTOs.ProjectDto;
-using UCMS.Services.ClassService.Abstraction;
 using UCMS.Services.PhaseService.Abstraction;
 
 namespace UCMS.Controllers;
@@ -11,12 +8,10 @@ namespace UCMS.Controllers;
 [ApiController]
 public class PhaseController:ControllerBase
 {
-    private readonly DataContext _context;
     private readonly IPhaseService _phaseService;
 
-    public PhaseController(DataContext context, IPhaseService phaseService)
+    public PhaseController(IPhaseService phaseService)
     {
-        _context = context;
         _phaseService = phaseService;
     }
     [RoleBasedAuthorization("Instructor")]
@@ -45,9 +40,9 @@ public class PhaseController:ControllerBase
     }
     [RoleBasedAuthorization("Instructor")]
     [HttpPatch("{phaseId}")]
-    public async Task<IActionResult> UpdatePhase(int projectId, int phaseId, [FromForm] PatchPhaseDto dto)
+    public async Task<IActionResult> UpdatePhase(int phaseId, [FromForm] PatchPhaseDto dto)
     {
-        var response = await _phaseService.UpdatePhaseAsync(projectId, phaseId, dto);
+        var response = await _phaseService.UpdatePhaseAsync(phaseId, dto);
 
         if (response.Success)
             return Ok(response);
@@ -56,9 +51,9 @@ public class PhaseController:ControllerBase
     }
     [RoleBasedAuthorization("Instructor")]
     [HttpDelete("{phaseId}")]
-    public async Task<IActionResult> DeletePhase(int projectId, int phaseId)
+    public async Task<IActionResult> DeletePhase(int phaseId)
     {
-        var response = await _phaseService.DeletePhaseAsync(projectId, phaseId);
+        var response = await _phaseService.DeletePhaseAsync(phaseId);
         if (!response.Success)
             return NotFound(response.Message);
 

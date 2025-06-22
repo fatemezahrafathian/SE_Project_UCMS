@@ -4,6 +4,8 @@ using UCMS.DTOs;
 using UCMS.DTOs.Student;
 using UCMS.Models;
 using UCMS.Repositories.StudentRepository.Abstraction;
+using UCMS.Repositories.UserRepository;
+using UCMS.Repositories.UserRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.StudentService.Abstraction;
 using UCMS.Services.Utils;
@@ -17,28 +19,42 @@ namespace UCMS.Services.StudentService
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<StudentService> _logger;
         private readonly UrlBuilder _urlBuilder;
+        private readonly IUserRepository _userRepository;
 
-        public StudentService(IStudentRepository studentRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<StudentService> logger, UrlBuilder urlBuilder)
+        public StudentService(IStudentRepository studentRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, ILogger<StudentService> logger, UrlBuilder urlBuilder, IUserRepository userRepository)
         {
             _studentRepository = studentRepository;
             _mapper = mapper;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
-            _urlBuilder = urlBuilder; 
+            _userRepository = userRepository;
+            _urlBuilder = urlBuilder;
         }
 
+        public async Task<ServiceResponse<StudentProfileDto>> GetStudentProfileById(int userId)
+        {
+            User? user = await _userRepository.GetUserByIdAsync(userId);
+            Student? student = await _studentRepository.GetStudentByUserIdAsync(userId);
+
+            return BuildStudentProfileOutput(student, userId);
+        }
 
         public async Task<ServiceResponse<StudentProfileDto>> GetCurrentStudent()
         {
             var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
             Student? student = await _studentRepository.GetStudentByUserIdAsync(user.Id);
 
+            return BuildStudentProfileOutput(student, user.Id);
+        }
+
+        private ServiceResponse<StudentProfileDto> BuildStudentProfileOutput(Student? student, int userId)
+        {
             if (student == null)
             {
                 return new ServiceResponse<StudentProfileDto>
                 {
                     Success = false,
-                    Message = String.Format(Messages.UserNotFound, user.Id)
+                    Message = String.Format(Messages.UserNotFound, student.UserId)
                 };
             }
 
@@ -48,7 +64,7 @@ namespace UCMS.Services.StudentService
             {
                 Data = responseStudent,
                 Success = true,
-                Message = string.Format(Messages.UserFound, user.Id)
+                Message = string.Format(Messages.UserFound, student.UserId)
             };
         }
 

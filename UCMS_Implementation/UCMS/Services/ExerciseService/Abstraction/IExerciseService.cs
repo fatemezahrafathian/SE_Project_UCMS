@@ -9,9 +9,12 @@ public interface IExerciseService
     Task<ServiceResponse<GetExerciseForInstructorDto>> GetExerciseByIdForInstructorAsync(int exerciseId);
     Task<ServiceResponse<GetExerciseForInstructorDto>> UpdateExerciseAsync(int exerciseId, PatchExerciseDto dto);
     Task<ServiceResponse<string>>  DeleteExerciseAsync(int exerciseId);
-    Task<ServiceResponse<List<GetExercisesForInstructorDto>>> GetExercisesForInstructor(int classId);
     Task<ServiceResponse<FileDownloadDto>> HandleDownloadExerciseFileForInstructorAsync(int classId);
     Task<ServiceResponse<GetExerciseForStudentDto>> GetExerciseByIdForStudentAsync(int exerciseId);
-    Task<ServiceResponse<List<GetExercisesForStudentDto>>> GetExercisesForStudent(int classId);
     Task<ServiceResponse<FileDownloadDto>> HandleDownloadExerciseFileForStudentAsync(int exerciseId);
+    Task<ServiceResponse<List<GetExercisesForStudentDto>>> GetExercisesForStudent();
+    Task<ServiceResponse<List<GetExercisesForInstructorDto>>> GetExercisesForInstructor();
+    Task<ServiceResponse<List<GetExercisesForStudentDto>>> GetExercisesOfClassForStudent(int classId);
+    Task<ServiceResponse<List<GetExercisesForInstructorDto>>> GetExercisesOfClassForInstructor(int classId);
+    
 }

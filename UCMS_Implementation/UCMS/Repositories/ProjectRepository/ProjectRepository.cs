@@ -610,4 +610,17 @@ public class ProjectRepository: IProjectRepository
     {
         return await _context.Projects.AnyAsync(p => p.Id == projectId);
     }
+    public async Task<bool> IsProjectNameDuplicateAsync(int classId, string projectName)
+    {
+        return await _context.Projects
+            .AnyAsync(p => p.ClassId == classId && p.Title == projectName);
+    }
+    public async Task<List<Project>> GetProjectsByClassIdAsync(int classId)
+    {
+        return await _context.Projects
+            .Where(p => p.ClassId == classId)
+            .OrderByDescending(p => p.EndDate)                
+            .ToListAsync();
+    }
+
 }

@@ -11,6 +11,10 @@ public interface IExerciseRepository
     Task<List<Exercise>> GetExercisesByClassIdAsync(int classId);
     Task UpdateAsync(Exercise exercise);
     Task<bool> ExistsWithTitleExceptIdAsync(string title, int classId, int exerciseIdToExclude);
-    Task DeleteAsync(Exercise exercise); 
+    Task DeleteAsync(Exercise exercise);
+    Task<List<Exercise>> GetExercisesByStudentIdAsync(int studentId);
+    Task<List<Exercise>> GetExercisesByInstructorIdAsync(int instructorId);
+    Task<List<Exercise>> GetExercisesCloseDeadLines(DateTime lowerBound, DateTime upperBound,CancellationToken stoppingToken);
+    Task<List<Exercise>> GetExercisesCloseStartDate(DateTime lowerBound, DateTime upperBound,CancellationToken stoppingToken);
 
 }

@@ -66,4 +66,37 @@ public class ExerciseRepository:IExerciseRepository
         _context.Exercises.Remove(exercise);
         await _context.SaveChangesAsync();
     }
+    public async Task<List<Exercise>> GetExercisesByStudentIdAsync(int studentId)
+    {
+        return await _context.Exercises
+            .Include(e => e.Class)
+            .ThenInclude(c => c.ClassStudents)
+            .Where(e => e.Class.ClassStudents.Any(cs => cs.StudentId == studentId))
+            .ToListAsync();
+    }
+
+    public async Task<List<Exercise>> GetExercisesByInstructorIdAsync(int instructorId)
+    {
+        return await _context.Exercises
+            .Include(e => e.Class)
+            .Where(e => e.Class.InstructorId == instructorId)
+            .ToListAsync();
+    }
+    public async Task<List<Exercise>> GetExercisesCloseDeadLines(DateTime lowerBound, DateTime upperBound,CancellationToken stoppingToken)
+    {
+        return await _context.Exercises
+            .Include(e => e.Class.ClassStudents)
+            .ThenInclude(cs => cs.Student.User)
+            .Where(p => p.EndDate >= lowerBound && p.EndDate <= upperBound)
+            .ToListAsync(stoppingToken);
+    }
+    public async Task<List<Exercise>> GetExercisesCloseStartDate(DateTime lowerBound, DateTime upperBound,CancellationToken stoppingToken)
+    {
+        return await _context.Exercises
+            .Include(e => e.Class.ClassStudents)
+            .ThenInclude(cs => cs.Student.User)
+            .Where(p => p.StartDate >= lowerBound && p.StartDate <= upperBound)
+            .ToListAsync(stoppingToken);
+    }
+    
 }
