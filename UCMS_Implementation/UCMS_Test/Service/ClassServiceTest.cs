@@ -223,7 +223,7 @@ public async Task CreateClass_ShouldReturnSuccess_WhenValidDto()
             var dto = new PatchClassDto
             {
                 Title = "Updated Title",
-                StartDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(10)), // ❌ بعد از EndDate
+                StartDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(10)),
                 EndDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(5)),
                 ProfileImage = null
             };
