@@ -21,4 +21,5 @@ public class Exam
     public int ClassId { get; set; }
     [ForeignKey("ClassId")]
     public Class Class { get; set; } = null!;
+    public double? PortionInTotalScore { get; set; }
 }

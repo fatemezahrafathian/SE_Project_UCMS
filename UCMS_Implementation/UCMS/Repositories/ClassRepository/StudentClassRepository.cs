@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using UCMS.Data;
 using UCMS.Models;
 using UCMS.Repositories.ClassRepository.Abstraction;

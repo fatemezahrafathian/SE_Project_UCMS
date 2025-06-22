@@ -45,7 +45,64 @@ public class ClassRepository: IClassRepository
             .Include(c => c.Schedules)
             .FirstOrDefaultAsync();
     }
-    
+
+    public async Task<Class?> GetClassWithEntriesAsync(int classId)
+    {
+        return await _context.Classes.Where(c => c.Id == classId)
+            .Include(c => c.Projects)
+            .ThenInclude(p => p.Phases)
+            .Include(c => c.Exercises)
+            .Include(c => c.Exams)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<Class?> GetClassWithRelationsByIdAsync(int classId)
+    {
+        return await _context.Classes.Where(c=>c.Id==classId)
+            .Include(c=>c.ClassStudents)
+            .ThenInclude(cs=>cs.Student)
+            .ThenInclude(s=>s.User)
+            .Include(c => c.Projects)
+            .ThenInclude(p => p.Phases)
+            .Include(c => c.Exercises)
+            .Include(c => c.Exams)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<Class?> GetClassWithRelationsAsync(int studentId, int classId)
+    {
+        return await _context.Classes.Where(c=>c.Id==classId && _context.ClassStudents
+                .Any(cs => cs.ClassId == c.Id && cs.StudentId == studentId))
+            .Include(c=>c.ClassStudents)
+            .ThenInclude(cs=>cs.Student)
+            .ThenInclude(s=>s.User)
+            .Include(c => c.Projects)
+            .ThenInclude(p => p.Phases)
+            .Include(c => c.Exercises)
+            .Include(c => c.Exams)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<List<Class>> GetClassesWithRelationsAsync(int studentId)
+    {
+        return await _context.Classes.Where(c =>
+            _context.ClassStudents.Any(cs => cs.ClassId == c.Id && cs.StudentId == studentId))
+            .Include(c => c.Projects)
+            .ThenInclude(p => p.Phases)
+            .Include(c => c.Exercises)
+            .Include(c => c.Exams)
+            .ToListAsync();
+        // return await _context.ClassStudents.Where(cs => cs.StudentId == studentId)
+        //     .Include(cs => cs.Class)
+        //     .ThenInclude(c => c.Projects)
+        //     .ThenInclude(p => p.Phases)
+        //     .Include(cs => cs.Class)
+        //     .ThenInclude(c => c.Exercises)
+        //     .Include(cs => cs.Class)
+        //     .ThenInclude(c => c.Exams)
+        //     .ToListAsync();
+    }
+
     public async Task DeleteClassAsync(Class cls)
     {
         _context.Classes.Remove(cls);

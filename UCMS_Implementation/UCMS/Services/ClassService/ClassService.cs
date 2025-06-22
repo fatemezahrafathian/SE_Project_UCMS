@@ -1,10 +1,14 @@
 using AutoMapper;
+using DocumentFormat.OpenXml.Office.PowerPoint.Y2021.M06.Main;
 using UCMS.DTOs;
 using UCMS.DTOs.ClassDto;
 using UCMS.Extensions;
 using UCMS.Factories;
 using UCMS.Models;
 using UCMS.Repositories.ClassRepository.Abstraction;
+using UCMS.Repositories.ExamRepository.Abstraction;
+using UCMS.Repositories.ExerciseRepository.Abstraction;
+using UCMS.Repositories.PhaseRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.ClassService.Abstraction;
 using UCMS.Services.ImageService;
@@ -20,8 +24,11 @@ public class ClassService: IClassService
     private readonly IImageService _imageService;
     private readonly IPasswordService _passwordService;
     private readonly IStudentClassService _studentClassService;
+    private readonly IPhaseRepository _phaseRepository;
+    private readonly IExerciseRepository _exerciseRepository;
+    private readonly IExamRepository _examRepository;
 
-    public ClassService(IClassRepository classRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, IImageService imageService, IPasswordService passwordService, IStudentClassService studentClassService)
+    public ClassService(IClassRepository classRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, IImageService imageService, IPasswordService passwordService, IStudentClassService studentClassService, IPhaseRepository phaseRepository, IExerciseRepository exerciseRepository, IExamRepository examRepository)
     {
         _classRepository = classRepository;
         _mapper = mapper;
@@ -29,6 +36,9 @@ public class ClassService: IClassService
         _imageService = imageService;
         _passwordService = passwordService;
         _studentClassService = studentClassService;
+        _phaseRepository = phaseRepository;
+        _exerciseRepository = exerciseRepository;
+        _examRepository = examRepository;
     }
 
     public async Task<ServiceResponse<GetClassForInstructorDto>> CreateClass(CreateClassDto dto)
@@ -115,6 +125,64 @@ public class ClassService: IClassService
         return ServiceResponseFactory.Success(responseDto, Messages.ClassesRetrievedSuccessfully); // ClassesFetchedSuccessfully
     }
 
+    public async Task<ServiceResponse<List<GetClassEntryDto>>> GetClassEntries(int classId)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+
+        var cls = await _classRepository.GetClassWithEntriesAsync(classId);
+        if (cls == null)
+        {
+            return ServiceResponseFactory.Failure<List<GetClassEntryDto>>(Messages.ClassNotFound);
+        }
+        if (cls.InstructorId != user!.Instructor!.Id)
+        {
+            return ServiceResponseFactory.Failure<List<GetClassEntryDto>>(Messages.ClassCantBeAccessed);
+        }
+
+        var entriesList = new List<GetClassEntryDto>();
+        foreach (var project in cls.Projects) // use select instead
+        {
+            foreach (var phase in project.Phases)
+            {
+                entriesList.Add(new GetClassEntryDto()
+                {
+                    EntryId = phase.Id,
+                    EntryType = EntryType.Phase,
+                    EntryName = phase.Title,
+                    PartialScore = phase.PhaseScore,
+                    PortionInTotalScore = phase.PortionInTotalScore
+                });
+            }
+        }
+
+        foreach (var exercise in cls.Exercises)
+        {
+            entriesList.Add(new GetClassEntryDto()
+            {
+                EntryId = exercise.Id,
+                EntryType = EntryType.Exercise,
+                EntryName = exercise.Title,
+                PartialScore = exercise.ExerciseScore,
+                PortionInTotalScore = exercise.PortionInTotalScore
+            });
+        }
+        
+        foreach (var exam in cls.Exams)
+        {
+            entriesList.Add(new GetClassEntryDto()
+            {
+                EntryId = exam.Id,
+                EntryType = EntryType.Exam,
+                EntryName = exam.Title,
+                PartialScore = exam.ExamScore,
+                PortionInTotalScore = exam.PortionInTotalScore
+            });
+        }
+        
+        return ServiceResponseFactory.Success<List<GetClassEntryDto>>(Messages.ClassEntriesFetchedSuccessfully);
+
+    }
+
     public async Task<ServiceResponse<string>> DeleteClass(int classId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
@@ -184,5 +252,71 @@ public class ClassService: IClassService
         var responseDto = _mapper.Map<GetClassForInstructorDto>(classEntity);
         return ServiceResponseFactory.Success(responseDto, Messages.ClassUpdatedSuccessfully);
     }
-    
+
+    public async Task<ServiceResponse<string>> UpdateClassEntries(int classId, UpdateClassEntriesDto dto)
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+
+        var cls = await _classRepository.GetClassWithEntriesAsync(classId);
+        if (cls == null)
+        {
+            return ServiceResponseFactory.Failure<string>(Messages.ClassNotFound);
+        }
+        if (cls.InstructorId != user!.Instructor!.Id)
+        {
+            return ServiceResponseFactory.Failure<string>(Messages.ClassCantBeAccessed);
+        }
+        
+        // dto validator (sum = total)
+
+        // get class by Id 
+        
+        foreach (var entry in dto.EntryDtos)
+        {
+            switch (entry.EntryType)
+            {
+                case EntryType.Phase:
+
+                    var phase = await _phaseRepository.GetPhaseWithoutRelationsByIdAsync(entry.EntryId); // if nall
+                    if (phase == null)
+                    {
+                        return ServiceResponseFactory.Failure<string>(Messages.PhaseNotFound);
+                    }
+                    // phase can not be accessed so change functions used
+                    phase.PortionInTotalScore = entry.PortionInTotalScore;
+                    await _phaseRepository.UpdateAsync(phase);
+                    break;
+                
+                case EntryType.Exercise:
+                    
+                    var exercise = await _exerciseRepository.GetSimpleExerciseWithoutRelationsByIdAsync(entry.EntryId);
+                    if (exercise == null)
+                    {
+                        return ServiceResponseFactory.Failure<string>(Messages.ExerciseNotFound);
+                    }
+                    // phase can not be accessed so change functions used
+                    exercise.PortionInTotalScore = entry.PortionInTotalScore;
+                    await _exerciseRepository.UpdateAsync(exercise);
+                    break;
+
+                case EntryType.Exam:
+                    
+                    var exam = await _examRepository.GetSimpleExamWithoutRelationsByIdAsync(entry.EntryId);
+                    if (exam == null)
+                    {
+                        return ServiceResponseFactory.Failure<string>(Messages.ExamNotFound);
+                    }
+                    // phase can not be accessed so change functions used
+                    // check to belong to the classId
+                    exam.PortionInTotalScore = entry.PortionInTotalScore;
+                    await _examRepository.UpdateAsync(exam);
+                    break;
+            }
+        }
+        
+        // update class with total score
+        
+        return ServiceResponseFactory.Success<string>(Messages.ClassEntriesUpdatedSuccessfully);
+
+    }
 }

@@ -196,11 +196,47 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ClassEntriesFetchedSuccessfully.
+        /// </summary>
+        public static string ClassEntriesFetchedSuccessfully {
+            get {
+                return ResourceManager.GetString("ClassEntriesFetchedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ClassEntriesUpdatedSuccessfully.
+        /// </summary>
+        public static string ClassEntriesUpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("ClassEntriesUpdatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Classes retrieved successfully..
         /// </summary>
         public static string ClassesRetrievedSuccessfully {
             get {
                 return ResourceManager.GetString("ClassesRetrievedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ClassesStudentsScoresFetchedSuccessfully.
+        /// </summary>
+        public static string ClassesStudentsScoresFetchedSuccessfully {
+            get {
+                return ResourceManager.GetString("ClassesStudentsScoresFetchedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ClassesStudentsScoresFileGeneratedSuccessfully.
+        /// </summary>
+        public static string ClassesStudentsScoresFileGeneratedSuccessfully {
+            get {
+                return ResourceManager.GetString("ClassesStudentsScoresFileGeneratedSuccessfully", resourceCulture);
             }
         }
         
@@ -1371,6 +1407,24 @@ namespace UCMS.Resources {
         public static string StartDateCanNotBeLaterThanEndDatte {
             get {
                 return ResourceManager.GetString("StartDateCanNotBeLaterThanEndDatte", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to StudentClassesScoresGeneratedSuccessfully.
+        /// </summary>
+        public static string StudentClassesScoresfetchedSuccessfully {
+            get {
+                return ResourceManager.GetString("StudentClassesScoresfetchedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to StudentClassScoresFetcehedSuccessfully.
+        /// </summary>
+        public static string StudentClassScoresFetcehedSuccessfully {
+            get {
+                return ResourceManager.GetString("StudentClassScoresFetcehedSuccessfully", resourceCulture);
             }
         }
         

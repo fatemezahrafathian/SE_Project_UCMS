@@ -23,6 +23,12 @@ public class ExamRepository:IExamRepository
             .Include(p => p.Class)
             .FirstOrDefaultAsync(p => p.Id == examId);
     }
+
+    public async Task<Exam?> GetSimpleExamWithoutRelationsByIdAsync(int examId)
+    {
+        return await _context.Exams.FirstOrDefaultAsync(e => e.Id == examId);
+    }
+
     public async Task<List<Exam>> GetExamsByClassIdAsync(int classId)
     {
         return await _context.Exams
@@ -34,6 +40,11 @@ public class ExamRepository:IExamRepository
     {
         return await _context.StudentExams.FirstOrDefaultAsync(se =>
             se.ExamId == examId && se.Student.StudentNumber == studentNumber);
+    }
+
+    public async Task<StudentExam?> GetStudentExamAsync(int studentId, int examId)
+    {
+        return await _context.StudentExams.FirstOrDefaultAsync(se => se.StudentId == studentId && se.ExamId == examId);
     }
 
     public async Task UpdateAsync(Exam exam)
