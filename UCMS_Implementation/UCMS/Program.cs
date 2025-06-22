@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using UCMS.Data;
 using UCMS.Middleware;
+using UCMS.Models;
 using UCMS.Profile;
 using UCMS.Repositories.ClassRepository;
 using UCMS.Repositories.ClassRepository.Abstraction;
@@ -15,16 +16,22 @@ using UCMS.Repositories.ExerciseRepository;
 using UCMS.Repositories.ExerciseRepository.Abstraction;
 using UCMS.Repositories.ExamRepository;
 using UCMS.Repositories.ExamRepository.Abstraction;
+using UCMS.Repositories.ExerciseSubmissionRepository;
+using UCMS.Repositories.ExerciseSubmissionRepository.Abstraction;
 using UCMS.Repositories.InstructorRepository;
 using UCMS.Repositories.InstructorRepository.Abstraction;
 using UCMS.Repositories.PhaseRepository;
 using UCMS.Repositories.PhaseRepository.Abstraction;
+using UCMS.Repositories.PhaseSubmissionRepository;
+using UCMS.Repositories.PhaseSubmissionRepository.Abstraction;
 using UCMS.Repositories.ProjectRepository;
 using UCMS.Repositories.ProjectRepository.Abstarction;
 using UCMS.Repositories.RoleRepository;
 using UCMS.Repositories.RoleRepository.Abstraction;
 using UCMS.Repositories.StudentRepository;
 using UCMS.Repositories.StudentRepository.Abstraction;
+using UCMS.Repositories.StudentTeamPhaseRepository;
+using UCMS.Repositories.StudentTeamPhaseRepository.Abstraction;
 using UCMS.Repositories.TeamRepository;
 using UCMS.Repositories.TeamRepository.Abstraction;
 using UCMS.Repositories.UserRepository;
@@ -42,6 +49,8 @@ using UCMS.Services.ExamService;
 using UCMS.Services.ExamService.Abstraction;
 using UCMS.Services.ExerciseService;
 using UCMS.Services.ExerciseService.Abstraction;
+using UCMS.Services.ExerciseSubmissionService;
+using UCMS.Services.ExerciseSubmissionService.Abstraction;
 using UCMS.Services.FileService;
 using UCMS.Services.ImageService;
 using UCMS.Services.PasswordService;
@@ -50,11 +59,13 @@ using UCMS.Services.InstructorService;
 using UCMS.Services.InstructorService.Abstraction;
 using UCMS.Services.PhaseService;
 using UCMS.Services.PhaseService.Abstraction;
+using UCMS.Services.PhaseSubmissionSrvice;
 using UCMS.Services.ProjectService;
 using UCMS.Services.RoleService;
 using UCMS.Services.RoleService.Abstraction;
 using UCMS.Services.StudentService;
 using UCMS.Services.StudentService.Abstraction;
+using UCMS.Services.TeamPhaseSrvice;
 using UCMS.Services.TeamService;
 using UCMS.Services.TeamService.Abstraction;
 using UCMS.Services.TokenService;
@@ -71,12 +82,21 @@ var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseNpgsql(connectionString));
 
+builder.Services.Configure<MimeTypeOptions>(
+    builder.Configuration.GetSection("MimeTypes"));
+
 
 builder.Services.Configure<ImageUploadSettings>(
     builder.Configuration.GetSection("ImageUploadSettings"));
 
 builder.Services.Configure<TeamTemplateSettings>(
     builder.Configuration.GetSection("TeamTemplateSettings"));
+
+builder.Services.Configure<ExerciseScoreTemplateSettings>(
+    builder.Configuration.GetSection("ExerciseScoreTemplateSettings"));
+
+builder.Services.Configure<PhaseScoreTemplateSettings>(
+    builder.Configuration.GetSection("PhaseScoreTemplateSettings"));
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 // var mapperConfig = new MapperConfiguration(cfg =>
@@ -118,6 +138,11 @@ builder.Services.AddScoped<IClassRepository, ClassRepository>();
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IStudentClassService, StudentClassService>();
+builder.Services.AddScoped<IPhaseSubmissionRepository, PhaseSubmissionRepository>();
+builder.Services.AddScoped<IPhaseSubmissionService, PhaseSubmissionService>();
+builder.Services.AddScoped<IStudentTeamPhaseRepository, StudentTeamPhaseRepository>();
+builder.Services.AddScoped<IExerciseSubmissionService, ExerciseSubmissionService>();
+builder.Services.AddScoped<IExerciseSubmissionRepository, ExerciseSubmissionRepository>();
 
 builder.Services.AddTransient<UrlBuilder>();
 

@@ -4,6 +4,8 @@ using UCMS.DTOs.ClassDto;
 using UCMS.DTOs.ExerciseDto;
 using UCMS.DTOs.PhaseDto;
 using UCMS.DTOs.ExamDto;
+using UCMS.DTOs.ExerciseSubmissionDto;
+using UCMS.DTOs.PhaseSubmissionDto;
 using UCMS.DTOs.ProjectDto;
 using UCMS.DTOs.RoleDto;
 using UCMS.DTOs.TeamDto;
@@ -304,6 +306,28 @@ public class AutoMapperProfile : Profile
             .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
             .ForMember(dest => dest.ExamScore, opt => opt.MapFrom(src => src.ExamScore));
 
+        CreateMap<CreatePhaseSubmissionDto, PhaseSubmission>();
+
+        CreateMap<PhaseSubmission, GetPhaseSubmissionPreviewForInstructorDto>()
+            .ForMember(dest => dest.TeamName, opt => opt.MapFrom(src => src.StudentTeamPhase.StudentTeam.Team.Name))
+            .ForMember(dest => dest.FileType, opt => opt.Ignore());
+        
+        CreateMap<PhaseSubmission, GetPhaseSubmissionPreviewForStudentDto>()
+            .ForMember(dest => dest.FileType, opt => opt.Ignore());
+
+        CreateMap<CreateExerciseSubmissionDto, ExerciseSubmission>();
+        
+        CreateMap<ExerciseSubmission, GetExerciseSubmissionPreviewForInstructorDto>()
+            .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src =>  $"{src.Student.User.LastName} {src.Student.User.FirstName}"))
+            .ForMember(dest => dest.StudentNumber, opt => opt.MapFrom(src =>  src.Student.StudentNumber))
+            .ForMember(dest => dest.FileType, opt => opt.Ignore());
+        
+        CreateMap<ExerciseSubmission, GetExerciseSubmissionPreviewForStudentDto>()
+            .ForMember(dest => dest.FileType, opt => opt.Ignore());
+
+        CreateMap<StudentTeamPhase, GetStudentTeamPhasePreviewDto>()
+            .ForMember(dest => dest.StudentName, opt => opt.MapFrom(src => $"{src.StudentTeam.Student.User.LastName} {src.StudentTeam.Student.User.FirstName}"))
+            .ForMember(dest => dest.StudentNumber, opt => opt.MapFrom(src => src.StudentTeam.Student.StudentNumber));
     }
     private static ExerciseStatus calculateExerciseStatus(DateTime start, DateTime end)
     {

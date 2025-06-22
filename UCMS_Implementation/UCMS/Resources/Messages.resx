@@ -466,7 +466,13 @@
       <value>Invalid template file format.</value>
   </data>
   <data name="TeamsCanNotBeCreated" xml:space="preserve">
+      <value>Teams can not be created.</value>
+  </data>
+  <data name="InvalidInstructorForThisClass" xml:space="preserve">
+    <value>InvalidInstructorForThisClass</value>
+
       <value>TeamsCanNotBeCreated</value>
+
   </data>
   <data name="ExerciseAlreadyExists" xml:space="preserve">
     <value>ExerciseAlreadyExists</value>
@@ -578,5 +584,116 @@
   </data>
   <data name="InvalidFormatType" xml:space="preserve">
       <value>InvalidFormatType</value>
+  </data>
+  <data name="StudentInNoTeamForThisPhase" xml:space="preserve">
+      <value>StudentInNoTeamForThisPhase</value>
+  </data>
+  <data name="FileIsNeeded" xml:space="preserve">
+      <value>FileIsNeeded</value>
+  </data>
+  <data name="PhaseSubmissionCreatedSuccessfully" xml:space="preserve">
+      <value>PhaseSubmissionCreatesSuccessfully</value>
+  </data>
+  <data name="PhaseSubmissionNotFound" xml:space="preserve">
+      <value>PhaseSubmissionNotFound</value>
+  </data>
+  <data name="PhaseSubmissionCanNotBeAccessed" xml:space="preserve">
+      <value>PhaseSubmissionCanNotBeAccessed</value>
+  </data>
+  <data name="PhaseSubmissionFileFetchedSuccessfully" xml:space="preserve">
+      <value>PhaseSubmissionFileFetchedSuccessfully</value>
+  </data>
+  <data name="PhaseSubmissionFilesFetchedSuccessfully" xml:space="preserve">
+      <value>PhaseSubmissionFilesFetchedSuccessfully</value>
+  </data>
+  <data name="PhaseSubmissionsFetchedSuccessfully" xml:space="preserve">
+      <value>PhaseSubmissionsFetchedSuccessfully</value>
+  </data>
+  <data name="PhaseSubmissionMarkedAsFinalAlready" xml:space="preserve">
+      <value>PhaseSubmissionMarkedAsFinalAlready</value>
+  </data>
+  <data name="PhaseSubmissionMarkedAsFinalSuccessfully" xml:space="preserve">
+      <value>PhaseSubmissionMarkedAsFinal</value>
+  </data>
+  <data name="ExerciseNotFound" xml:space="preserve">
+      <value>ExerciseNotFound</value>
+  </data>
+  <data name="CanNotaccessExercise" xml:space="preserve">
+      <value>CanNotaccessExercise</value>
+  </data>
+  <data name="ExerciseSubmissionCreatedSuccessfully" xml:space="preserve">
+      <value>ExerciseSubmissionCreatedSuccessfully</value>
+  </data>
+  <data name="ExerciseSubmissionNotFound" xml:space="preserve">
+      <value>ExerciseSubmissionNotFound</value>
+  </data>
+  <data name="ExerciseSubmissionCanNotBeAccessed" xml:space="preserve">
+      <value>ExerciseSubmissionCanNotBeAccessed</value>
+  </data>
+  <data name="ExerciseSubmissionFileFetchedSuccessfully" xml:space="preserve">
+      <value>ExerciseSubmissionFileFetchedSuccessfully</value>
+  </data>
+  <data name="ExerciseSubmissionFilesFetchedSuccessfully" xml:space="preserve">
+      <value>ExerciseSubmissionFilesFetchedSuccessfully</value>
+  </data>
+  <data name="ExerciseSubmissionsFetchedSuccessfully" xml:space="preserve">
+      <value>ExerciseSubmissionsFetchedSuccessfully</value>
+  </data>
+  <data name="ExerciseSubmissionMarkedAsFinalAlready" xml:space="preserve">
+      <value>ExerciseSubmissionMarkedAsFinalAlready</value>
+  </data>
+  <data name="ExerciseSubmissionMarkedAsFinalSuccessfully" xml:space="preserve">
+      <value>ExerciseSubmissionMarkedAsFinalSuccessfully</value>
+  </data>
+  <data name="NoExerciseSubmissionFound" xml:space="preserve">
+      <value>NoSubmissionFound</value>
+  </data>
+  <data name="SortOrderOptionCanNotBeNone" xml:space="preserve">
+      <value>SortOrderOptionCanNotBeNone</value>
+  </data>
+  <data name="SortOrderOptionMustBeNone" xml:space="preserve">
+      <value>SortOrderOptionMustBeNone</value>
+  </data>
+  <data name="ExerciseScoreTemplateFileGeneratedSuccessfully" xml:space="preserve">
+      <value>ExerciseScoreTemplateFileGeneratedSuccessfully</value>
+  </data>
+  <data name="InvalidScore" xml:space="preserve">
+      <value>InvalidScore</value>
+  </data>
+  <data name="ExerciseSubmissionScoreUpdatedSuccessfully" xml:space="preserve">
+      <value>ExerciseSubmissionScoreUpdatedSuccessfully</value>
+  </data>
+  <data name="InvalidExerciseSubmission" xml:space="preserve">
+      <value>InvalidExerciseSubmission</value>
+  </data>
+  <data name="ExerciseSubmissionScoresCanNotBeUpdated" xml:space="preserve">
+      <value>ScoresCanNotBeCreated</value>
+  </data>
+  <data name="ExerciseSubmissionScoresUpdatedSuccessfully" xml:space="preserve">
+      <value>ExerciseSubmissionScoresUpdatedSuccessfully</value>
+  </data>
+  <data name="PhaseScoreTemplateFileGeneratedSuccessfully" xml:space="preserve">
+      <value>PhaseScoreTemplateFileGeneratedSuccessfully</value>
+  </data>
+  <data name="StudentTeamPhaseScoreUpdatedSuccessfully" xml:space="preserve">
+      <value>StudentTeamPhaseScoreUpdatedSuccessfully</value>
+  </data>
+  <data name="NoSuchTeamForThisPhase" xml:space="preserve">
+      <value>NoSuchTeamForThisPhase</value>
+  </data>
+  <data name="StudentTeamPhasesFetchedSuccessfully" xml:space="preserve">
+      <value>StudentTeamPhasesFetchedSuccessfully</value>
+  </data>
+  <data name="PhaseSubmissionScoresCanNotBeUpdated" xml:space="preserve">
+      <value>ScoresCanNotBeCreated</value>
+  </data>
+  <data name="ExamNotFound" xml:space="preserve">
+      <value>ExamNotFound</value>
+  </data>
+  <data name="ExamScoresCanNotBeUpdated" xml:space="preserve">
+      <value>ExamScoresCanNotBeUpdated</value>
+  </data>
+  <data name="ExamScoresUpdatedSuccessfully" xml:space="preserve">
+      <value>ExamScoresUpdatedSuccessfully</value>
   </data>
 </root>

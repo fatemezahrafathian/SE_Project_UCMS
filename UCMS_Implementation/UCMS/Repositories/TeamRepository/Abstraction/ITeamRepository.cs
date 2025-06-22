@@ -13,6 +13,7 @@ public interface ITeamRepository
     Task<Team?> GetTeamForInstructorByTeamIdAsync(int teamId);
     Task<Team?> GetTeamForStudentByTeamIdAsync(int teamId);
     Task<List<Team>> GetTeamsByProjectIdAsync(int projectId);
+    Task<List<Team>> GetTeamsWithRelationsByProjectIdAsync(int projectId);
     Task DeleteTeamAsync(Team team);
     Task UpdateTeamAsync(Team team);
     Task<List<string?>> GetStudentNumbersOfProjectTeams(int projectId);

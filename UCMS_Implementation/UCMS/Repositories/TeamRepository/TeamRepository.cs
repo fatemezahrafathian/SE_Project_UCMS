@@ -69,6 +69,14 @@ public class TeamRepository: ITeamRepository
             .ToListAsync();
     }
 
+    public async Task<List<Team>> GetTeamsWithRelationsByProjectIdAsync(int projectId)
+    {
+        return await _context.Teams
+            .Where(t => t.ProjectId == projectId)
+            .Include(t=>t.StudentTeams)
+            .ToListAsync();
+    }
+
     public async Task DeleteTeamAsync(Team team)
     {
         _context.Teams.Remove(team);
@@ -106,17 +114,5 @@ public class TeamRepository: ITeamRepository
             .AnyAsync(t =>
                 t.Project.Class.ClassStudents.Any(sc => sc.Student.Id == studentId));
     }
-    public async Task<bool> IsStudentInAnyTeamOfProjectAsync(int studentId, int projectId)
-    {
-        return await _context.StudentTeams
-            .AnyAsync(st => st.Student.Id == studentId && st.Team.ProjectId == projectId);
-    }
-    public async Task<bool> AreStudentsMemberOfAnyTeamAsync(int projectId, List<int> studentIds)
-    {
-        return await _context.StudentTeams
-            .Where(st => studentIds.Contains(st.StudentId) && st.Team.ProjectId == projectId)
-            .AnyAsync();
-    }
-
 
 }

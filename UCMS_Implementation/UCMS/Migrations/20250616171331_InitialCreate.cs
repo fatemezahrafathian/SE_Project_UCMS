@@ -188,12 +188,64 @@ namespace UCMS.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Exams",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    ExamLocation = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ExamScore = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ClassId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Exams", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Exams_Classes_ClassId",
+                        column: x => x.ClassId,
+                        principalTable: "Classes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Exercises",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ExerciseScore = table.Column<int>(type: "integer", nullable: false),
+                    ExerciseFilePath = table.Column<string>(type: "text", nullable: true),
+                    FileFormats = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ClassId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Exercises", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Exercises_Classes_ClassId",
+                        column: x => x.ClassId,
+                        principalTable: "Classes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Projects",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy",
-                            NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     TotalScore = table.Column<int>(type: "integer", nullable: false),
@@ -201,12 +253,9 @@ namespace UCMS.Migrations
                     GroupSize = table.Column<int>(type: "integer", nullable: true),
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ProjectFilePath =
-                        table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false,
-                        defaultValue: DateTime.UtcNow),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false,
-                        defaultValue: DateTime.UtcNow),
+                    ProjectFilePath = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     ClassId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
@@ -216,6 +265,64 @@ namespace UCMS.Migrations
                         name: "FK_Projects_Classes_ClassId",
                         column: x => x.ClassId,
                         principalTable: "Classes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ExerciseSubmissions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    StudentId = table.Column<int>(type: "integer", nullable: false),
+                    ExerciseId = table.Column<int>(type: "integer", nullable: false),
+                    FilePath = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
+                    Score = table.Column<double>(type: "double precision", nullable: true),
+                    IsFinal = table.Column<bool>(type: "boolean", nullable: false),
+                    SubmittedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExerciseSubmissions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ExerciseSubmissions_Exercises_ExerciseId",
+                        column: x => x.ExerciseId,
+                        principalTable: "Exercises",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ExerciseSubmissions_Students_StudentId",
+                        column: x => x.StudentId,
+                        principalTable: "Students",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Phases",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    PhaseScore = table.Column<int>(type: "integer", nullable: false),
+                    PhaseFilePath = table.Column<string>(type: "text", nullable: true),
+                    FileFormats = table.Column<string>(type: "text", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ProjectId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Phases", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Phases_Projects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Projects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -269,83 +376,52 @@ namespace UCMS.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
             migrationBuilder.CreateTable(
-                name: "Phases",
+                name: "StudentTeamPhases",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    PhaseScore = table.Column<int>(type: "integer", nullable: false),
-                    PhaseFilePath = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    FileFormats = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    ProjectId = table.Column<int>(type: "integer", nullable: false)
+                    StudentTeamId = table.Column<int>(type: "integer", nullable: false),
+                    PhaseId = table.Column<int>(type: "integer", nullable: false),
+                    Score = table.Column<double>(type: "double precision", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Phases", x => x.Id);
+                    table.PrimaryKey("PK_StudentTeamPhases", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Phases_Projects_ProjectId",
-                        column: x => x.ProjectId,
-                        principalTable: "Projects",
+                        name: "FK_StudentTeamPhases_Phases_PhaseId",
+                        column: x => x.PhaseId,
+                        principalTable: "Phases",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_StudentTeamPhases_StudentTeams_StudentTeamId",
+                        column: x => x.StudentTeamId,
+                        principalTable: "StudentTeams",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
             migrationBuilder.CreateTable(
-                name: "Exams",
+                name: "PhaseSubmissions",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    ExamLocation = table.Column<string>(type: "character varying(100)", maxLength: 500, nullable: true),
-                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ExamScore = table.Column<int>(type: "integer", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    ClassId = table.Column<int>(type: "integer", nullable: false)
+                    StudentTeamPhaseId = table.Column<int>(type: "integer", nullable: false),
+                    FilePath = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
+                    IsFinal = table.Column<bool>(type: "boolean", nullable: false),
+                    SubmittedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Exams", x => x.Id);
+                    table.PrimaryKey("PK_PhaseSubmissions", x => x.Id);
                     table.ForeignKey(
-            
-                        name: "FK_Exams_Classes_ClassId",
-                        column: x => x.ClassId,
-                        principalTable: "Classes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-            migrationBuilder.CreateTable(
-                name: "Exercises",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Title = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                    StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ExerciseScore = table.Column<int>(type: "integer", nullable: false),
-                    ExerciseFilePath = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    FileFormats = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
-                    ClassId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Exercises", x => x.Id);
-                    table.ForeignKey(
-            
-                        name: "FK_Exercises_Classes_ClassId",
-                        column: x => x.ClassId,
-                        principalTable: "Classes",
+                        name: "FK_PhaseSubmissions_StudentTeamPhases_StudentTeamPhaseId",
+                        column: x => x.StudentTeamPhaseId,
+                        principalTable: "StudentTeamPhases",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -366,10 +442,40 @@ namespace UCMS.Migrations
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Exams_ClassId",
+                table: "Exams",
+                column: "ClassId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Exercises_ClassId",
+                table: "Exercises",
+                column: "ClassId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExerciseSubmissions_ExerciseId",
+                table: "ExerciseSubmissions",
+                column: "ExerciseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ExerciseSubmissions_StudentId",
+                table: "ExerciseSubmissions",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Instructors_UserId",
                 table: "Instructors",
                 column: "UserId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Phases_ProjectId",
+                table: "Phases",
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PhaseSubmissions_StudentTeamPhaseId",
+                table: "PhaseSubmissions",
+                column: "StudentTeamPhaseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Projects_ClassId",
@@ -392,6 +498,16 @@ namespace UCMS.Migrations
                 table: "Students",
                 column: "UserId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentTeamPhases_PhaseId",
+                table: "StudentTeamPhases",
+                column: "PhaseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_StudentTeamPhases_StudentTeamId",
+                table: "StudentTeamPhases",
+                column: "StudentTeamId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StudentTeams_StudentId",
@@ -424,17 +540,6 @@ namespace UCMS.Migrations
                 table: "Users",
                 column: "Username",
                 unique: true);
-            
-            
-            migrationBuilder.CreateIndex(
-                name: "IX_Exams_ClassId",
-                table: "Exams",
-                column: "ClassId");
-            migrationBuilder.CreateIndex(
-                name: "IX_Exercises_ClassId",
-                table: "Exercises",
-                column: "ClassId");
-
         }
 
         /// <inheritdoc />
@@ -447,7 +552,23 @@ namespace UCMS.Migrations
                 name: "ClassStudents");
 
             migrationBuilder.DropTable(
-                name: "Classes");
+                name: "Exams");
+
+            migrationBuilder.DropTable(
+                name: "ExerciseSubmissions");
+
+            migrationBuilder.DropTable(
+                name: "PhaseSubmissions");
+
+            migrationBuilder.DropTable(
+                name: "Exercises");
+
+            migrationBuilder.DropTable(
+                name: "StudentTeamPhases");
+
+            migrationBuilder.DropTable(
+                name: "Phases");
+
             migrationBuilder.DropTable(
                 name: "StudentTeams");
 
@@ -472,6 +593,5 @@ namespace UCMS.Migrations
             migrationBuilder.DropTable(
                 name: "Roles");
         }
-        
     }
 }
