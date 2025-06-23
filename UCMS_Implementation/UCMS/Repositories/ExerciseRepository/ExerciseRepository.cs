@@ -35,11 +35,6 @@ public class ExerciseRepository:IExerciseRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<Exercise?> GetSimpleExerciseWithoutRelationsByIdAsync(int exerciseId)
-    {
-        return await _context.Exercises.FirstOrDefaultAsync(e => e.Id == exerciseId);
-    }
-
     public async Task<Exercise?> GetExerciseWithRelationsByIdAsync(int exerciseId)
     {
         return await _context.Exercises

@@ -1,5 +1,4 @@
 using AutoMapper;
-using DocumentFormat.OpenXml.Office.PowerPoint.Y2021.M06.Main;
 using UCMS.DTOs;
 using UCMS.DTOs.ClassDto;
 using UCMS.Extensions;
@@ -139,47 +138,36 @@ public class ClassService: IClassService
             return ServiceResponseFactory.Failure<List<GetClassEntryDto>>(Messages.ClassCantBeAccessed);
         }
 
-        var entriesList = new List<GetClassEntryDto>();
-        foreach (var project in cls.Projects) // use select instead
+        var entriesList = (from project in cls.Projects
+        from phase in project.Phases
+        select new GetClassEntryDto()
         {
-            foreach (var phase in project.Phases)
-            {
-                entriesList.Add(new GetClassEntryDto()
-                {
-                    EntryId = phase.Id,
-                    EntryType = EntryType.Phase,
-                    EntryName = phase.Title,
-                    PartialScore = phase.PhaseScore,
-                    PortionInTotalScore = phase.PortionInTotalScore
-                });
-            }
-        }
+            EntryId = phase.Id,
+            EntryType = EntryType.Phase,
+            EntryName = phase.Title,
+            PartialScore = phase.PhaseScore,
+            PortionInTotalScore = phase.PortionInTotalScore
+        }).ToList();
+        
+        entriesList.AddRange(cls.Exercises.Select(exercise => new GetClassEntryDto()
+        {
+            EntryId = exercise.Id,
+            EntryType = EntryType.Exercise,
+            EntryName = exercise.Title,
+            PartialScore = exercise.ExerciseScore,
+            PortionInTotalScore = exercise.PortionInTotalScore
+        }));
 
-        foreach (var exercise in cls.Exercises)
+        entriesList.AddRange(cls.Exams.Select(exam => new GetClassEntryDto()
         {
-            entriesList.Add(new GetClassEntryDto()
-            {
-                EntryId = exercise.Id,
-                EntryType = EntryType.Exercise,
-                EntryName = exercise.Title,
-                PartialScore = exercise.ExerciseScore,
-                PortionInTotalScore = exercise.PortionInTotalScore
-            });
-        }
-        
-        foreach (var exam in cls.Exams)
-        {
-            entriesList.Add(new GetClassEntryDto()
-            {
-                EntryId = exam.Id,
-                EntryType = EntryType.Exam,
-                EntryName = exam.Title,
-                PartialScore = exam.ExamScore,
-                PortionInTotalScore = exam.PortionInTotalScore
-            });
-        }
-        
-        return ServiceResponseFactory.Success<List<GetClassEntryDto>>(Messages.ClassEntriesFetchedSuccessfully);
+            EntryId = exam.Id,
+            EntryType = EntryType.Exam,
+            EntryName = exam.Title,
+            PartialScore = exam.ExamScore,
+            PortionInTotalScore = exam.PortionInTotalScore
+        }));
+
+        return ServiceResponseFactory.Success(entriesList, Messages.ClassEntriesFetchedSuccessfully);
 
     }
 
@@ -266,55 +254,98 @@ public class ClassService: IClassService
         {
             return ServiceResponseFactory.Failure<string>(Messages.ClassCantBeAccessed);
         }
-        
-        // dto validator (sum = total)
 
-        // get class by Id 
+        // var entriesList = (from project in cls.Projects
+        //     from phase in project.Phases
+        //     select new
+        //     {
+        //         phase.Id,
+        //         EntryType.Phase
+        //     }).ToList();
+        //
+        // entriesList.AddRange(cls.Exercises.Select(exercise => new
+        // {
+        //     exercise.Id,
+        //     EntryType.Exercise
+        // }));
+        //
+        // entriesList.AddRange(cls.Exams.Select(exam => new
+        // {
+        //     exam.Id,
+        //     EntryType.Exam,
+        // }));
+        //
+        // dto.EntryDtos.Select(d => new
+        // {
+        //     d.EntryId,
+        //     d.EntryType
+        // });
+        // compare
         
+        
+        var validator = new UpdateClassEntriesDtoDtoValidator();
+        var result = await validator.ValidateAsync(dto);
+        if (!result.IsValid)
+        {
+            var errorMessage = result.Errors.First().ErrorMessage;
+            return ServiceResponseFactory.Failure<string>(errorMessage);
+        }
+
         foreach (var entry in dto.EntryDtos)
         {
             switch (entry.EntryType)
             {
                 case EntryType.Phase:
 
-                    var phase = await _phaseRepository.GetPhaseWithoutRelationsByIdAsync(entry.EntryId); // if nall
+                    var phase = await _phaseRepository.GetPhaseByIdAsync(entry.EntryId);
                     if (phase == null)
                     {
                         return ServiceResponseFactory.Failure<string>(Messages.PhaseNotFound);
                     }
-                    // phase can not be accessed so change functions used
+                    if (phase.Project.ClassId!=classId)
+                    {
+                        return ServiceResponseFactory.Failure<string>(Messages.PhaseCantBeAccessed);
+                    }
                     phase.PortionInTotalScore = entry.PortionInTotalScore;
                     await _phaseRepository.UpdateAsync(phase);
                     break;
                 
                 case EntryType.Exercise:
                     
-                    var exercise = await _exerciseRepository.GetSimpleExerciseWithoutRelationsByIdAsync(entry.EntryId);
+                    var exercise = await _exerciseRepository.GetExerciseByIdAsync(entry.EntryId);
                     if (exercise == null)
                     {
                         return ServiceResponseFactory.Failure<string>(Messages.ExerciseNotFound);
                     }
-                    // phase can not be accessed so change functions used
+                    if (exercise.ClassId!=classId)
+                    {
+                        return ServiceResponseFactory.Failure<string>(Messages.ExerciseCantBeAccessed);
+                    }
                     exercise.PortionInTotalScore = entry.PortionInTotalScore;
                     await _exerciseRepository.UpdateAsync(exercise);
                     break;
 
                 case EntryType.Exam:
                     
-                    var exam = await _examRepository.GetSimpleExamWithoutRelationsByIdAsync(entry.EntryId);
+                    var exam = await _examRepository.GetExamByIdAsync(entry.EntryId);
                     if (exam == null)
                     {
                         return ServiceResponseFactory.Failure<string>(Messages.ExamNotFound);
                     }
-                    // phase can not be accessed so change functions used
-                    // check to belong to the classId
+                    if (exam.ClassId!=classId)
+                    {
+                        return ServiceResponseFactory.Failure<string>(Messages.ExamCantBeAccessed);
+                    }
                     exam.PortionInTotalScore = entry.PortionInTotalScore;
                     await _examRepository.UpdateAsync(exam);
                     break;
+                default:
+                    return ServiceResponseFactory.Failure<string>(Messages.InvalidEntryType);
             }
         }
-        
-        // update class with total score
+
+        cls.TotalScore = dto.TotalScore;
+        await _classRepository.UpdateClassAsync(cls);
         
         return ServiceResponseFactory.Success<string>(Messages.ClassEntriesUpdatedSuccessfully);
 

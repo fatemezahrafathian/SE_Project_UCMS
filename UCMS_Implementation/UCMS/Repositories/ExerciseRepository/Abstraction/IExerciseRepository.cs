@@ -8,7 +8,6 @@ public interface IExerciseRepository
     Task<Exercise?> GetExerciseByIdAsync(int exerciseId);
     Task<Exercise?> GetExerciseWithRelationsByIdAsync(int exerciseId);
     Task<Exercise?> GetExerciseWithClassRelationsByIdAsync(int exerciseId);
-    Task<Exercise?> GetSimpleExerciseWithoutRelationsByIdAsync(int exerciseId);
     Task<List<Exercise>> GetExercisesByClassIdAsync(int classId);
     Task UpdateAsync(Exercise exercise);
     Task<bool> ExistsWithTitleExceptIdAsync(string title, int classId, int exerciseIdToExclude);

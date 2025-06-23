@@ -44,12 +44,7 @@ public class PhaseRepository:IPhaseRepository
             .ThenInclude(s=>s.User)
             .FirstOrDefaultAsync();
     }
-
-    public async Task<Phase?> GetPhaseWithoutRelationsByIdAsync(int phaseId)
-    {
-        return await _context.Phases.FirstOrDefaultAsync(p => p.Id == phaseId);
-    }
-
+    
     public async Task<List<Phase>> GetPhasesByProjectIdAsync(int projectId)
     {
         return await _context.Phases

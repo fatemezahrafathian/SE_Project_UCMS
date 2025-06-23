@@ -72,13 +72,6 @@ public class StudentClassRepository: IStudentClassRepository
             .Distinct()
             .ToListAsync();
     }
-
-    public async Task<bool> AreStudentsInClassAsync(List<int> studentIds, int classId)
-    {
-        return await _context.ClassStudents
-            .Where(cs => cs.ClassId == classId && studentIds.Contains(cs.Student.Id))
-            .AnyAsync();
-    }
     
     private IQueryable<Class> GetClassesByStudentId(int studentId)
     {

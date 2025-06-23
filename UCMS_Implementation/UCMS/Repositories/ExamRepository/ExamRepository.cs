@@ -24,11 +24,6 @@ public class ExamRepository:IExamRepository
             .FirstOrDefaultAsync(p => p.Id == examId);
     }
 
-    public async Task<Exam?> GetSimpleExamWithoutRelationsByIdAsync(int examId)
-    {
-        return await _context.Exams.FirstOrDefaultAsync(e => e.Id == examId);
-    }
-
     public async Task<List<Exam>> GetExamsByClassIdAsync(int classId)
     {
         return await _context.Exams

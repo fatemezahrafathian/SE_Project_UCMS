@@ -561,9 +561,6 @@
   <data name="PhaseEndTimeCannotBeAfterProjectEndTime" xml:space="preserve">
       <value>PhaseEndTimeCannotBeAfterProjectEndTime</value>
   </data>
-  <data name="PhaseStartTimeCannotBeBeforeProjectStartTime" xml:space="preserve">
-      <value>PhaseStartTimeCannotBeBeforeProjectStartTime</value>
-  </data>
   <data name="InvalidIstructorForThisPhase" xml:space="preserve">
       <value>InvalidIstructorForThisPhase</value>
   </data>
@@ -663,9 +660,6 @@
   <data name="ExerciseSubmissionScoreUpdatedSuccessfully" xml:space="preserve">
       <value>ExerciseSubmissionScoreUpdatedSuccessfully</value>
   </data>
-  <data name="InvalidExerciseSubmission" xml:space="preserve">
-      <value>InvalidExerciseSubmission</value>
-  </data>
   <data name="ExerciseSubmissionScoresCanNotBeUpdated" xml:space="preserve">
       <value>ScoresCanNotBeCreated</value>
   </data>
@@ -713,5 +707,14 @@
   </data>
   <data name="StudentClassScoresFetcehedSuccessfully" xml:space="preserve">
       <value>StudentClassScoresFetcehedSuccessfully</value>
+  </data>
+  <data name="PhaseStartTimeCannotBeBeforeProjectStartTime" xml:space="preserve">
+      <value>PhaseStartTimeCannotBeBeforeProjectStartTime</value>
+  </data>
+  <data name="PortionInTotalScoreMustBeSetFirst" xml:space="preserve">
+      <value>PortionInTotalScoreMustBeSetFirst</value>
+  </data>
+  <data name="InvalidEntryType" xml:space="preserve">
+      <value>InvalidEntryType</value>
   </data>
 </root>

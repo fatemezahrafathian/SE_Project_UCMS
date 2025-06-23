@@ -6,7 +6,6 @@ public interface IExamRepository
 {
     Task AddAsync(Exam exam);
     Task<Exam?> GetExamByIdAsync(int examId);
-    Task<Exam?> GetSimpleExamWithoutRelationsByIdAsync(int examId);
     Task<List<Exam>> GetExamsByClassIdAsync(int classId);
     Task<StudentExam?> GetStudentExamsByStudentNumberAsync(int examId, string studentNumber);
     Task<StudentExam?> GetStudentExamAsync(int studentId, int examId);

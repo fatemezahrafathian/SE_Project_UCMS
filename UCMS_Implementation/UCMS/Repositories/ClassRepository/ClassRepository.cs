@@ -91,6 +91,7 @@ public class ClassRepository: IClassRepository
             .ThenInclude(p => p.Phases)
             .Include(c => c.Exercises)
             .Include(c => c.Exams)
+            .OrderBy(c=>c.Title)
             .ToListAsync();
         // return await _context.ClassStudents.Where(cs => cs.StudentId == studentId)
         //     .Include(cs => cs.Class)

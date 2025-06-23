@@ -7,5 +7,8 @@ public class GetStudentClassEntityScoreDto
     public int EntryId { get; set; }
     public EntryType EntryType { get; set; }
     public string EntryName { get; set; }
+    public double ScoreInTotalScore { get; set; }
+    public double TotalScore { get; set; }
+    public double ScoreInPartialScore { get; set; }
     public double PartialScore { get; set; }
 }

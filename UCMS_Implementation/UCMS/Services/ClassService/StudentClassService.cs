@@ -258,11 +258,11 @@ public class StudentClassService: IStudentClassService
         return ServiceResponseFactory.Success(responseDto, Messages.ClassesRetrievedSuccessfully); // ClassesFetchedSuccessfully
     }
 
-    public async Task<ServiceResponse<GetClassStudentsScoresDto>> GetClassStudentsScores(int classId, SearchClassStudentsScoresDto dto)
+    public async Task<ServiceResponse<GetClassStudentsScoresDto>> GetClassStudentsScores(int classId, FilterClassStudentsScoresDto dto) // search
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        var cls = await _classRepository.GetClassWithRelationsByIdAsync(classId);  // sort by last name
+        var cls = await _classRepository.GetClassWithRelationsByIdAsync(classId); // student class repository to be able to order snd filter
         if (cls == null)
         {
             return ServiceResponseFactory.Failure<GetClassStudentsScoresDto>(Messages.ClassNotFound);
@@ -273,72 +273,110 @@ public class StudentClassService: IStudentClassService
             return ServiceResponseFactory.Failure<GetClassStudentsScoresDto>(Messages.ClassCantBeAccessed);
         }
 
+        // dto validator
+        
         var getClassStudentsScoresDto = new GetClassStudentsScoresDto();
         bool firstTime = true;
+
+        var classStudents = cls.ClassStudents // use repository to sort
+            .OrderBy(c => c.Student.User.LastName + " " + c.Student.User.FirstName);
         
-        foreach (var classStudent in cls.ClassStudents)
+        foreach (var classStudent in classStudents)
         {
             var getClassStudentScoresDto = new GetClassStudentScoresDto()
             {
                 StudentId = classStudent.StudentId,
                 FullName = classStudent.Student.User.LastName + " " + classStudent.Student.User.FirstName,
-                StudentNumber = classStudent.Student.StudentNumber
+                StudentNumber = classStudent.Student.StudentNumber ?? ""
             };
             
-            foreach (var project in cls.Projects) // use select instead
+            foreach (var project in cls.Projects)
             {
                 foreach (var phase in project.Phases)
                 {
+                    if (phase.PortionInTotalScore == null)
+                    {
+                        return ServiceResponseFactory.Failure<GetClassStudentsScoresDto>(Messages.PortionInTotalScoreMustBeSetFirst);
+                    }
+                    
                     var studentTeamPhase = await _studentTeamPhaseRepository.GetStudentTeamPhaseAsync(classStudent.StudentId, phase.Id);
-                    if (studentTeamPhase == null || studentTeamPhase.Score == null)
+                    if (studentTeamPhase?.Score == null)
                     {
                         getClassStudentScoresDto.Scores.Add(0);
                     }
                     else
                     {
-                        getClassStudentScoresDto.Scores.Add((double) studentTeamPhase.Score); // calculate score
+                        var score = (double) studentTeamPhase.Score * (double)phase.PortionInTotalScore / phase.PhaseScore;
+                        getClassStudentScoresDto.Scores.Add(score);
                     }
 
                     if (firstTime)
                     {
-                        getClassStudentsScoresDto.headers.Add(phase.Title); // change it dto
+                        getClassStudentsScoresDto.headers.Add(new GetClassEntryPreviewDto()
+                        {
+                            EntryId = phase.Id,
+                            EntryName = phase.Title,
+                            EntryType = EntryType.Phase
+                        });
                     }
                 }
             }
 
             foreach (var exercise in cls.Exercises)
             {
+                if (exercise.PortionInTotalScore == null)
+                {
+                    return ServiceResponseFactory.Failure<GetClassStudentsScoresDto>(Messages.PortionInTotalScoreMustBeSetFirst);
+                }
+                
                 var exerciseSubmission = await _exerciseSubmissionRepository.GetFinalExerciseSubmissionsAsync(classStudent.StudentId, exercise.Id);
-                if (exerciseSubmission == null || exerciseSubmission.Score == null)
+                if (exerciseSubmission?.Score == null)
                 {
                     getClassStudentScoresDto.Scores.Add(0);
                 }
                 else
                 {
-                    getClassStudentScoresDto.Scores.Add((double) exerciseSubmission.Score);
+                    var score = (double) exerciseSubmission.Score * (double) exercise.PortionInTotalScore / exercise.ExerciseScore;
+                    getClassStudentScoresDto.Scores.Add(score);
                 }
 
                 if (firstTime)
                 {
-                    getClassStudentsScoresDto.headers.Add(exercise.Title);
+                    getClassStudentsScoresDto.headers.Add(new GetClassEntryPreviewDto()
+                    {
+                        EntryId = exercise.Id,
+                        EntryName = exercise.Title,
+                        EntryType = EntryType.Exercise
+                    });
                 }
             }
         
             foreach (var exam in cls.Exams)
             {
+                if (exam.PortionInTotalScore == null)
+                {
+                    return ServiceResponseFactory.Failure<GetClassStudentsScoresDto>(Messages.PortionInTotalScoreMustBeSetFirst);
+                }
+
                 var studentExam = await _examRepository.GetStudentExamAsync(classStudent.StudentId, exam.Id);
-                if (studentExam == null || studentExam.Score == null)
+                if (studentExam?.Score == null)
                 {
                     getClassStudentScoresDto.Scores.Add(0);
                 }
                 else
                 {
-                    getClassStudentScoresDto.Scores.Add((double) studentExam.Score);
+                    var score = (double) studentExam.Score * (double) exam.PortionInTotalScore / exam.ExamScore;
+                    getClassStudentScoresDto.Scores.Add(score);
                 }
                 
                 if (firstTime)
                 {
-                    getClassStudentsScoresDto.headers.Add(exam.Title);
+                    getClassStudentsScoresDto.headers.Add(new GetClassEntryPreviewDto()
+                    {
+                        EntryId = exam.Id,
+                        EntryName = exam.Title,
+                        EntryType = EntryType.Exam
+                    });
                 }
             }
 
@@ -379,18 +417,24 @@ public class StudentClassService: IStudentClassService
             worksheet.Cell(rowCounter, colCounter++).Value = classStudent.Student.User.LastName + " " + classStudent.Student.User.FirstName;
             worksheet.Cell(rowCounter, colCounter++).Value = classStudent.Student.StudentNumber;
             
-            foreach (var project in cls.Projects) // use select instead
+            foreach (var project in cls.Projects) 
             {
                 foreach (var phase in project.Phases)
                 {
+                    if (phase.PortionInTotalScore == null)
+                    {
+                        return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.PortionInTotalScoreMustBeSetFirst);
+                    }
+                    
                     var studentTeamPhase = await _studentTeamPhaseRepository.GetStudentTeamPhaseAsync(classStudent.StudentId, phase.Id);
-                    if (studentTeamPhase == null || studentTeamPhase.Score == null)
+                    if (studentTeamPhase?.Score == null)
                     {
                         worksheet.Cell(rowCounter, colCounter++).Value = 0;
                     }
                     else
                     {
-                        worksheet.Cell(rowCounter, colCounter++).Value = studentTeamPhase.Score;
+                        var score = (double) studentTeamPhase.Score * (double) phase.PortionInTotalScore / phase.PhaseScore;
+                        worksheet.Cell(rowCounter, colCounter++).Value = score;
                     }
 
                     if (rowCounter==2)
@@ -402,14 +446,20 @@ public class StudentClassService: IStudentClassService
 
             foreach (var exercise in cls.Exercises)
             {
+                if (exercise.PortionInTotalScore == null)
+                {
+                    return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.PortionInTotalScoreMustBeSetFirst);
+                }
+                
                 var exerciseSubmission = await _exerciseSubmissionRepository.GetFinalExerciseSubmissionsAsync(classStudent.StudentId, exercise.Id);
-                if (exerciseSubmission == null || exerciseSubmission.Score == null)
+                if (exerciseSubmission?.Score == null)
                 {
                     worksheet.Cell(rowCounter, colCounter++).Value = 0;
                 }
                 else
                 {
-                    worksheet.Cell(rowCounter, colCounter++).Value = exerciseSubmission.Score;
+                    var score = (double) exerciseSubmission.Score * (double) exercise.PortionInTotalScore / exercise.ExerciseScore;
+                    worksheet.Cell(rowCounter, colCounter++).Value = score;
                 }
 
                 if (rowCounter==2)
@@ -420,14 +470,20 @@ public class StudentClassService: IStudentClassService
         
             foreach (var exam in cls.Exams)
             {
+                if (exam.PortionInTotalScore == null)
+                {
+                    return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.PortionInTotalScoreMustBeSetFirst);
+                }
+                
                 var studentExam = await _examRepository.GetStudentExamAsync(classStudent.StudentId, exam.Id);
-                if (studentExam == null || studentExam.Score == null)
+                if (studentExam?.Score == null)
                 {
                     worksheet.Cell(rowCounter, colCounter++).Value = 0;
                 }
                 else
                 {
-                    worksheet.Cell(rowCounter, colCounter++).Value = studentExam.Score;
+                    var score = (double) studentExam.Score * (double) exam.PortionInTotalScore / exam.ExamScore;
+                    worksheet.Cell(rowCounter, colCounter++).Value = score;
                 }
                 
                 if (rowCounter==2)
@@ -456,11 +512,12 @@ public class StudentClassService: IStudentClassService
         return ServiceResponseFactory.Success(result, Messages.ClassesStudentsScoresFileGeneratedSuccessfully);
     }
 
-    public async Task<ServiceResponse<List<GetStudentClassScoreDto>>> GetStudentClassesScores(SearchStudentClassesScoresDto dto) // search
+    public async Task<ServiceResponse<List<GetStudentClassScoreDto>>> GetStudentClassesScores(FilterStudentClassesScoresDto dto) // search
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        var classes = await _classRepository.GetClassesWithRelationsAsync(user!.Student!.Id);
+        var classes = await _classRepository.GetClassesWithRelationsAsync(user!.Student!.Id); // filter by class name
+        // dto validator
         // check count
         var result = new List<GetStudentClassScoreDto>();
         foreach (var cls in classes)
@@ -472,45 +529,63 @@ public class StudentClassService: IStudentClassService
             };
 
             double scoreCounter = 0;
-            foreach (var project in cls.Projects) // use select instead
+            foreach (var project in cls.Projects)
             {
                 foreach (var phase in project.Phases)
                 {
+                    if (phase.PortionInTotalScore == null)
+                    {
+                        return ServiceResponseFactory.Failure<List<GetStudentClassScoreDto>>(Messages.PortionInTotalScoreMustBeSetFirst);
+                    }
+
                     var studentTeamPhase = await _studentTeamPhaseRepository.GetStudentTeamPhaseAsync(user.Student.Id, phase.Id);
-                    if (studentTeamPhase == null || studentTeamPhase.Score == null)
+                    if (studentTeamPhase?.Score == null)
                     {
                         scoreCounter += 0;
                     }
                     else
                     {
-                        scoreCounter += (double) studentTeamPhase.Score;  // calculate
+                        var score = (double) studentTeamPhase.Score * (double) phase.PortionInTotalScore / phase.PhaseScore;
+                        scoreCounter += score;
                     }
                 }
             }
 
             foreach (var exercise in cls.Exercises)
             {
+                if (exercise.PortionInTotalScore == null)
+                {
+                    return ServiceResponseFactory.Failure<List<GetStudentClassScoreDto>>(Messages.PortionInTotalScoreMustBeSetFirst);
+                }
+
                 var exerciseSubmission = await _exerciseSubmissionRepository.GetFinalExerciseSubmissionsAsync(user.Student.Id, exercise.Id);
-                if (exerciseSubmission == null || exerciseSubmission.Score == null)
+                if (exerciseSubmission?.Score == null)
                 {
                     scoreCounter += 0;
                 }
                 else
                 {
-                    scoreCounter += (double) exerciseSubmission.Score;  // calculate
+                    var score = (double) exerciseSubmission.Score * (double) exercise.PortionInTotalScore / exercise.ExerciseScore;
+                    scoreCounter += score;
                 }
             }
         
             foreach (var exam in cls.Exams)
             {
+                if (exam.PortionInTotalScore == null)
+                {
+                    return ServiceResponseFactory.Failure<List<GetStudentClassScoreDto>>(Messages.PortionInTotalScoreMustBeSetFirst);
+                }
+                
                 var studentExam = await _examRepository.GetStudentExamAsync(user.Student.Id, exam.Id);
-                if (studentExam == null || studentExam.Score == null)
+                if (studentExam?.Score == null)
                 {
                     scoreCounter += 0;
                 }
                 else
                 {
-                    scoreCounter += (double) studentExam.Score;  // calculate
+                    var score = (double) studentExam.Score * (double) exam.PortionInTotalScore / exam.ExamScore;
+                    scoreCounter += score;
                 }
             }
 
@@ -526,30 +601,40 @@ public class StudentClassService: IStudentClassService
     public async Task<ServiceResponse<List<GetStudentClassEntityScoreDto>>> GetStudentClassScores(int classId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
-
         var cls = await _classRepository.GetClassWithRelationsAsync(user!.Student!.Id, classId);
         // check for null
+        // check access to class
         var result = new List<GetStudentClassEntityScoreDto>();
 
-        foreach (var project in cls.Projects) // use select instead
+        foreach (var project in cls.Projects)
         {
             foreach (var phase in project.Phases)
             {
+                if (phase.PortionInTotalScore == null)
+                {
+                    return ServiceResponseFactory.Failure<List<GetStudentClassEntityScoreDto>>(Messages.PortionInTotalScoreMustBeSetFirst);
+                }
+
                 var getStudentClassEntityScoreDto = new GetStudentClassEntityScoreDto()
                 {
                     EntryId = phase.Id,
                     EntryType = EntryType.Phase,
-                    EntryName = phase.Title
+                    EntryName = phase.Title,
+                    TotalScore = phase.PhaseScore,
+                    PartialScore = (double) phase.PortionInTotalScore
                 };
                 
                 var studentTeamPhase = await _studentTeamPhaseRepository.GetStudentTeamPhaseAsync(user.Student.Id, phase.Id);
-                if (studentTeamPhase == null || studentTeamPhase.Score == null)
+                if (studentTeamPhase?.Score == null)
                 {
-                    getStudentClassEntityScoreDto.PartialScore = 0;
+                    getStudentClassEntityScoreDto.ScoreInTotalScore = 0;
+                    getStudentClassEntityScoreDto.ScoreInPartialScore = 0;
                 }
                 else
                 {
-                    getStudentClassEntityScoreDto.PartialScore = (double) studentTeamPhase.Score;  // calculate
+                    getStudentClassEntityScoreDto.ScoreInTotalScore = (double)studentTeamPhase.Score;
+                    var score = (double) studentTeamPhase.Score * (double) phase.PortionInTotalScore / phase.PhaseScore;
+                    getStudentClassEntityScoreDto.PartialScore = score;
                 }
                 
                 result.Add(getStudentClassEntityScoreDto);
@@ -558,21 +643,31 @@ public class StudentClassService: IStudentClassService
 
         foreach (var exercise in cls.Exercises)
         {
+            if (exercise.PortionInTotalScore == null)
+            {
+                return ServiceResponseFactory.Failure<List<GetStudentClassEntityScoreDto>>(Messages.PortionInTotalScoreMustBeSetFirst);
+            }
+            
             var getStudentClassEntityScoreDto = new GetStudentClassEntityScoreDto()
             {
                 EntryId = exercise.Id,
                 EntryType = EntryType.Exercise,
-                EntryName = exercise.Title
+                EntryName = exercise.Title,
+                TotalScore = exercise.ExerciseScore,
+                PartialScore = (double) exercise.PortionInTotalScore
             };
 
             var exerciseSubmission = await _exerciseSubmissionRepository.GetFinalExerciseSubmissionsAsync(user.Student.Id, exercise.Id);
-            if (exerciseSubmission == null || exerciseSubmission.Score == null)
+            if (exerciseSubmission?.Score == null)
             {
-                getStudentClassEntityScoreDto.PartialScore = 0;
+                getStudentClassEntityScoreDto.ScoreInTotalScore = 0;
+                getStudentClassEntityScoreDto.ScoreInPartialScore = 0;
             }
             else
             {
-                getStudentClassEntityScoreDto.PartialScore = (double) exerciseSubmission.Score;  // calculate
+                getStudentClassEntityScoreDto.ScoreInTotalScore = (double)exerciseSubmission.Score;
+                var score = (double) exerciseSubmission.Score * (double) exercise.PortionInTotalScore / exercise.ExerciseScore;
+                getStudentClassEntityScoreDto.PartialScore = score;
             }
             
             result.Add(getStudentClassEntityScoreDto);
@@ -580,21 +675,31 @@ public class StudentClassService: IStudentClassService
         
         foreach (var exam in cls.Exams)
         {
+            if (exam.PortionInTotalScore == null)
+            {
+                return ServiceResponseFactory.Failure<List<GetStudentClassEntityScoreDto>>(Messages.PortionInTotalScoreMustBeSetFirst);
+            }
+
             var getStudentClassEntityScoreDto = new GetStudentClassEntityScoreDto()
             {
                 EntryId = exam.Id,
                 EntryType = EntryType.Exam,
-                EntryName = exam.Title
+                EntryName = exam.Title,
+                TotalScore = exam.ExamScore,
+                PartialScore = (double) exam.PortionInTotalScore
             };
 
             var studentExam = await _examRepository.GetStudentExamAsync(user.Student.Id, exam.Id);
-            if (studentExam == null || studentExam.Score == null)
+            if (studentExam?.Score == null)
             {
-                getStudentClassEntityScoreDto.PartialScore = 0;
+                getStudentClassEntityScoreDto.ScoreInTotalScore = 0;
+                getStudentClassEntityScoreDto.ScoreInPartialScore = 0;
             }
             else
             {
-                getStudentClassEntityScoreDto.PartialScore = (double) studentExam.Score;  // calculate
+                getStudentClassEntityScoreDto.ScoreInTotalScore = (double)studentExam.Score;
+                var score = (double) studentExam.Score * (double) exam.PortionInTotalScore / exam.ExamScore;
+                getStudentClassEntityScoreDto.PartialScore = score;
             }
 
             result.Add(getStudentClassEntityScoreDto);

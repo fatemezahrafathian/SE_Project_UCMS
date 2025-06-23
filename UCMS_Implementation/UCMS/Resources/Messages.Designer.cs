@@ -583,7 +583,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
-
+        ///   Looks up a localized string similar to ExerciseStartDateCannotBeBeforeClassStartDate.
+        /// </summary>
+        public static string ExerciseStartDateCannotBeBeforeClassStartDate {
+            get {
+                return ResourceManager.GetString("ExerciseStartDateCannotBeBeforeClassStartDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ExerciseSubmissionCanNotBeAccessed.
         /// </summary>
         public static string ExerciseSubmissionCanNotBeAccessed {
@@ -679,12 +687,6 @@ namespace UCMS.Resources {
         public static string ExerciseSubmissionsFetchedSuccessfully {
             get {
                 return ResourceManager.GetString("ExerciseSubmissionsFetchedSuccessfully", resourceCulture);
-        ///   Looks up a localized string similar to ExerciseStartDateCannotBeBeforeClassStartDate.
-        /// </summary>
-        public static string ExerciseStartDateCannotBeBeforeClassStartDate {
-            get {
-                return ResourceManager.GetString("ExerciseStartDateCannotBeBeforeClassStartDate", resourceCulture);
-
             }
         }
         
@@ -721,13 +723,15 @@ namespace UCMS.Resources {
         public static string FileIsNeeded {
             get {
                 return ResourceManager.GetString("FileIsNeeded", resourceCulture);
-
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to FileNotFound.
         /// </summary>
         public static string FileNotFound {
             get {
                 return ResourceManager.GetString("FileNotFound", resourceCulture);
-
             }
         }
         
@@ -759,11 +763,11 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to InvalidExerciseSubmission.
+        ///   Looks up a localized string similar to InvalidEntryType.
         /// </summary>
-        public static string InvalidExerciseSubmission {
+        public static string InvalidEntryType {
             get {
-                return ResourceManager.GetString("InvalidExerciseSubmission", resourceCulture);
+                return ResourceManager.GetString("InvalidEntryType", resourceCulture);
             }
         }
         
@@ -1182,7 +1186,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
-
+        ///   Looks up a localized string similar to PhaseStartTimeCannotBeBeforeProjectStartTime.
+        /// </summary>
+        public static string PhaseStartTimeCannotBeBeforeProjectStartTime {
+            get {
+                return ResourceManager.GetString("PhaseStartTimeCannotBeBeforeProjectStartTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to PhaseSubmissionCanNotBeAccessed.
         /// </summary>
         public static string PhaseSubmissionCanNotBeAccessed {
@@ -1260,13 +1272,6 @@ namespace UCMS.Resources {
         public static string PhaseSubmissionsFetchedSuccessfully {
             get {
                 return ResourceManager.GetString("PhaseSubmissionsFetchedSuccessfully", resourceCulture);
-
-        ///   Looks up a localized string similar to PhaseStartTimeCannotBeBeforeProjectStartTime.
-        /// </summary>
-        public static string PhaseStartTimeCannotBeBeforeProjectStartTime {
-            get {
-                return ResourceManager.GetString("PhaseStartTimeCannotBeBeforeProjectStartTime", resourceCulture);
-
             }
         }
         
@@ -1276,6 +1281,15 @@ namespace UCMS.Resources {
         public static string PhaseUpdatedSuccessfully {
             get {
                 return ResourceManager.GetString("PhaseUpdatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to PortionInTotalScoreMustBeSetFirst.
+        /// </summary>
+        public static string PortionInTotalScoreMustBeSetFirst {
+            get {
+                return ResourceManager.GetString("PortionInTotalScoreMustBeSetFirst", resourceCulture);
             }
         }
         
@@ -1658,11 +1672,7 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
-
         ///   Looks up a localized string similar to Teams can not be created..
-
-        ///   Looks up a localized string similar to TeamsCanNotBeCreated.
-
         /// </summary>
         public static string TeamsCanNotBeCreated {
             get {

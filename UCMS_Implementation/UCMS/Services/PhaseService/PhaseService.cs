@@ -218,7 +218,7 @@ public class PhaseService:IPhaseService
         if (dto==null)
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileDoesNotExist);
 
-        dto.ContentType = _fileService.GetContentTypeFromPath(project.PhaseFilePath);
+        dto.ContentType = _fileService.GetContentTypeFromPath(phase.PhaseFilePath);
 
         return ServiceResponseFactory.Success(dto,Messages.PhaseFileDownloadedSuccessfully);
     }

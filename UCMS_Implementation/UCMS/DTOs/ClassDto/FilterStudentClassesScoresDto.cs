@@ -1,6 +1,6 @@
 namespace UCMS.DTOs.ClassDto;
 
-public class SearchStudentClassesScoresDto
+public class FilterStudentClassesScoresDto
 {
     public string? ClassName { get; set; }
 }
