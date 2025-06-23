@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using UCMS.Attributes;
-using UCMS.Data;
 using UCMS.DTOs.ExamDto;
 using UCMS.Services.ExamService.Abstraction;
 // test update scores
@@ -9,23 +8,21 @@ namespace UCMS.Controllers;
 [ApiController]
 public class ExamController:ControllerBase
 {
-    private readonly DataContext _context;
-    private readonly IExamService _ExamService;
+    private readonly IExamService _examService;
 
-    public ExamController(DataContext context, IExamService ExamService)
+    public ExamController(IExamService examService)
     {
-        _context = context;
-        _ExamService = ExamService;
+        _examService = examService;
     }
     [RoleBasedAuthorization("Instructor")]
     [HttpPost("")]
     public async Task<IActionResult> CreateExam(int classId,[FromForm] CreateExamDto dto)
     {
-        var response = await _ExamService.CreateExamAsync(classId,dto);
+        var response = await _examService.CreateExamAsync(classId,dto);
     
         if (response.Success)
         {
-            return CreatedAtAction(nameof(GetExamForInstructor), new { examId = response.Data.examId }, response);
+            return CreatedAtAction(nameof(GetExamForInstructor), new { examId = response.Data.ExamId }, response);
 
         }
     
@@ -35,7 +32,7 @@ public class ExamController:ControllerBase
     [HttpGet("Instructor/{examId}")]
     public async Task<IActionResult> GetExamForInstructor(int examId)
     {
-        var response = await _ExamService.GetExamByIdForInstructorAsync(examId);
+        var response = await _examService.GetExamByIdForInstructorAsync(examId);
         if (!response.Success)
             return NotFound(response.Message);
 
@@ -43,9 +40,9 @@ public class ExamController:ControllerBase
     }
     [RoleBasedAuthorization("Instructor")]
     [HttpPatch("{examId}")]
-    public async Task<IActionResult> UpdateExam(int classId,int examId, [FromForm] PatchExamDto dto)
+    public async Task<IActionResult> UpdateExam(int examId, [FromForm] PatchExamDto dto)
     {
-        var response = await _ExamService.UpdateExamAsync(examId, dto);
+        var response = await _examService.UpdateExamAsync(examId, dto);
 
         if (response.Success)
             return Ok(response);
@@ -54,19 +51,19 @@ public class ExamController:ControllerBase
     }
     [RoleBasedAuthorization("Instructor")]
     [HttpDelete("{examId}")]
-    public async Task<IActionResult> DeleteExam(int classId, int examId)
+    public async Task<IActionResult> DeleteExam(int examId)
     {
-        var response = await _ExamService.DeleteExamAsync(examId);
+        var response = await _examService.DeleteExamAsync(examId);
         if (!response.Success)
             return NotFound(response.Message);
 
         return Ok(response.Message);
     }
     [RoleBasedAuthorization("Instructor")]
-    [HttpGet("instructor")]
-    public async Task<IActionResult> GetExamsForInstructor(int classId)
+    [HttpGet("instructor/class/{classId}")]
+    public async Task<IActionResult> GetExamsOfClassForInstructor(int classId)
     {
-        var response = await _ExamService.GetExamsForInstructor(classId);
+        var response = await _examService.GetExamsOfClassForInstructor(classId);
 
         if (!response.Success)
             return NotFound(response.Message);
@@ -78,17 +75,40 @@ public class ExamController:ControllerBase
     [HttpGet("Student/{examId}")]
     public async Task<IActionResult> GetExamForStudent(int examId)
     {
-        var response = await _ExamService.GetExamByIdForStudentAsync(examId);
+        var response = await _examService.GetExamByIdForStudentAsync(examId);
         if (!response.Success)
             return NotFound(response.Message);
 
         return Ok(response.Data);
     }
     [RoleBasedAuthorization("Student")]
-    [HttpGet("Student")]
-    public async Task<IActionResult> GetExamsForStudent(int classId)
+    [HttpGet("Student/class/{classId}")]
+    public async Task<IActionResult> GetExamsOfClassForStudent(int classId)
     {
-        var response = await _ExamService.GetExamsForStudent(classId);
+        var response = await _examService.GetExamsOfClassForStudent(classId);
+
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Data);
+    }
+    
+    [RoleBasedAuthorization("Instructor")]
+    [HttpGet("/api/Instructor/exams")]
+    public async Task<IActionResult> GetExamsForInstructor()
+    {
+        var response = await _examService.GetExamsForInstructor();
+
+        if (!response.Success)
+            return NotFound(response.Message);
+
+        return Ok(response.Data);
+    }
+    [RoleBasedAuthorization("Student")]
+    [HttpGet("/api/Student/exams")]
+    public async Task<IActionResult> GetExamsForStudent()
+    {
+        var response = await _examService.GetExamsForStudent();
 
         if (!response.Success)
             return NotFound(response.Message);

@@ -71,5 +71,22 @@ public class PhaseRepository:IPhaseRepository
         _context.Phases.Remove(phase);
         await _context.SaveChangesAsync();
     }
-
+    public async Task<List<Phase>> GetPhasesCloseDeadLines(DateTime lowerBound, DateTime upperBound,CancellationToken stoppingToken)
+    {
+        return await _context.Phases
+            .Include(p => p.Project)
+                .ThenInclude(pr => pr.Class.ClassStudents)
+                .ThenInclude(cs => cs.Student.User)
+            .Where(p => p.EndDate >= lowerBound && p.EndDate <= upperBound)
+            .ToListAsync(stoppingToken);
+    }
+    public async Task<List<Phase>> GetPhasesCloseStartDate(DateTime lowerBound, DateTime upperBound,CancellationToken stoppingToken)
+    {
+        return await _context.Phases
+            .Include(p => p.Project)
+            .ThenInclude(pr => pr.Class.ClassStudents)
+            .ThenInclude(cs => cs.Student.User)
+            .Where(p => p.StartDate >= lowerBound && p.StartDate <= upperBound)
+            .ToListAsync(stoppingToken);
+    }
 }

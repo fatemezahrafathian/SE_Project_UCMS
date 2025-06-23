@@ -1,13 +1,7 @@
 using FluentValidation;
-using UCMS.Models;
 using UCMS.Resources;
 using UCMS.Services.FileService;
-using FluentValidation;
 using UCMS.DTOs.PhaseDto;
-using UCMS.DTOs.ProjectDto;
-using UCMS.Models;
-using UCMS.Resources;
-using UCMS.Services.FileService;
 
 namespace UCMS.Services.PhaseService;
 
@@ -55,7 +49,7 @@ public class CreatePhaseDtoValidator: AbstractValidator<CreatePhaseDto>
         {
             RuleFor(x => x.FileFormats)
                 .Must(AllFormatsAreValid)
-                .WithMessage(Messages.InvalidFormat);
+                .WithMessage(Messages.InvalidFormatType);
         });
         
     }

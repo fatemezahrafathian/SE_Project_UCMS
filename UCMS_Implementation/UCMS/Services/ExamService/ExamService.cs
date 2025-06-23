@@ -10,28 +10,30 @@ using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Repositories.ExamRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.ExamService.Abstraction;
+
 using UCMS.Services.ExerciseSubmissionService;
 using UCMS.Services.FileService;
+
 
 namespace UCMS.Services.ExamService;
 
 public class ExamService:IExamService
 {
-     private readonly IExamRepository  _repository;
+    private readonly IExamRepository  _repository;
     private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IClassRepository _classRepository;
-    private readonly IFileService _fileService;
     private readonly IStudentClassRepository _studentClassRepository;
     private readonly ExerciseScoreTemplateSettings _exerciseScoreTemplateSettings;
 
+
     public ExamService(IExamRepository repository, IMapper mapper,IHttpContextAccessor httpContextAccessor,IClassRepository classRepository,IFileService fileService,IStudentClassRepository studentClassRepository, IOptions<ExerciseScoreTemplateSettings> templateSettingsOptions)
+
     {
         _repository = repository;
         _mapper = mapper;
         _httpContextAccessor = httpContextAccessor;
         _classRepository = classRepository;
-        _fileService = fileService;
         _studentClassRepository = studentClassRepository;
         _exerciseScoreTemplateSettings = templateSettingsOptions.Value;
     }
@@ -44,9 +46,17 @@ public class ExamService:IExamService
         {
             return ServiceResponseFactory.Failure<GetExamForInstructorDto>(Messages.ClassNotFound);
         }
-        if (currentClass.InstructorId != user.Instructor.Id)
+        if (currentClass.InstructorId != user!.Instructor!.Id)
         {
             return ServiceResponseFactory.Failure<GetExamForInstructorDto>(Messages.InvalidInstructorForThisClass);
+        }
+        
+        if (currentClass.EndDate.HasValue)
+        {
+            if (currentClass.EndDate.Value < DateOnly.FromDateTime(dto.Date))
+            {
+                return ServiceResponseFactory.Failure<GetExamForInstructorDto>(Messages.ExamEndDateCannotBeAfterClassEndDate);
+            }
         }
         var validator = new CreateExamDtoValidator();
         var result = await validator.ValidateAsync(dto);
@@ -66,7 +76,6 @@ public class ExamService:IExamService
         var phaseDto = _mapper.Map<GetExamForInstructorDto>(newExam);
         return ServiceResponseFactory.Success(phaseDto, Messages.ExamCreatedSuccessfully);
     }
-
     public async Task<ServiceResponse<GetExamForInstructorDto>> GetExamByIdForInstructorAsync(int examId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
@@ -87,15 +96,29 @@ public class ExamService:IExamService
         var existingExam = await _repository.GetExamByIdAsync(examId);
         if (existingExam == null || existingExam.Class.InstructorId !=  user?.Instructor?.Id)
             return ServiceResponseFactory.Failure<GetExamForInstructorDto>(Messages.ExamCantBeAccessed);
-
+        
+        if (dto.Date.HasValue)
+        {
+            DateTime.SpecifyKind(dto.Date.Value, DateTimeKind.Unspecified);
+            if (existingExam.Class.EndDate.HasValue)
+            {
+                if (existingExam.Class.EndDate.Value < DateOnly.FromDateTime(dto.Date.Value.Date))
+                {
+                    return ServiceResponseFactory.Failure<GetExamForInstructorDto>(Messages.ExamEndDateCannotBeAfterClassEndDate);
+                }
+            }
+        }
         var validator = new UpdateExamDtoValidator();
         var validationResult = await validator.ValidateAsync(dto);
         if (!validationResult.IsValid)
             return ServiceResponseFactory.Failure<GetExamForInstructorDto>(validationResult.Errors.First().ErrorMessage);
-        
-        var isDuplicate = await _repository.ExistsWithTitleExceptIdAsync(dto.Title, existingExam.ClassId, examId);
-        if (isDuplicate)
-            return ServiceResponseFactory.Failure<GetExamForInstructorDto>(Messages.ExamAlreadyExists);
+        if (dto.Title != null)
+        {
+           var isDuplicate = await _repository.ExistsWithTitleExceptIdAsync(dto.Title, existingExam.ClassId, examId);
+           if (isDuplicate)
+               return ServiceResponseFactory.Failure<GetExamForInstructorDto>(Messages.ExamAlreadyExists); 
+        }
+
 
         existingExam = _mapper.Map(dto, existingExam);
         existingExam.UpdatedAt = DateTime.UtcNow;
@@ -105,24 +128,23 @@ public class ExamService:IExamService
         var phaseDto = _mapper.Map<GetExamForInstructorDto>(existingExam);
         return ServiceResponseFactory.Success(phaseDto, Messages.ExamUpdatedSuccessfully);
     }
-
     public async Task<ServiceResponse<string>>  DeleteExamAsync(int examId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var exam = await _repository.GetExamByIdAsync(examId);
-        if (exam.Class.InstructorId != user!.Instructor!.Id)
+        if (exam == null ||exam.Class.InstructorId != user!.Instructor!.Id)
             return ServiceResponseFactory.Failure<string>(Messages.ExamCantBeAccessed);
         await _repository.DeleteAsync(exam);
         return ServiceResponseFactory.Success("Exam deleted successfully", Messages.ExamDeletedSuccessfully);
     }
-    public async Task<ServiceResponse<List<GetExamForInstructorDto>>> GetExamsForInstructor(int classId)
+    public async Task<ServiceResponse<List<GetExamForInstructorDto>>> GetExamsOfClassForInstructor(int classId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
-        var currentclass = await _classRepository.GetClassByIdAsync(classId);
+        var currentClass = await _classRepository.GetClassByIdAsync(classId);
 
-        if (currentclass == null || currentclass.InstructorId != user?.Instructor?.Id)
+        if (currentClass == null || currentClass.InstructorId != user?.Instructor?.Id)
         {
-            return ServiceResponseFactory.Failure<List<GetExamForInstructorDto>>(Messages.ProjectCantBeAccessed);
+            return ServiceResponseFactory.Failure<List<GetExamForInstructorDto>>(Messages.ExamCantBeAccessed);
         }
         var exams = await _repository.GetExamsByClassIdAsync(classId);
         var dto =  _mapper.Map<List<GetExamForInstructorDto>>(exams);
@@ -133,12 +155,12 @@ public class ExamService:IExamService
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var exam = await _repository.GetExamByIdAsync(examId);
         
-        if (exam == null || user==null || user.Student==null)
+        if (exam == null)
         {
             return ServiceResponseFactory.Failure<GetExamForStudentDto>(Messages.ExamCantBeAccessed);
         }
         
-        if (!await _studentClassRepository.IsStudentOfClassAsync(exam.ClassId,user.Student.Id))
+        if (!await _studentClassRepository.IsStudentOfClassAsync(exam.ClassId,user!.Student!.Id))
         {
             return ServiceResponseFactory.Failure<GetExamForStudentDto>(Messages.ExamCantBeAccessed);
         }
@@ -147,19 +169,20 @@ public class ExamService:IExamService
 
         return ServiceResponseFactory.Success(dto, Messages.ExamRetrievedSuccessfully);
     }
-    public async Task<ServiceResponse<List<GetExamForStudentDto>>> GetExamsForStudent(int classId)
+    public async Task<ServiceResponse<List<GetExamForStudentDto>>> GetExamsOfClassForStudent(int classId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
         var currentClass = await _classRepository.GetClassByIdAsync(classId);
 
-        if (currentClass == null || user==null || user.Student==null || !await _studentClassRepository.IsStudentOfClassAsync(classId,user.Student.Id))
+        if (currentClass == null || !await _studentClassRepository.IsStudentOfClassAsync(classId,user!.Student!.Id))
         {
-            return ServiceResponseFactory.Failure<List<GetExamForStudentDto>>(Messages.ClassCantBeAccessed);
+            return ServiceResponseFactory.Failure<List<GetExamForStudentDto>>(Messages.ExamCantBeAccessed);
         }
         var exams = await _repository.GetExamsByClassIdAsync(classId);
         var dto =  _mapper.Map<List<GetExamForStudentDto>>(exams);
         return ServiceResponseFactory.Success(dto,Messages.ExamsRetrievedSuccessfully);
     }
+
     
     public async Task<ServiceResponse<List<GetScoreFileValidationResultDto>>> UpdateExamScores(int examId, IFormFile scoreFile)
     {
@@ -260,6 +283,22 @@ public class ExamService:IExamService
         return ServiceResponseFactory.Success<List<GetScoreFileValidationResultDto>>(Messages.ExamScoresUpdatedSuccessfully);
     
     }
+
+    public async Task<ServiceResponse<List<GetExamForInstructorDto>>> GetExamsForInstructor()
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+        var exams = await _repository.GetExamsByInstructorIdAsync(user!.Instructor!.Id);
+        var dto =  _mapper.Map<List<GetExamForInstructorDto>>(exams);
+        return ServiceResponseFactory.Success(dto,Messages.ExamsRetrievedSuccessfully);
+    }
+    public async Task<ServiceResponse<List<GetExamForStudentDto>>> GetExamsForStudent()
+    {
+        var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
+        var exams = await _repository.GetExamsByStudentIdAsync(user!.Student!.Id);
+        var dto =  _mapper.Map<List<GetExamForStudentDto>>(exams);
+        return ServiceResponseFactory.Success(dto,Messages.ExamsRetrievedSuccessfully);
+    }
+
 }
    
     

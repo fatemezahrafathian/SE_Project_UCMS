@@ -69,4 +69,26 @@ public class ExamRepository:IExamRepository
         _context.Exams.Remove(exam);
         await _context.SaveChangesAsync();
     }
+    public async Task<List<Exam>> GetExamsByStudentIdAsync(int studentId)
+    {
+        return await _context.Exams
+            .Include(e => e.Class)
+            .Where(e => e.Class.ClassStudents.Any(cs => cs.StudentId == studentId))
+            .ToListAsync();
+    }
+    public async Task<List<Exam>> GetExamsByInstructorIdAsync(int instructorId)
+    {
+        return await _context.Exams
+            .Include(e => e.Class)
+            .Where(e => e.Class.InstructorId == instructorId)
+            .ToListAsync();
+    }
+    public async Task<List<Exam>> GetExamsCloseDeadLines(DateTime lowerBound, DateTime upperBound,CancellationToken stoppingToken)
+    {
+        return await _context.Exams
+            .Include(e => e.Class.ClassStudents)
+            .ThenInclude(cs => cs.Student.User)
+            .Where(p => p.Date >= lowerBound && p.Date <= upperBound)
+            .ToListAsync(stoppingToken);
+    }
 }
