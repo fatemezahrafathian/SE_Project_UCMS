@@ -59,7 +59,7 @@ public class FileService: IFileService
 
     public bool IsValidExtension(IFormFile file, string validExtensions)
     {
-        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+        var extension = Path.GetExtension(file.FileName).Remove(0, 1).ToLowerInvariant();
         var allowedExtensions = validExtensions
             .Split(',', StringSplitOptions.RemoveEmptyEntries)
             .Select(e => e.Trim().ToLowerInvariant());

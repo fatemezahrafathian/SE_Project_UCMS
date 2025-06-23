@@ -86,7 +86,7 @@ public class StudentClassController: ControllerBase
     }
     
     [RoleBasedAuthorization("Instructor")]
-    [HttpGet("{classId}/scores")]
+    [HttpGet("{classId}/students/scores")]
     public async Task<IActionResult> GetClassStudentsScores(int classId, [FromQuery] FilterClassStudentsScoresDto dto)
     {
         var response = await _studentClassService.GetClassStudentsScores(classId, dto);
@@ -98,7 +98,7 @@ public class StudentClassController: ControllerBase
     }
     
     [RoleBasedAuthorization("Instructor")]
-    [HttpGet("{classId}/scores/file")]
+    [HttpGet("{classId}/students/scores/export")]
     public async Task<IActionResult> GetClassStudentsScoresFile(int classId)
     {
         var response = await _studentClassService.GetClassStudentsScoresFile(classId);

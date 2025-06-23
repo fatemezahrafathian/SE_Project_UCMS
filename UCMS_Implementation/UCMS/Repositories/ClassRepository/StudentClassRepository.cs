@@ -52,6 +52,13 @@ public class StudentClassRepository: IStudentClassRepository
             .Select(cs => cs.Student)
             .ToListAsync();
     }
+
+    public async Task<List<ClassStudent>> GetStudentClassesByClassIdAsync(int classId)
+    {
+        return await _context.ClassStudents.Where(cs => cs.ClassId == classId)
+            .ToListAsync();
+    }
+
     public IQueryable<Class> FilterStudentClassesByStudentIdAsync(int studentId, string? title, bool? isActive)
     {
         var baseQuery = GetClassesByStudentId(studentId);

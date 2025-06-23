@@ -84,21 +84,15 @@ public class PhaseService:IPhaseService
         newPhase.PhaseFilePath = filePath;
         await _repository.AddAsync(newPhase);
 
-        var newStudentTeamPhases = new List<StudentTeamPhase>();
         var teams = await _teamRepository.GetTeamsWithRelationsByProjectIdAsync(newPhase.ProjectId); // to be done on active teams
-        foreach (var team in teams)
-        {
-            foreach (var stdTeam in team.StudentTeams)
-            {
-                var newStudentTeamPhase = new StudentTeamPhase()
-                {
-                    StudentTeamId = stdTeam.Id,
+        var newStudentTeamPhases = (
+            from team in teams 
+            from stdTeam in team.StudentTeams 
+            select new StudentTeamPhase() 
+                {StudentTeamId = stdTeam.Id, 
                     PhaseId = newPhase.Id
-                };
-
-                newStudentTeamPhases.Add(newStudentTeamPhase);
-            }
-        }
+                }).ToList();
+        
         await _studentTeamPhaseRepository.AddRangeStudentTeamPhaseAsync(newStudentTeamPhases);
 
         var phaseDto = _mapper.Map<GetPhaseForInstructorDto>(newPhase);

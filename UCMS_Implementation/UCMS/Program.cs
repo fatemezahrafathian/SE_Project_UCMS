@@ -28,6 +28,8 @@ using UCMS.Repositories.ProjectRepository;
 using UCMS.Repositories.ProjectRepository.Abstarction;
 using UCMS.Repositories.RoleRepository;
 using UCMS.Repositories.RoleRepository.Abstraction;
+using UCMS.Repositories.StudentExamRepository;
+using UCMS.Repositories.StudentExamRepository.Abstraction;
 using UCMS.Repositories.StudentRepository;
 using UCMS.Repositories.StudentRepository.Abstraction;
 using UCMS.Repositories.StudentTeamPhaseRepository;
@@ -63,6 +65,8 @@ using UCMS.Services.PhaseSubmissionSrvice;
 using UCMS.Services.ProjectService;
 using UCMS.Services.RoleService;
 using UCMS.Services.RoleService.Abstraction;
+using UCMS.Services.StudentExamService;
+using UCMS.Services.StudentExamService.Abstraction;
 using UCMS.Services.StudentService;
 using UCMS.Services.StudentService.Abstraction;
 using UCMS.Services.TeamPhaseSrvice;
@@ -97,6 +101,9 @@ builder.Services.Configure<ExerciseScoreTemplateSettings>(
 
 builder.Services.Configure<PhaseScoreTemplateSettings>(
     builder.Configuration.GetSection("PhaseScoreTemplateSettings"));
+
+builder.Services.Configure<ScoresSetting>(
+    builder.Configuration.GetSection("ScoresSetting"));
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 // var mapperConfig = new MapperConfiguration(cfg =>
@@ -143,6 +150,8 @@ builder.Services.AddScoped<IPhaseSubmissionService, PhaseSubmissionService>();
 builder.Services.AddScoped<IStudentTeamPhaseRepository, StudentTeamPhaseRepository>();
 builder.Services.AddScoped<IExerciseSubmissionService, ExerciseSubmissionService>();
 builder.Services.AddScoped<IExerciseSubmissionRepository, ExerciseSubmissionRepository>();
+builder.Services.AddScoped<IStudentExamRepository, StudentExamRepository>();
+builder.Services.AddScoped<IStudentExamService, StudentExamService>();
 
 builder.Services.AddTransient<UrlBuilder>();
 

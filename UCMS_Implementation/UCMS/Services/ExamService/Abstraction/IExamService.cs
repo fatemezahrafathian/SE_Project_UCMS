@@ -12,15 +12,8 @@ public interface IExamService
     Task<ServiceResponse<string>>  DeleteExamAsync(int examId);
     Task<ServiceResponse<List<GetExamForInstructorDto>>> GetExamsOfClassForInstructor(int classId);
     Task<ServiceResponse<GetExamForStudentDto>> GetExamByIdForStudentAsync(int examId);
-
-    
-    Task<ServiceResponse<List<GetScoreFileValidationResultDto>>> UpdateExamScores(int examId, IFormFile scoreFile);
-
-
     Task<ServiceResponse<List<GetExamForStudentDto>>> GetExamsOfClassForStudent(int classId);
-    
     Task<ServiceResponse<List<GetExamForInstructorDto>>> GetExamsForInstructor();
-    
     Task<ServiceResponse<List<GetExamForStudentDto>>> GetExamsForStudent();
 
 

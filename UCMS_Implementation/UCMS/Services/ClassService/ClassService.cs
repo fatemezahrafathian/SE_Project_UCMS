@@ -255,34 +255,6 @@ public class ClassService: IClassService
             return ServiceResponseFactory.Failure<string>(Messages.ClassCantBeAccessed);
         }
 
-        // var entriesList = (from project in cls.Projects
-        //     from phase in project.Phases
-        //     select new
-        //     {
-        //         phase.Id,
-        //         EntryType.Phase
-        //     }).ToList();
-        //
-        // entriesList.AddRange(cls.Exercises.Select(exercise => new
-        // {
-        //     exercise.Id,
-        //     EntryType.Exercise
-        // }));
-        //
-        // entriesList.AddRange(cls.Exams.Select(exam => new
-        // {
-        //     exam.Id,
-        //     EntryType.Exam,
-        // }));
-        //
-        // dto.EntryDtos.Select(d => new
-        // {
-        //     d.EntryId,
-        //     d.EntryType
-        // });
-        // compare
-        
-        
         var validator = new UpdateClassEntriesDtoDtoValidator();
         var result = await validator.ValidateAsync(dto);
         if (!result.IsValid)
@@ -291,6 +263,29 @@ public class ClassService: IClassService
             return ServiceResponseFactory.Failure<string>(errorMessage);
         }
 
+        var entriesList = new List<(int Id, EntryType Type)>();
+        entriesList.AddRange(
+            cls.Projects.SelectMany(p => p.Phases)
+                .Select(phase => (phase.Id, EntryType.Phase)));
+        entriesList.AddRange(
+            cls.Exercises.Select(ex => (ex.Id, EntryType.Exercise)));
+        entriesList.AddRange(
+            cls.Exams.Select(exam => (exam.Id, EntryType.Exam)));
+        var dtoEntriesList = dto.EntryDtos
+            .Select(e => (e.EntryId, e.EntryType))
+            .ToList();
+        if (entriesList.Count != dtoEntriesList.Count)
+        {
+            return ServiceResponseFactory.Failure<string>(Messages.EntriesMismatchWithClassEntries);
+        }
+
+        var setA = entriesList.ToHashSet();
+        var setB = dtoEntriesList.ToHashSet();
+        if (!setA.SetEquals(setB))
+        {
+            return ServiceResponseFactory.Failure<string>(Messages.EntriesMismatchWithClassEntries);
+        }
+        
         foreach (var entry in dto.EntryDtos)
         {
             switch (entry.EntryType)

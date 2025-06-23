@@ -9,10 +9,29 @@ public class UpdateClassEntriesDtoDtoValidator : AbstractValidator<UpdateClassEn
     {
         ClassLevelCascadeMode = CascadeMode.Stop;
         RuleLevelCascadeMode = CascadeMode.Stop;
+        
+        RuleFor(x => x.EntryDtos)
+            .NotNull().WithMessage(Messages.EntryDtosMustNotBeNull);
+            // .NotEmpty().WithMessage("Entries list must not be empty.");
 
-        // check EntryType to be valid (Phase, Exercise, Exam)
-        // check PortionInTotalScore and TotalScore to be valid
-        // check sum of PortionInTotalScores to be equal to TotalScore
-        // any other check needed
+        RuleForEach(x => x.EntryDtos).ChildRules(entry =>
+        {
+            // entry.RuleFor(e => e.EntryId)
+            //     .GreaterThan(0).WithMessage("EntryId must be greater than 0.");
+
+            entry.RuleFor(e => e.EntryType)
+                .IsInEnum().WithMessage(Messages.InvalidEntryType);
+
+            entry.RuleFor(e => e.PortionInTotalScore)
+                .GreaterThan(0).WithMessage(Messages.InvalidPortionInTotalScore);
+        });
+
+        RuleFor(x => x.TotalScore)
+            .GreaterThan(0).WithMessage(Messages.InvalidTotalScore);
+
+        RuleFor(x => x)
+            .Must(x => Math.Abs(x.EntryDtos.Sum(e => e.PortionInTotalScore) - x.TotalScore) < 0.001)
+            .WithMessage(Messages.SumOfPortionInTotalScoreMustBeEqualToTotalScore);
+
     }
 }

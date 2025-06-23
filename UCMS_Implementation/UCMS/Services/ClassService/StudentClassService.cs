@@ -9,6 +9,7 @@ using UCMS.Models;
 using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Repositories.ExamRepository.Abstraction;
 using UCMS.Repositories.ExerciseSubmissionRepository.Abstraction;
+using UCMS.Repositories.StudentExamRepository.Abstraction;
 using UCMS.Repositories.StudentTeamPhaseRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.ClassService.Abstraction;
@@ -27,8 +28,9 @@ public class StudentClassService: IStudentClassService
     private readonly IExerciseSubmissionRepository _exerciseSubmissionRepository;
     private readonly IExamRepository _examRepository;
     private readonly ScoresSetting _scoresSetting;
+    private readonly IStudentExamRepository _studentExamRepository;
 
-    public StudentClassService(IClassRepository classRepository, IStudentClassRepository studentClassRepository, IHttpContextAccessor httpContextAccessor, IPasswordService passwordService, IMapper mapper, IStudentTeamPhaseRepository studentTeamPhaseRepository, IExerciseSubmissionRepository exerciseSubmissionRepository, IExamRepository examRepository, IOptions<ScoresSetting> scoresSetting)
+    public StudentClassService(IClassRepository classRepository, IStudentClassRepository studentClassRepository, IHttpContextAccessor httpContextAccessor, IPasswordService passwordService, IMapper mapper, IStudentTeamPhaseRepository studentTeamPhaseRepository, IExerciseSubmissionRepository exerciseSubmissionRepository, IExamRepository examRepository, IOptions<ScoresSetting> scoresSetting, IStudentExamRepository studentExamRepository)
     {
         _classRepository = classRepository;
         _studentClassRepository = studentClassRepository;
@@ -38,6 +40,7 @@ public class StudentClassService: IStudentClassService
         _studentTeamPhaseRepository = studentTeamPhaseRepository;
         _exerciseSubmissionRepository = exerciseSubmissionRepository;
         _examRepository = examRepository;
+        _studentExamRepository = studentExamRepository;
         _scoresSetting = scoresSetting.Value;
     }
 
@@ -258,11 +261,11 @@ public class StudentClassService: IStudentClassService
         return ServiceResponseFactory.Success(responseDto, Messages.ClassesRetrievedSuccessfully); // ClassesFetchedSuccessfully
     }
 
-    public async Task<ServiceResponse<GetClassStudentsScoresDto>> GetClassStudentsScores(int classId, FilterClassStudentsScoresDto dto) // search
+    public async Task<ServiceResponse<GetClassStudentsScoresDto>> GetClassStudentsScores(int classId, FilterClassStudentsScoresDto dto)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        var cls = await _classRepository.GetClassWithRelationsByIdAsync(classId); // student class repository to be able to order snd filter
+        var cls = await _classRepository.FilterClassStudentsWithRelations(classId, dto.FullName, dto.StudentNumber);
         if (cls == null)
         {
             return ServiceResponseFactory.Failure<GetClassStudentsScoresDto>(Messages.ClassNotFound);
@@ -278,10 +281,7 @@ public class StudentClassService: IStudentClassService
         var getClassStudentsScoresDto = new GetClassStudentsScoresDto();
         bool firstTime = true;
 
-        var classStudents = cls.ClassStudents // use repository to sort
-            .OrderBy(c => c.Student.User.LastName + " " + c.Student.User.FirstName);
-        
-        foreach (var classStudent in classStudents)
+        foreach (var classStudent in cls.ClassStudents)
         {
             var getClassStudentScoresDto = new GetClassStudentScoresDto()
             {
@@ -307,7 +307,7 @@ public class StudentClassService: IStudentClassService
                     else
                     {
                         var score = (double) studentTeamPhase.Score * (double)phase.PortionInTotalScore / phase.PhaseScore;
-                        getClassStudentScoresDto.Scores.Add(score);
+                        getClassStudentScoresDto.Scores.Add(Double.Round(score, 2));
                     }
 
                     if (firstTime)
@@ -337,7 +337,7 @@ public class StudentClassService: IStudentClassService
                 else
                 {
                     var score = (double) exerciseSubmission.Score * (double) exercise.PortionInTotalScore / exercise.ExerciseScore;
-                    getClassStudentScoresDto.Scores.Add(score);
+                    getClassStudentScoresDto.Scores.Add(Double.Round(score, 2));
                 }
 
                 if (firstTime)
@@ -358,7 +358,7 @@ public class StudentClassService: IStudentClassService
                     return ServiceResponseFactory.Failure<GetClassStudentsScoresDto>(Messages.PortionInTotalScoreMustBeSetFirst);
                 }
 
-                var studentExam = await _examRepository.GetStudentExamAsync(classStudent.StudentId, exam.Id);
+                var studentExam = await _studentExamRepository.GetStudentExamAsync(classStudent.StudentId, exam.Id);
                 if (studentExam?.Score == null)
                 {
                     getClassStudentScoresDto.Scores.Add(0);
@@ -366,7 +366,7 @@ public class StudentClassService: IStudentClassService
                 else
                 {
                     var score = (double) studentExam.Score * (double) exam.PortionInTotalScore / exam.ExamScore;
-                    getClassStudentScoresDto.Scores.Add(score);
+                    getClassStudentScoresDto.Scores.Add(Double.Round(score, 2));
                 }
                 
                 if (firstTime)
@@ -391,7 +391,7 @@ public class StudentClassService: IStudentClassService
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        var cls = await _classRepository.GetClassWithRelationsByIdAsync(classId);
+        var cls = await _classRepository.FilterClassStudentsWithRelations(classId, null, null);
         if (cls == null)
         {
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.ClassNotFound);
@@ -411,7 +411,7 @@ public class StudentClassService: IStudentClassService
 
         int rowCounter = 2;
         int colCounter = 1;
-        int headerCounter = 2;
+        int headerCounter = 3;
         foreach (var classStudent in cls.ClassStudents)
         {
             worksheet.Cell(rowCounter, colCounter++).Value = classStudent.Student.User.LastName + " " + classStudent.Student.User.FirstName;
@@ -434,7 +434,7 @@ public class StudentClassService: IStudentClassService
                     else
                     {
                         var score = (double) studentTeamPhase.Score * (double) phase.PortionInTotalScore / phase.PhaseScore;
-                        worksheet.Cell(rowCounter, colCounter++).Value = score;
+                        worksheet.Cell(rowCounter, colCounter++).Value = Double.Round(score, 2);
                     }
 
                     if (rowCounter==2)
@@ -459,7 +459,7 @@ public class StudentClassService: IStudentClassService
                 else
                 {
                     var score = (double) exerciseSubmission.Score * (double) exercise.PortionInTotalScore / exercise.ExerciseScore;
-                    worksheet.Cell(rowCounter, colCounter++).Value = score;
+                    worksheet.Cell(rowCounter, colCounter++).Value = Double.Round(score, 2);
                 }
 
                 if (rowCounter==2)
@@ -475,7 +475,7 @@ public class StudentClassService: IStudentClassService
                     return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.PortionInTotalScoreMustBeSetFirst);
                 }
                 
-                var studentExam = await _examRepository.GetStudentExamAsync(classStudent.StudentId, exam.Id);
+                var studentExam = await _studentExamRepository.GetStudentExamAsync(classStudent.StudentId, exam.Id);
                 if (studentExam?.Score == null)
                 {
                     worksheet.Cell(rowCounter, colCounter++).Value = 0;
@@ -483,7 +483,7 @@ public class StudentClassService: IStudentClassService
                 else
                 {
                     var score = (double) studentExam.Score * (double) exam.PortionInTotalScore / exam.ExamScore;
-                    worksheet.Cell(rowCounter, colCounter++).Value = score;
+                    worksheet.Cell(rowCounter, colCounter++).Value = Double.Round(score, 2);
                 }
                 
                 if (rowCounter==2)
@@ -512,13 +512,16 @@ public class StudentClassService: IStudentClassService
         return ServiceResponseFactory.Success(result, Messages.ClassesStudentsScoresFileGeneratedSuccessfully);
     }
 
-    public async Task<ServiceResponse<List<GetStudentClassScoreDto>>> GetStudentClassesScores(FilterStudentClassesScoresDto dto) // search
+    public async Task<ServiceResponse<List<GetStudentClassScoreDto>>> GetStudentClassesScores(FilterStudentClassesScoresDto dto)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        var classes = await _classRepository.GetClassesWithRelationsAsync(user!.Student!.Id); // filter by class name
+        var classes = await _classRepository.FilterStudentClassesWithRelations(user!.Student!.Id, dto.Title);
+        if (!classes.Any())
+        {
+            return ServiceResponseFactory.Failure<List<GetStudentClassScoreDto>>(Messages.NoClassFound);
+        }
         // dto validator
-        // check count
         var result = new List<GetStudentClassScoreDto>();
         foreach (var cls in classes)
         {
@@ -577,7 +580,7 @@ public class StudentClassService: IStudentClassService
                     return ServiceResponseFactory.Failure<List<GetStudentClassScoreDto>>(Messages.PortionInTotalScoreMustBeSetFirst);
                 }
                 
-                var studentExam = await _examRepository.GetStudentExamAsync(user.Student.Id, exam.Id);
+                var studentExam = await _studentExamRepository.GetStudentExamAsync(user.Student.Id, exam.Id);
                 if (studentExam?.Score == null)
                 {
                     scoreCounter += 0;
@@ -589,7 +592,7 @@ public class StudentClassService: IStudentClassService
                 }
             }
 
-            getStudentClassScoreDto.Score = scoreCounter;
+            getStudentClassScoreDto.Score = Double.Round(scoreCounter, 2);
             result.Add(getStudentClassScoreDto);
 
         }
@@ -634,7 +637,7 @@ public class StudentClassService: IStudentClassService
                 {
                     getStudentClassEntityScoreDto.ScoreInTotalScore = (double)studentTeamPhase.Score;
                     var score = (double) studentTeamPhase.Score * (double) phase.PortionInTotalScore / phase.PhaseScore;
-                    getStudentClassEntityScoreDto.PartialScore = score;
+                    getStudentClassEntityScoreDto.PartialScore = Double.Round(score, 2);
                 }
                 
                 result.Add(getStudentClassEntityScoreDto);
@@ -667,7 +670,7 @@ public class StudentClassService: IStudentClassService
             {
                 getStudentClassEntityScoreDto.ScoreInTotalScore = (double)exerciseSubmission.Score;
                 var score = (double) exerciseSubmission.Score * (double) exercise.PortionInTotalScore / exercise.ExerciseScore;
-                getStudentClassEntityScoreDto.PartialScore = score;
+                getStudentClassEntityScoreDto.PartialScore = Double.Round(score, 2);
             }
             
             result.Add(getStudentClassEntityScoreDto);
@@ -689,7 +692,7 @@ public class StudentClassService: IStudentClassService
                 PartialScore = (double) exam.PortionInTotalScore
             };
 
-            var studentExam = await _examRepository.GetStudentExamAsync(user.Student.Id, exam.Id);
+            var studentExam = await _studentExamRepository.GetStudentExamAsync(user.Student.Id, exam.Id);
             if (studentExam?.Score == null)
             {
                 getStudentClassEntityScoreDto.ScoreInTotalScore = 0;
@@ -699,7 +702,7 @@ public class StudentClassService: IStudentClassService
             {
                 getStudentClassEntityScoreDto.ScoreInTotalScore = (double)studentExam.Score;
                 var score = (double) studentExam.Score * (double) exam.PortionInTotalScore / exam.ExamScore;
-                getStudentClassEntityScoreDto.PartialScore = score;
+                getStudentClassEntityScoreDto.PartialScore = Double.Round(score, 2);
             }
 
             result.Add(getStudentClassEntityScoreDto);

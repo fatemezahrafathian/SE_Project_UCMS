@@ -102,7 +102,7 @@ public class ClassesController : ControllerBase
 
     [RoleBasedAuthorization("Instructor")]
     [HttpPatch("{classId}/entries")]
-    public async Task<IActionResult> UpdateClassEntries(int classId, UpdateClassEntriesDto dto)
+    public async Task<IActionResult> UpdateClassEntries(int classId,  UpdateClassEntriesDto dto) // remove from form
     {
         var response = await _classService.UpdateClassEntries(classId, dto);
         

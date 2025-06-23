@@ -98,6 +98,9 @@ namespace UCMS.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<double?>("TotalScore")
+                        .HasColumnType("double precision");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -177,6 +180,9 @@ namespace UCMS.Migrations
                     b.Property<int>("ExamScore")
                         .HasColumnType("integer");
 
+                    b.Property<double?>("PortionInTotalScore")
+                        .HasColumnType("double precision");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -222,6 +228,9 @@ namespace UCMS.Migrations
                     b.Property<string>("FileFormats")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<double?>("PortionInTotalScore")
+                        .HasColumnType("double precision");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
@@ -341,6 +350,9 @@ namespace UCMS.Migrations
 
                     b.Property<int>("PhaseScore")
                         .HasColumnType("integer");
+
+                    b.Property<double?>("PortionInTotalScore")
+                        .HasColumnType("double precision");
 
                     b.Property<int>("ProjectId")
                         .HasColumnType("integer");
@@ -472,6 +484,32 @@ namespace UCMS.Migrations
                         .IsUnique();
 
                     b.ToTable("Students");
+                });
+
+            modelBuilder.Entity("UCMS.Models.StudentExam", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ExamId")
+                        .HasColumnType("integer");
+
+                    b.Property<double?>("Score")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExamId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("StudentExams");
                 });
 
             modelBuilder.Entity("UCMS.Models.StudentTeam", b =>
@@ -702,7 +740,7 @@ namespace UCMS.Migrations
             modelBuilder.Entity("UCMS.Models.Exam", b =>
                 {
                     b.HasOne("UCMS.Models.Class", "Class")
-                        .WithMany()
+                        .WithMany("Exams")
                         .HasForeignKey("ClassId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -782,6 +820,25 @@ namespace UCMS.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("UCMS.Models.StudentExam", b =>
+                {
+                    b.HasOne("UCMS.Models.Exam", "Exam")
+                        .WithMany()
+                        .HasForeignKey("ExamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UCMS.Models.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Exam");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("UCMS.Models.StudentTeam", b =>
@@ -869,6 +926,8 @@ namespace UCMS.Migrations
             modelBuilder.Entity("UCMS.Models.Class", b =>
                 {
                     b.Navigation("ClassStudents");
+
+                    b.Navigation("Exams");
 
                     b.Navigation("Exercises");
 

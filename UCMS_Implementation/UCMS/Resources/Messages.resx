@@ -717,4 +717,22 @@
   <data name="InvalidEntryType" xml:space="preserve">
       <value>InvalidEntryType</value>
   </data>
+  <data name="EntryDtosMustNotBeNull" xml:space="preserve">
+      <value>EntryDtosMustNotBeNull</value>
+  </data>
+  <data name="InvalidPortionInTotalScore" xml:space="preserve">
+      <value>InvalidPortionInTotalScore</value>
+  </data>
+  <data name="InvalidTotalScore" xml:space="preserve">
+      <value>InvalidTotalScore</value>
+  </data>
+  <data name="SumOfPortionInTotalScoreMustBeEqualToTotalScore" xml:space="preserve">
+      <value>SumOfPortionInTotalScoreMustBeEqualToTotalScore</value>
+  </data>
+  <data name="EntriesMismatchWithClassEntries" xml:space="preserve">
+      <value>EntriesMismatchWithClassEntries</value>
+  </data>
+  <data name="NoClassFound" xml:space="preserve">
+      <value>NoClassFound</value>
+  </data>
 </root>
