@@ -25,7 +25,9 @@ public class ExamService:IExamService
     private readonly IStudentClassRepository _studentClassRepository;
     private readonly IStudentExamRepository _studentExamRepository;
 
+
     public ExamService(IExamRepository repository, IMapper mapper,IHttpContextAccessor httpContextAccessor,IClassRepository classRepository,IStudentClassRepository studentClassRepository, IStudentExamRepository studentExamRepository)
+
 
     {
         _repository = repository;
