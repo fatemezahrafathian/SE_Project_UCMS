@@ -16,10 +16,10 @@ public class StudentExamController: ControllerBase
     }
 
     [RoleBasedAuthorization("Instructor")]
-    [HttpGet("template/{exerciseId}")]
-    public async Task<IActionResult> GetExerciseScoreTemplateFile(int exerciseId)
+    [HttpGet("template/{examId}")]
+    public async Task<IActionResult> GetExerciseScoreTemplateFile(int examId)
     {
-        var response = await _studentExamService.GetExamScoreTemplateFile(exerciseId);
+        var response = await _studentExamService.GetExamScoreTemplateFile(examId);
 
         if (!response.Success)
             return BadRequest(response);
@@ -29,7 +29,7 @@ public class StudentExamController: ControllerBase
 
     [RoleBasedAuthorization("Instructor")]
     [HttpPatch("{examId}/scores")]
-    public async Task<IActionResult> UpdateExerciseSubmissionScores(int examId, [FromForm] IFormFile scoreFile)
+    public async Task<IActionResult> UpdateExerciseSubmissionScores(int examId, IFormFile scoreFile)
     {
         var response = await _studentExamService.UpdateExamScores(examId, scoreFile);
         

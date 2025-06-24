@@ -15,23 +15,23 @@ namespace UCMS.Services.StudentExamService;
 public class StudentExamService: IStudentExamService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly ExerciseScoreTemplateSettings _exerciseScoreTemplateSettings;
     private readonly IExamRepository _examRepository;
     private readonly IStudentExamRepository _studentExamRepository;
+    private readonly ExamScoreTemplateSettings _examScoreTemplateSettings;
 
-    public StudentExamService(IOptions<ExerciseScoreTemplateSettings> templateSettingsOptions, IHttpContextAccessor httpContextAccessor, IStudentExamRepository studentExamRepository, IExamRepository examRepository)
+    public StudentExamService(IOptions<ExamScoreTemplateSettings> templateSettingsOptions, IHttpContextAccessor httpContextAccessor, IStudentExamRepository studentExamRepository, IExamRepository examRepository)
     {
         _httpContextAccessor = httpContextAccessor;
         _studentExamRepository = studentExamRepository;
         _examRepository = examRepository;
-        _exerciseScoreTemplateSettings = templateSettingsOptions.Value;
+        _examScoreTemplateSettings = templateSettingsOptions.Value;
     }
 
-    public async Task<ServiceResponse<FileDownloadDto>> GetExamScoreTemplateFile(int exerciseId)
+    public async Task<ServiceResponse<FileDownloadDto>> GetExamScoreTemplateFile(int examId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        var exam = await _examRepository.GetExamWithClassRelationsByIdAsync(exerciseId);
+        var exam = await _examRepository.GetExamWithClassRelationsByIdAsync(examId);
         if (exam==null)
         {
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.ExerciseNotFound);
@@ -43,12 +43,12 @@ public class StudentExamService: IStudentExamService
         }
 
         using var workbook = new XLWorkbook();
-        var worksheet = workbook.Worksheets.Add(_exerciseScoreTemplateSettings.WorksheetName);
+        var worksheet = workbook.Worksheets.Add(_examScoreTemplateSettings.WorksheetName);
         worksheet.RightToLeft = true;
     
-        worksheet.Cell(1, 1).Value = _exerciseScoreTemplateSettings.ColumnHeaders[0];
-        worksheet.Cell(1, 2).Value = _exerciseScoreTemplateSettings.ColumnHeaders[1];
-        worksheet.Cell(1, 3).Value = _exerciseScoreTemplateSettings.ColumnHeaders[2];
+        worksheet.Cell(1, 1).Value = _examScoreTemplateSettings.ColumnHeaders[0];
+        worksheet.Cell(1, 2).Value = _examScoreTemplateSettings.ColumnHeaders[1];
+        worksheet.Cell(1, 3).Value = _examScoreTemplateSettings.ColumnHeaders[2];
 
         var students = exam.Class.ClassStudents
             .OrderBy(cs=>cs.Student.User.LastName + " " + cs.Student.User.FirstName);
@@ -72,8 +72,8 @@ public class StudentExamService: IStudentExamService
 
         var result = new FileDownloadDto()
         {
-            FileName = _exerciseScoreTemplateSettings.FileName,
-            ContentType = _exerciseScoreTemplateSettings.ContentType,
+            FileName = _examScoreTemplateSettings.FileName,
+            ContentType = _examScoreTemplateSettings.ContentType,
             FileBytes = fileBytes
         };
 
@@ -101,7 +101,7 @@ public class StudentExamService: IStudentExamService
         try
         {
             workbook = new XLWorkbook(scoreFile.OpenReadStream());
-            worksheet = workbook.Worksheet(_exerciseScoreTemplateSettings.WorksheetName);
+            worksheet = workbook.Worksheet(_examScoreTemplateSettings.WorksheetName);
         }
         catch
         {
@@ -114,9 +114,9 @@ public class StudentExamService: IStudentExamService
         {
             var expectedHeader = i switch
             {
-                1 => _exerciseScoreTemplateSettings.ColumnHeaders[0],
-                2 => _exerciseScoreTemplateSettings.ColumnHeaders[1],
-                _ => _exerciseScoreTemplateSettings.ColumnHeaders[2]
+                1 => _examScoreTemplateSettings.ColumnHeaders[0],
+                2 => _examScoreTemplateSettings.ColumnHeaders[1],
+                _ => _examScoreTemplateSettings.ColumnHeaders[2]
             };
     
             var actualHeader = worksheet.Cell(1, i).GetString().Trim();

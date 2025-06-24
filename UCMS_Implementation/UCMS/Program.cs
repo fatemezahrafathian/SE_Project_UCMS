@@ -102,6 +102,9 @@ builder.Services.Configure<ExerciseScoreTemplateSettings>(
 builder.Services.Configure<PhaseScoreTemplateSettings>(
     builder.Configuration.GetSection("PhaseScoreTemplateSettings"));
 
+builder.Services.Configure<ExamScoreTemplateSettings>(
+    builder.Configuration.GetSection("ExamScoreTemplateSettings"));
+
 builder.Services.Configure<ScoresSetting>(
     builder.Configuration.GetSection("ScoresSetting"));
 

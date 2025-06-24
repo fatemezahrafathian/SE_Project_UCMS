@@ -167,7 +167,9 @@ public class ExerciseSubmissionService: IExerciseSubmissionService
         var filePaths = submissions
             .Select(s => s.FilePath)
             .ToList();
-        
+        // name each phaseSubmission file to team name:  exerciseSubmission.Student.User.LastName + " " + exerciseSubmission.Student.User.FirstName
+        // name zip file to the name of phase: exercise.Title
+
         var zipFile = await _fileService.ZipFiles(filePaths);
         if (zipFile==null)
         {

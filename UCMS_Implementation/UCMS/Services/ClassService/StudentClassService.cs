@@ -289,7 +289,8 @@ public class StudentClassService: IStudentClassService
                 FullName = classStudent.Student.User.LastName + " " + classStudent.Student.User.FirstName,
                 StudentNumber = classStudent.Student.StudentNumber ?? ""
             };
-            
+
+            double total = 0;
             foreach (var project in cls.Projects)
             {
                 foreach (var phase in project.Phases)
@@ -308,6 +309,7 @@ public class StudentClassService: IStudentClassService
                     {
                         var score = (double) studentTeamPhase.Score * (double)phase.PortionInTotalScore / phase.PhaseScore;
                         getClassStudentScoresDto.Scores.Add(Double.Round(score, 2));
+                        total += score;
                     }
 
                     if (firstTime)
@@ -338,6 +340,7 @@ public class StudentClassService: IStudentClassService
                 {
                     var score = (double) exerciseSubmission.Score * (double) exercise.PortionInTotalScore / exercise.ExerciseScore;
                     getClassStudentScoresDto.Scores.Add(Double.Round(score, 2));
+                    total += score;
                 }
 
                 if (firstTime)
@@ -366,7 +369,8 @@ public class StudentClassService: IStudentClassService
                 else
                 {
                     var score = (double) studentExam.Score * (double) exam.PortionInTotalScore / exam.ExamScore;
-                    getClassStudentScoresDto.Scores.Add(Double.Round(score, 2));
+                    getClassStudentScoresDto.Scores.Add(double.Round(score, 2));
+                    total += score;
                 }
                 
                 if (firstTime)
@@ -379,6 +383,8 @@ public class StudentClassService: IStudentClassService
                     });
                 }
             }
+
+            getClassStudentScoresDto.total = double.Round(total, 2);
 
             firstTime = false;
             getClassStudentsScoresDto.ClassStudentScoresDtos.Add(getClassStudentScoresDto);
@@ -412,6 +418,7 @@ public class StudentClassService: IStudentClassService
         int rowCounter = 2;
         int colCounter = 1;
         int headerCounter = 3;
+        double total = 0;
         foreach (var classStudent in cls.ClassStudents)
         {
             worksheet.Cell(rowCounter, colCounter++).Value = classStudent.Student.User.LastName + " " + classStudent.Student.User.FirstName;
@@ -435,6 +442,7 @@ public class StudentClassService: IStudentClassService
                     {
                         var score = (double) studentTeamPhase.Score * (double) phase.PortionInTotalScore / phase.PhaseScore;
                         worksheet.Cell(rowCounter, colCounter++).Value = Double.Round(score, 2);
+                        total += score;
                     }
 
                     if (rowCounter==2)
@@ -460,6 +468,7 @@ public class StudentClassService: IStudentClassService
                 {
                     var score = (double) exerciseSubmission.Score * (double) exercise.PortionInTotalScore / exercise.ExerciseScore;
                     worksheet.Cell(rowCounter, colCounter++).Value = Double.Round(score, 2);
+                    total += score;
                 }
 
                 if (rowCounter==2)
@@ -484,6 +493,7 @@ public class StudentClassService: IStudentClassService
                 {
                     var score = (double) studentExam.Score * (double) exam.PortionInTotalScore / exam.ExamScore;
                     worksheet.Cell(rowCounter, colCounter++).Value = Double.Round(score, 2);
+                    total += score;
                 }
                 
                 if (rowCounter==2)
@@ -491,6 +501,12 @@ public class StudentClassService: IStudentClassService
                     worksheet.Cell(1, headerCounter++).Value = exam.Title;
                 }
             }
+
+            if (rowCounter==2)
+            {
+                worksheet.Cell(1, headerCounter++).Value = _scoresSetting.ColumnHeaders[2];
+            }
+            worksheet.Cell(rowCounter, colCounter).Value = double.Round(total, 2);
 
             rowCounter++;
             colCounter = 1;

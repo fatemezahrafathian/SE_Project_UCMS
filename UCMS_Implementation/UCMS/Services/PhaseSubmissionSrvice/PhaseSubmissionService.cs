@@ -169,6 +169,8 @@ public class PhaseSubmissionService: IPhaseSubmissionService
             .Select(s => s.FilePath)
             .ToList();
 
+        // name each phaseSubmission file to team name:  phaseSubmission.StudentTeamPhase.StudentTeam.Team.Name
+        // name zip file to the name of phase: phase.Title
         var zipFile = await _fileService.ZipFiles(filePaths);
         if (zipFile==null)
         {

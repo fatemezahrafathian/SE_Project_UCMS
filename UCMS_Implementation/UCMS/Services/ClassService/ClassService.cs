@@ -254,15 +254,7 @@ public class ClassService: IClassService
         {
             return ServiceResponseFactory.Failure<string>(Messages.ClassCantBeAccessed);
         }
-
-        var validator = new UpdateClassEntriesDtoDtoValidator();
-        var result = await validator.ValidateAsync(dto);
-        if (!result.IsValid)
-        {
-            var errorMessage = result.Errors.First().ErrorMessage;
-            return ServiceResponseFactory.Failure<string>(errorMessage);
-        }
-
+        
         var entriesList = new List<(int Id, EntryType Type)>();
         entriesList.AddRange(
             cls.Projects.SelectMany(p => p.Phases)
@@ -285,7 +277,15 @@ public class ClassService: IClassService
         {
             return ServiceResponseFactory.Failure<string>(Messages.EntriesMismatchWithClassEntries);
         }
-        
+
+        var validator = new UpdateClassEntriesDtoDtoValidator();
+        var result = await validator.ValidateAsync(dto);
+        if (!result.IsValid)
+        {
+            var errorMessage = result.Errors.First().ErrorMessage;
+            return ServiceResponseFactory.Failure<string>(errorMessage);
+        }
+
         foreach (var entry in dto.EntryDtos)
         {
             switch (entry.EntryType)
