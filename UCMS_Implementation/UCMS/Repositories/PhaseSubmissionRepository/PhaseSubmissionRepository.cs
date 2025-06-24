@@ -99,7 +99,11 @@ public class PhaseSubmissionRepository: IPhaseSubmissionRepository
     public async Task<List<PhaseSubmission>> GetPhaseSubmissionsAsync(int phaseId)
     {
         return await _context.PhaseSubmissions
-            .Where(ps => ps.StudentTeamPhase.PhaseId == phaseId && ps.IsFinal).ToListAsync();
+            .Where(ps => ps.StudentTeamPhase.PhaseId == phaseId && ps.IsFinal)
+            .Include(ps=>ps.StudentTeamPhase)
+            .ThenInclude(p=>p.StudentTeam)
+            .ThenInclude(st=>st.Team)
+            .ToListAsync();
     }
 
     public async Task<PhaseSubmission?> GetFinalPhaseSubmissionsAsync(int teamId, int phaseId)

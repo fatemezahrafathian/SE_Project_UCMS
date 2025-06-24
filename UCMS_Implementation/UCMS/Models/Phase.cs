@@ -28,4 +28,5 @@ public class Phase
     [ForeignKey("ProjectId")]
     public Project Project { get; set; }
     public ICollection<StudentTeamPhase> StudentTeamPhases { get; set; } = new List<StudentTeamPhase>();
+    public double? PortionInTotalScore { get; set; }
 }

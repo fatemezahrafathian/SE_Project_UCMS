@@ -146,6 +146,17 @@ public class PhaseService:IPhaseService
         newPhase.PhaseFilePath = filePath;
         await _repository.AddAsync(newPhase);
 
+
+//         var teams = await _teamRepository.GetTeamsWithRelationsByProjectIdAsync(newPhase.ProjectId); // to be done on active teams
+//         var newStudentTeamPhases = (
+//             from team in teams 
+//             from stdTeam in team.StudentTeams 
+//             select new StudentTeamPhase() 
+//                 {StudentTeamId = stdTeam.Id, 
+//                     PhaseId = newPhase.Id
+//                 }).ToList();
+        
+
         // Attach phase to all student teams
         // var newStudentTeamPhases = new List<StudentTeamPhase>();
         // var teams = await _teamRepository.GetTeamsWithRelationsByProjectIdAsync(newPhase.ProjectId);
@@ -175,7 +186,6 @@ public class PhaseService:IPhaseService
                 });
             }
         }
-
 
         await _studentTeamPhaseRepository.AddRangeStudentTeamPhaseAsync(newStudentTeamPhases);
 

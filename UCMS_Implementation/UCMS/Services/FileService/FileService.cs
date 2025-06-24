@@ -59,7 +59,7 @@ public class FileService: IFileService
 
     public bool IsValidExtension(IFormFile file, string validExtensions)
     {
-        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+        var extension = Path.GetExtension(file.FileName).Remove(0, 1).ToLowerInvariant();
         var allowedExtensions = validExtensions
             .Split(',', StringSplitOptions.RemoveEmptyEntries)
             .Select(e => e.Trim().ToLowerInvariant());
@@ -116,20 +116,19 @@ public class FileService: IFileService
     }
 
 
-    public async Task<FileDownloadDto?> ZipFiles(List<string> relativePaths)
+    public async Task<FileDownloadDto?> ZipFiles(Dictionary<string, string> namedFilePaths, string zipFileName)
     {
         var fileList = new List<(byte[] FileContent, string FileName)>();
 
-        foreach (var relativePath in relativePaths)
+        foreach (var relativePath in namedFilePaths)
         {
-            var fullPath = Path.Combine(_env.WebRootPath, relativePath.TrimStart('/'));
+            var fullPath = Path.Combine(_env.WebRootPath, relativePath.Value.TrimStart('/'));
             
             if (!File.Exists(fullPath))
                 continue;
 
             var fileBytes = await File.ReadAllBytesAsync(fullPath);
-            var fileName = Path.GetFileName(fullPath);
-            fileList.Add((fileBytes, fileName));
+            fileList.Add((fileBytes, relativePath.Key));
         }
 
         if (!fileList.Any())
@@ -143,7 +142,7 @@ public class FileService: IFileService
         {
             FileBytes = zipBytes,
             ContentType = "application/zip",
-            FileName = $"files_{DateTime.Now:yyyyMMdd_HHmmss}.zip"
+            FileName = $"{zipFileName}.zip"
         };
     }
 

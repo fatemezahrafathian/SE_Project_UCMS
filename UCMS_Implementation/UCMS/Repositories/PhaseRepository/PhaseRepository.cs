@@ -44,7 +44,7 @@ public class PhaseRepository:IPhaseRepository
             .ThenInclude(s=>s.User)
             .FirstOrDefaultAsync();
     }
-
+    
     public async Task<List<Phase>> GetPhasesByProjectIdAsync(int projectId)
     {
         return await _context.Phases

@@ -23,28 +23,28 @@ public class ExamRepository:IExamRepository
             .Include(p => p.Class)
             .FirstOrDefaultAsync(p => p.Id == examId);
     }
+
+    public async Task<Exam?> GetExamWithClassRelationsByIdAsync(int examId)
+    {
+        return await _context.Exams
+            .Where(e => e.Id == examId)
+            .Include(e=>e.Class)
+            .ThenInclude(c=>c.ClassStudents)
+            .ThenInclude(cs=>cs.Student)
+            .ThenInclude(cs=>cs.User)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<List<Exam>> GetExamsByClassIdAsync(int classId)
     {
         return await _context.Exams
             .Where(p => p.ClassId == classId)
             .ToListAsync();
     }
-
-    public async Task<StudentExam?> GetStudentExamsByStudentNumberAsync(int examId, string studentNumber)
-    {
-        return await _context.StudentExams.FirstOrDefaultAsync(se =>
-            se.ExamId == examId && se.Student.StudentNumber == studentNumber);
-    }
-
+    
     public async Task UpdateAsync(Exam exam)
     {
         _context.Exams.Update(exam);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task UpdateRangeStudentExamAsync(List<StudentExam> studentExams)
-    {
-        _context.StudentExams.UpdateRange(studentExams);
         await _context.SaveChangesAsync();
     }
 
@@ -53,6 +53,7 @@ public class ExamRepository:IExamRepository
         return await _context.Exams
             .AnyAsync(p => p.Title == title && p.ClassId == classId && p.Id != examIdToExclude);
     }
+    
     public async Task DeleteAsync(Exam exam)
     {
         _context.Exams.Remove(exam);

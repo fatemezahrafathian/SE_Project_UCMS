@@ -65,6 +65,18 @@ public class ClassesController : ControllerBase
     }
 
     [RoleBasedAuthorization("Instructor")]
+    [HttpGet("{classId}/entries")]
+    public async Task<IActionResult> GetClassEntries(int classId)
+    {
+        var response = await _classService.GetClassEntries(classId);
+        
+        if (!response.Success)
+            return BadRequest(response);
+    
+        return Ok(response);
+    }
+
+    [RoleBasedAuthorization("Instructor")]
     [HttpDelete("{classId}")]
     public async Task<IActionResult> DeleteClass(int classId)
     {
@@ -86,6 +98,18 @@ public class ClassesController : ControllerBase
             return NotFound(response.Message);
 
         return Ok(response.Message);
+    }
+
+    [RoleBasedAuthorization("Instructor")]
+    [HttpPatch("{classId}/entries")]
+    public async Task<IActionResult> UpdateClassEntries(int classId,  UpdateClassEntriesDto dto) // remove from form
+    {
+        var response = await _classService.UpdateClassEntries(classId, dto);
+        
+        if (!response.Success)
+            return BadRequest(response);
+    
+        return Ok(response);
     }
 
     // [HttpPost("test{userId}")]

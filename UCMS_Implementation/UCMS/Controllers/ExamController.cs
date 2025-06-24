@@ -116,16 +116,4 @@ public class ExamController:ControllerBase
         return Ok(response.Data);
     }
     
-    [RoleBasedAuthorization("Instructor")]
-    [HttpPatch("{examId}/scores")]
-    public async Task<IActionResult> UpdateExerciseSubmissionScores(int examId, [FromForm] IFormFile scoreFile)
-    {
-        var response = await _examService.UpdateExamScores(examId, scoreFile);
-        
-        if (!response.Success)
-            return BadRequest(response);
-
-        return Ok(response);
-    }
-
 }

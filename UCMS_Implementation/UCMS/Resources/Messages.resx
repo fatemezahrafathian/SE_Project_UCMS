@@ -552,9 +552,6 @@
   <data name="PhaseEndTimeCannotBeAfterProjectEndTime" xml:space="preserve">
       <value>PhaseEndTimeCannotBeAfterProjectEndTime</value>
   </data>
-  <data name="PhaseStartTimeCannotBeBeforeProjectStartTime" xml:space="preserve">
-      <value>PhaseStartTimeCannotBeBeforeProjectStartTime</value>
-  </data>
   <data name="InvalidIstructorForThisPhase" xml:space="preserve">
       <value>InvalidIstructorForThisPhase</value>
   </data>
@@ -654,9 +651,6 @@
   <data name="ExerciseSubmissionScoreUpdatedSuccessfully" xml:space="preserve">
       <value>ExerciseSubmissionScoreUpdatedSuccessfully</value>
   </data>
-  <data name="InvalidExerciseSubmission" xml:space="preserve">
-      <value>InvalidExerciseSubmission</value>
-  </data>
   <data name="ExerciseSubmissionScoresCanNotBeUpdated" xml:space="preserve">
       <value>ScoresCanNotBeCreated</value>
   </data>
@@ -687,7 +681,54 @@
   <data name="ExamScoresUpdatedSuccessfully" xml:space="preserve">
       <value>ExamScoresUpdatedSuccessfully</value>
   </data>
+
+  <data name="ClassEntriesFetchedSuccessfully" xml:space="preserve">
+      <value>ClassEntriesFetchedSuccessfully</value>
+  </data>
+  <data name="ClassEntriesUpdatedSuccessfully" xml:space="preserve">
+      <value>ClassEntriesUpdatedSuccessfully</value>
+  </data>
+  <data name="ClassesStudentsScoresFetchedSuccessfully" xml:space="preserve">
+      <value>ClassesStudentsScoresFetchedSuccessfully</value>
+  </data>
+  <data name="ClassesStudentsScoresFileGeneratedSuccessfully" xml:space="preserve">
+      <value>ClassesStudentsScoresFileGeneratedSuccessfully</value>
+  </data>
+  <data name="StudentClassesScoresfetchedSuccessfully" xml:space="preserve">
+      <value>StudentClassesScoresGeneratedSuccessfully</value>
+  </data>
+  <data name="StudentClassScoresFetcehedSuccessfully" xml:space="preserve">
+      <value>StudentClassScoresFetcehedSuccessfully</value>
+  </data>
+  <data name="PhaseStartTimeCannotBeBeforeProjectStartTime" xml:space="preserve">
+      <value>PhaseStartTimeCannotBeBeforeProjectStartTime</value>
+  </data>
+  <data name="PortionInTotalScoreMustBeSetFirst" xml:space="preserve">
+      <value>PortionInTotalScoreMustBeSetFirst</value>
+  </data>
+  <data name="InvalidEntryType" xml:space="preserve">
+      <value>InvalidEntryType</value>
+  </data>
+  <data name="EntryDtosMustNotBeNull" xml:space="preserve">
+      <value>EntryDtosMustNotBeNull</value>
+  </data>
+  <data name="InvalidPortionInTotalScore" xml:space="preserve">
+      <value>InvalidPortionInTotalScore</value>
+  </data>
+  <data name="InvalidTotalScore" xml:space="preserve">
+      <value>InvalidTotalScore</value>
+  </data>
+  <data name="SumOfPortionInTotalScoreMustBeEqualToTotalScore" xml:space="preserve">
+      <value>SumOfPortionInTotalScoreMustBeEqualToTotalScore</value>
+  </data>
+  <data name="EntriesMismatchWithClassEntries" xml:space="preserve">
+      <value>EntriesMismatchWithClassEntries</value>
+  </data>
+  <data name="NoClassFound" xml:space="preserve">
+      <value>NoClassFound</value>
+
   <data name="InvalidInstructorForThisClass" xml:space="preserve">
       <value>InvalidInstructorForThisClass</value>
+
   </data>
 </root>

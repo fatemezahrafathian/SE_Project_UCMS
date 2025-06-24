@@ -37,7 +37,11 @@ public class ExerciseSubmissionRepository: IExerciseSubmissionRepository
 
     public async Task<List<ExerciseSubmission>> GetExerciseSubmissionsAsync(int exerciseId)
     {
-        return await _context.ExerciseSubmissions.Where(es => es.ExerciseId == exerciseId && es.IsFinal).ToListAsync();
+        return await _context.ExerciseSubmissions
+            .Where(es => es.ExerciseId == exerciseId && es.IsFinal)
+            .Include(es=>es.Student)
+            .ThenInclude(s=>s.User)
+            .ToListAsync();
     }
 
     public async Task<List<ExerciseSubmission>> GetExerciseSubmissionsForInstructorByExerciseIdAsync(int exerciseId,

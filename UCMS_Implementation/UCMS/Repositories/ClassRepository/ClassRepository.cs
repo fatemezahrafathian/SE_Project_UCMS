@@ -45,7 +45,92 @@ public class ClassRepository: IClassRepository
             .Include(c => c.Schedules)
             .FirstOrDefaultAsync();
     }
+
+    public async Task<Class?> GetClassWithEntriesAsync(int classId)
+    {
+        return await _context.Classes.Where(c => c.Id == classId)
+            .Include(c => c.Projects)
+            .ThenInclude(p => p.Phases)
+            .Include(c => c.Exercises)
+            .Include(c => c.Exams)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<List<Class>> FilterStudentClassesWithRelations(int studentId, string? title)
+    {
+        var query = GetClassesWithRelations(studentId);
+        if (!string.IsNullOrWhiteSpace(title))
+            query = FilterClassesByTitle(query, title);
+
+        return await query.ToListAsync();
+    }
     
+    private IQueryable<Class> GetClassesWithRelations(int studentId)
+    {
+        return _context.Classes
+            .Where(c =>
+                _context.ClassStudents.Any(cs => cs.ClassId == c.Id && cs.StudentId == studentId))
+            .Include(c => c.Projects)
+            .ThenInclude(p => p.Phases)
+            .Include(c => c.Exercises)
+            .Include(c => c.Exams)
+            .OrderBy(c => c.Title);
+
+    }
+    
+    public async Task<Class?> GetClassWithRelationsAsync(int studentId, int classId)
+    {
+        return await _context.Classes.Where(c=>c.Id==classId && _context.ClassStudents
+                .Any(cs => cs.ClassId == c.Id && cs.StudentId == studentId))
+            .Include(c=>c.ClassStudents)
+            .ThenInclude(cs=>cs.Student)
+            .ThenInclude(s=>s.User)
+            .Include(c => c.Projects)
+            .ThenInclude(p => p.Phases)
+            .Include(c => c.Exercises)
+            .Include(c => c.Exams)
+            .FirstOrDefaultAsync();
+    }
+
+    public async Task<Class?> FilterClassStudentsWithRelations(int classId, string? fullName, string? studentNumber)
+    {
+        var cls = await GetClassWithRelations(classId);
+        if (cls == null) return cls;
+        if (!string.IsNullOrWhiteSpace(fullName))
+            cls.ClassStudents = cls.ClassStudents
+                .Where(cs =>
+                    cs.Student.User.LastName != null &&
+                    cs.Student.User.FirstName != null &&
+                    (cs.Student.User.LastName + " " + cs.Student.User.FirstName)
+                    .Contains(fullName))
+                .ToList();
+
+        if (!string.IsNullOrWhiteSpace(studentNumber))
+            cls.ClassStudents = cls.ClassStudents
+                .Where(cs => cs.Student.StudentNumber != null && cs.Student.StudentNumber
+                    .Contains(studentNumber))
+                .ToList();
+
+        cls.ClassStudents = cls.ClassStudents.OrderBy(cs => cs.Student.User.LastName + " " + cs.Student.User.FirstName).ToList();
+        return cls;
+
+    }
+    
+    private async Task<Class?> GetClassWithRelations(int classId)
+    {
+        return await _context.Classes
+            .Where(c => c.Id == classId)
+            .Include(c => c.ClassStudents)
+            .ThenInclude(cs => cs.Student)
+            .ThenInclude(s => s.User)
+            .Include(c => c.Projects)
+            .ThenInclude(p => p.Phases)
+            .Include(c => c.Exercises)
+            .Include(c => c.Exams)
+            .FirstOrDefaultAsync();
+
+    }
+
     public async Task DeleteClassAsync(Class cls)
     {
         _context.Classes.Remove(cls);

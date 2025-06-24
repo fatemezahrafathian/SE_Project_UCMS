@@ -84,4 +84,53 @@ public class StudentClassController: ControllerBase
 
         return Ok(response.Data);
     }
+    
+    [RoleBasedAuthorization("Instructor")]
+    [HttpGet("{classId}/students/scores")]
+    public async Task<IActionResult> GetClassStudentsScores(int classId, [FromQuery] FilterClassStudentsScoresDto dto)
+    {
+        var response = await _studentClassService.GetClassStudentsScores(classId, dto);
+        
+        if (!response.Success)
+            return BadRequest(response);
+    
+        return Ok(response);
+    }
+    
+    [RoleBasedAuthorization("Instructor")]
+    [HttpGet("{classId}/students/scores/export")]
+    public async Task<IActionResult> GetClassStudentsScoresFile(int classId)
+    {
+        var response = await _studentClassService.GetClassStudentsScoresFile(classId);
+        
+        if (!response.Success)
+            return BadRequest(response);
+    
+        return File(response.Data.FileBytes, response.Data.ContentType, response.Data.FileName);
+    }
+    
+    [RoleBasedAuthorization("Student")]
+    [HttpGet("scores")]
+    public async Task<IActionResult> GetStudentClassesScores([FromQuery] FilterStudentClassesScoresDto dto)
+    {
+        var response = await _studentClassService.GetStudentClassesScores(dto);
+        
+        if (!response.Success)
+            return BadRequest(response);
+    
+        return Ok(response);
+    }
+    
+    [RoleBasedAuthorization("Student")]
+    [HttpGet("{classId}/scores")]
+    public async Task<IActionResult> GetStudentClassScores(int classId)
+    {
+        var response = await _studentClassService.GetStudentClassScores(classId);
+        
+        if (!response.Success)
+            return BadRequest(response);
+    
+        return Ok(response);
+    }
+
 }

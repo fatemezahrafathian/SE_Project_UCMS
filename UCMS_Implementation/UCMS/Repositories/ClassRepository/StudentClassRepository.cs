@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using UCMS.Data;
 using UCMS.Models;
 using UCMS.Repositories.ClassRepository.Abstraction;
@@ -51,6 +52,13 @@ public class StudentClassRepository: IStudentClassRepository
             .Select(cs => cs.Student)
             .ToListAsync();
     }
+
+    public async Task<List<ClassStudent>> GetStudentClassesByClassIdAsync(int classId)
+    {
+        return await _context.ClassStudents.Where(cs => cs.ClassId == classId)
+            .ToListAsync();
+    }
+
     public IQueryable<Class> FilterStudentClassesByStudentIdAsync(int studentId, string? title, bool? isActive)
     {
         var baseQuery = GetClassesByStudentId(studentId);
@@ -70,13 +78,6 @@ public class StudentClassRepository: IStudentClassRepository
             .Select(cs => cs.Student.StudentNumber)
             .Distinct()
             .ToListAsync();
-    }
-
-    public async Task<bool> AreStudentsInClassAsync(List<int> studentIds, int classId)
-    {
-        return await _context.ClassStudents
-            .Where(cs => cs.ClassId == classId && studentIds.Contains(cs.Student.Id))
-            .AnyAsync();
     }
     
     private IQueryable<Class> GetClassesByStudentId(int studentId)

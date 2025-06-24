@@ -56,4 +56,7 @@ public class Class
     
     public ICollection<Project> Projects { get; set; }
     public ICollection<Exercise> Exercises { get; set; }
+    public ICollection<Exam> Exams { get; set; }
+    public double? TotalScore { get; set; }
+
 }

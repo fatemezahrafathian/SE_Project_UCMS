@@ -13,5 +13,8 @@ public interface IStudentClassService
     Task<int> GetStudentClassCount(int classId);
     Task<ServiceResponse<GetClassForStudentDto>> GetClassForStudent(int classId);
     Task<ServiceResponse<GetClassPageForStudentDto>> GetClassesForStudent(PaginatedFilterClassForStudentDto dto);
-
+    Task<ServiceResponse<GetClassStudentsScoresDto>> GetClassStudentsScores(int classId, FilterClassStudentsScoresDto dto);
+    Task<ServiceResponse<FileDownloadDto>> GetClassStudentsScoresFile(int classId);
+    Task<ServiceResponse<List<GetStudentClassScoreDto>>> GetStudentClassesScores(FilterStudentClassesScoresDto dto);
+    Task<ServiceResponse<List<GetStudentClassEntityScoreDto>>> GetStudentClassScores(int classId);
 }

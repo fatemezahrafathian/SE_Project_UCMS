@@ -195,11 +195,47 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ClassEntriesFetchedSuccessfully.
+        /// </summary>
+        public static string ClassEntriesFetchedSuccessfully {
+            get {
+                return ResourceManager.GetString("ClassEntriesFetchedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ClassEntriesUpdatedSuccessfully.
+        /// </summary>
+        public static string ClassEntriesUpdatedSuccessfully {
+            get {
+                return ResourceManager.GetString("ClassEntriesUpdatedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Classes retrieved successfully..
         /// </summary>
         public static string ClassesRetrievedSuccessfully {
             get {
                 return ResourceManager.GetString("ClassesRetrievedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ClassesStudentsScoresFetchedSuccessfully.
+        /// </summary>
+        public static string ClassesStudentsScoresFetchedSuccessfully {
+            get {
+                return ResourceManager.GetString("ClassesStudentsScoresFetchedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ClassesStudentsScoresFileGeneratedSuccessfully.
+        /// </summary>
+        public static string ClassesStudentsScoresFileGeneratedSuccessfully {
+            get {
+                return ResourceManager.GetString("ClassesStudentsScoresFileGeneratedSuccessfully", resourceCulture);
             }
         }
         
@@ -317,6 +353,24 @@ namespace UCMS.Resources {
         public static string EndDateCanNotBeInPast {
             get {
                 return ResourceManager.GetString("EndDateCanNotBeInPast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to EntriesMismatchWithClassEntries.
+        /// </summary>
+        public static string EntriesMismatchWithClassEntries {
+            get {
+                return ResourceManager.GetString("EntriesMismatchWithClassEntries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to EntryDtosMustNotBeNull.
+        /// </summary>
+        public static string EntryDtosMustNotBeNull {
+            get {
+                return ResourceManager.GetString("EntryDtosMustNotBeNull", resourceCulture);
             }
         }
         
@@ -726,11 +780,11 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to InvalidExerciseSubmission.
+        ///   Looks up a localized string similar to InvalidEntryType.
         /// </summary>
-        public static string InvalidExerciseSubmission {
+        public static string InvalidEntryType {
             get {
-                return ResourceManager.GetString("InvalidExerciseSubmission", resourceCulture);
+                return ResourceManager.GetString("InvalidEntryType", resourceCulture);
             }
         }
         
@@ -807,6 +861,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to InvalidPortionInTotalScore.
+        /// </summary>
+        public static string InvalidPortionInTotalScore {
+            get {
+                return ResourceManager.GetString("InvalidPortionInTotalScore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to InvalidProjectForThisClass.
         /// </summary>
         public static string InvalidProjectForThisClass {
@@ -866,6 +929,15 @@ namespace UCMS.Resources {
         public static string InvalidToken {
             get {
                 return ResourceManager.GetString("InvalidToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to InvalidTotalScore.
+        /// </summary>
+        public static string InvalidTotalScore {
+            get {
+                return ResourceManager.GetString("InvalidTotalScore", resourceCulture);
             }
         }
         
@@ -947,6 +1019,15 @@ namespace UCMS.Resources {
         public static string MustSpecifyNewLeaderWhenDeletingCurrentLeader {
             get {
                 return ResourceManager.GetString("MustSpecifyNewLeaderWhenDeletingCurrentLeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NoClassFound.
+        /// </summary>
+        public static string NoClassFound {
+            get {
+                return ResourceManager.GetString("NoClassFound", resourceCulture);
             }
         }
         
@@ -1248,6 +1329,15 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to PortionInTotalScoreMustBeSetFirst.
+        /// </summary>
+        public static string PortionInTotalScoreMustBeSetFirst {
+            get {
+                return ResourceManager.GetString("PortionInTotalScoreMustBeSetFirst", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ProjectCantBeAccessed.
         /// </summary>
         public static string ProjectCantBeAccessed {
@@ -1482,6 +1572,24 @@ namespace UCMS.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to StudentClassesScoresGeneratedSuccessfully.
+        /// </summary>
+        public static string StudentClassesScoresfetchedSuccessfully {
+            get {
+                return ResourceManager.GetString("StudentClassesScoresfetchedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to StudentClassScoresFetcehedSuccessfully.
+        /// </summary>
+        public static string StudentClassScoresFetcehedSuccessfully {
+            get {
+                return ResourceManager.GetString("StudentClassScoresFetcehedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to StudentInNoTeamForThisPhase.
         /// </summary>
         public static string StudentInNoTeamForThisPhase {
@@ -1532,6 +1640,15 @@ namespace UCMS.Resources {
         public static string StudentTeamPhasesFetchedSuccessfully {
             get {
                 return ResourceManager.GetString("StudentTeamPhasesFetchedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SumOfPortionInTotalScoreMustBeEqualToTotalScore.
+        /// </summary>
+        public static string SumOfPortionInTotalScoreMustBeEqualToTotalScore {
+            get {
+                return ResourceManager.GetString("SumOfPortionInTotalScoreMustBeEqualToTotalScore", resourceCulture);
             }
         }
         
