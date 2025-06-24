@@ -726,9 +726,8 @@
   </data>
   <data name="NoClassFound" xml:space="preserve">
       <value>NoClassFound</value>
-
+   </data>
   <data name="InvalidInstructorForThisClass" xml:space="preserve">
       <value>InvalidInstructorForThisClass</value>
-
   </data>
 </root>

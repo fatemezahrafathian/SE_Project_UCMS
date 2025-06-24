@@ -6,6 +6,7 @@ using UCMS.DTOs.ExamDto;
 using UCMS.Models;
 using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Repositories.ExamRepository.Abstraction;
+using UCMS.Repositories.StudentExamRepository.Abstraction;
 using UCMS.Repositories.StudentRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.ExamService;
@@ -23,6 +24,7 @@ public class ExamServiceTest
     private readonly Mock<IStudentClassRepository> _studentClassRepositoryMock = new();
     private readonly Mock<IClassRepository> _classRepositoryMock = new();
     private readonly Mock<IOptions<ExerciseScoreTemplateSettings>> _templateSettingsOptionsMock = new();
+    private readonly Mock<IStudentExamRepository> _studentExamRepository = new();
     private readonly ITestOutputHelper _output;
 
     public ExamServiceTest( ITestOutputHelper output)
@@ -34,7 +36,7 @@ public class ExamServiceTest
             _httpContextMock.Object,
             _classRepositoryMock.Object,
             _studentClassRepositoryMock.Object,
-            _templateSettingsOptionsMock.Object
+            _studentExamRepository.Object
         );
         _output = output;
     }
@@ -142,6 +144,18 @@ public class ExamServiceTest
         _examRepositoryMock.Setup(x => x.AddAsync(It.IsAny<Exam>())).Returns(Task.CompletedTask);
         _mapperMock.Setup(m => m.Map<Exam>(dto)).Returns(new Exam());
         _mapperMock.Setup(m => m.Map<GetExamForInstructorDto>(It.IsAny<Exam>())).Returns(new GetExamForInstructorDto());
+        _studentClassRepositoryMock
+            .Setup(x => x.GetStudentClassesByClassIdAsync(It.IsAny<int>()))
+            .ReturnsAsync(new List<ClassStudent>
+            {
+                new ClassStudent { StudentId = 1 }, 
+                new ClassStudent { StudentId = 2 }
+            });
+
+        _studentExamRepository
+            .Setup(x => x.AddRangeStudentExamAsync(It.IsAny<List<StudentExam>>()))
+            .Returns(Task.CompletedTask);
+
 
         var result = await _service.CreateExamAsync(1, dto);
 
