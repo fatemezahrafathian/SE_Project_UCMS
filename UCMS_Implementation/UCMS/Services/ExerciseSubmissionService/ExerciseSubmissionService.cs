@@ -148,37 +148,36 @@ public class ExerciseSubmissionService: IExerciseSubmissionService
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
         var exercise = await _exerciseRepository.GetExerciseByIdAsync(exerciseId);
-        if (exercise==null)
+        if (exercise == null)
         {
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.ExerciseNotFound);
         }
-        
-        if (exercise.Class.InstructorId!=user!.Instructor!.Id)
+
+        if (exercise.Class.InstructorId != user!.Instructor!.Id)
         {
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.CanNotaccessExercise);
         }
-        
+
         var submissions = await _exerciseSubmissionRepository.GetExerciseSubmissionsAsync(exerciseId);
         if (submissions.Count == 0)
         {
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.NoExerciseSubmissionFound);
         }
-        
-        var filePaths = submissions
-            .Select(s => s.FilePath)
-            .ToList();
-        // name each phaseSubmission file to team name:  exerciseSubmission.Student.User.LastName + " " + exerciseSubmission.Student.User.FirstName
-        // name zip file to the name of phase: exercise.Title
 
-        var zipFile = await _fileService.ZipFiles(filePaths);
-        if (zipFile==null)
+        var namedFilePaths = submissions.ToDictionary(
+            s => $"{s.Student.User.LastName} {s.Student.User.FirstName}-{s.Student.StudentNumber}{Path.GetExtension(s.FilePath)}",
+            s => s.FilePath
+        );
+
+        var zipFile = await _fileService.ZipFiles(namedFilePaths, $"{exercise.Title}-submissions");
+        if (zipFile == null)
         {
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileDoesNotExist);
         }
 
         return ServiceResponseFactory.Success(zipFile, Messages.ExerciseSubmissionFilesFetchedSuccessfully);
-        
     }
+
 
     public async Task<ServiceResponse<List<GetExerciseSubmissionPreviewForInstructorDto>>> GetExerciseSubmissionsForInstructor(SortExerciseSubmissionsForInstructorDto dto)
     {

@@ -165,14 +165,13 @@ public class PhaseSubmissionService: IPhaseSubmissionService
 
         var phaseSubmissions = await _phaseSubmissionRepository.GetPhaseSubmissionsAsync(phaseId);
 
-        var filePaths = phaseSubmissions
-            .Select(s => s.FilePath)
-            .ToList();
+        var namedFilePaths = phaseSubmissions.ToDictionary(
+            s => $"{s.StudentTeamPhase.StudentTeam.Team.Name}-{Path.GetExtension(s.FilePath)}",
+            s => s.FilePath
+        );
 
-        // name each phaseSubmission file to team name:  phaseSubmission.StudentTeamPhase.StudentTeam.Team.Name
-        // name zip file to the name of phase: phase.Title
-        var zipFile = await _fileService.ZipFiles(filePaths);
-        if (zipFile==null)
+        var zipFile = await _fileService.ZipFiles(namedFilePaths, $"{phase.Title}-submissions");
+        if (zipFile == null)
         {
             return ServiceResponseFactory.Failure<FileDownloadDto>(Messages.FileDoesNotExist);
         }
