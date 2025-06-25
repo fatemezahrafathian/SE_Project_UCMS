@@ -281,8 +281,6 @@ public class ProjectRepositoryTests
         Assert.NotNull(result);
         Assert.NotNull(result.Class);
         Assert.Equivalent(cls, result.Class);
-        // Assert.NotEmpty(result.Class.ClassStudents);
-        // Assert.Equal(1, result.Class.ClassStudents.First().StudentId);
     }
 
     [Fact]

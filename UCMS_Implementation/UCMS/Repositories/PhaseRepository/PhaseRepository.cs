@@ -25,7 +25,7 @@ public class PhaseRepository:IPhaseRepository
             .FirstOrDefaultAsync(p => p.Id == phaseId);
     }
 
-    public async Task<Phase?> GetPhaseSimpleByIdAsync(int phaseId)
+    public async Task<Phase?> GetPhaseWithTeamRelationsByIdAsync(int phaseId)
     {
         return await _context.Phases.Where(p => p.Id == phaseId)
             .Include(p=>p.StudentTeamPhases)
@@ -34,7 +34,7 @@ public class PhaseRepository:IPhaseRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<Phase?> GetPhaseWithRelationsByIdAsync(int phaseId)
+    public async Task<Phase?> GetPhaseWithClassStudentRelationsByIdAsync(int phaseId)
     {
         return await _context.Phases.Where(p => p.Id == phaseId)
             .Include(p => p.Project)
@@ -53,8 +53,12 @@ public class PhaseRepository:IPhaseRepository
     }
     public async Task UpdateAsync(Phase phase)
     {
-        _context.Phases.Update(phase);
-        await _context.SaveChangesAsync();
+        var existingPhases = await _context.Phases.FindAsync(phase.Id);
+        if (existingPhases != null)
+        {
+            _context.Phases.Update(phase);
+            await _context.SaveChangesAsync();
+        }
     }
     public async Task<bool> ExistsWithTitleExceptIdAsync(string title, int projectId, int phaseIdToExclude)
     {
@@ -63,8 +67,12 @@ public class PhaseRepository:IPhaseRepository
     }
     public async Task DeleteAsync(Phase phase)
     {
-        _context.Phases.Remove(phase);
-        await _context.SaveChangesAsync();
+        var existingPhase = await _context.Phases.FindAsync(phase.Id);
+        if (existingPhase != null)
+        {
+            _context.Phases.Remove(existingPhase);
+            await _context.SaveChangesAsync();
+        }
     }
     public async Task<List<Phase>> GetPhasesCloseDeadLines(DateTime lowerBound, DateTime upperBound,CancellationToken stoppingToken)
     {
