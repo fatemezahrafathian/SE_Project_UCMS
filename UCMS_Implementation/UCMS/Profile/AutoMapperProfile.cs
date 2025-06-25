@@ -309,6 +309,7 @@ public class AutoMapperProfile : Profile
         CreateMap<CreatePhaseSubmissionDto, PhaseSubmission>();
 
         CreateMap<PhaseSubmission, GetPhaseSubmissionPreviewForInstructorDto>()
+            .ForMember(dest => dest.TeamId, opt => opt.MapFrom(src => src.StudentTeamPhase.StudentTeam.TeamId))
             .ForMember(dest => dest.TeamName, opt => opt.MapFrom(src => src.StudentTeamPhase.StudentTeam.Team.Name))
             .ForMember(dest => dest.FileType, opt => opt.Ignore());
         
