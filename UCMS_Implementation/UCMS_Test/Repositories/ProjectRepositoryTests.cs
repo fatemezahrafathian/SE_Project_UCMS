@@ -840,7 +840,6 @@ public class ProjectRepositoryTests
     {
         var context = GetInMemoryDbContext();
 
-        // کلاس با پروژه ندارد
         context.Projects.Add(new Project
         {
             Id = 10,
