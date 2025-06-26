@@ -7,7 +7,7 @@ namespace UCMS.Services.ExerciseService;
 
 public class UpdateExerciseDtoValidator:AbstractValidator<PatchExerciseDto>
 {
-    private readonly List<string> _allowedFormats = new() { ".pdf", ".zip", ".rar", ".txt" };
+    private readonly List<string> _allowedFormats = new() { "pdf", "zip", "rar", "txt" };
 
     public UpdateExerciseDtoValidator(IFileService fileService)
     {

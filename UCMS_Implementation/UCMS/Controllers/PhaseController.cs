@@ -106,7 +106,7 @@ public class PhaseController:ControllerBase
     [HttpGet("{phaseId}/downloadForStudent")]
     public async Task<IActionResult> DownloadPhaseFileForStudent(int phaseId)
     {
-        var response = await _phaseService.HandleDownloadPhaseFileForInstructorAsync(phaseId);
+        var response = await _phaseService.HandleDownloadPhaseFileForStudentAsync(phaseId);
         if (!response.Success)
             return NotFound(response.Message);
     
