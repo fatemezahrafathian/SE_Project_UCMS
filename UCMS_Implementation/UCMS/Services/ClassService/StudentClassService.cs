@@ -608,6 +608,11 @@ public class StudentClassService: IStudentClassService
                     scoreCounter += score;
                 }
             }
+            
+            if (cls.TotalScore!=null)
+            {
+                getStudentClassScoreDto.TotalScore = (double) cls.TotalScore;
+            }
 
             getStudentClassScoreDto.Score = Double.Round(scoreCounter, 2);
             result.Add(getStudentClassScoreDto);
