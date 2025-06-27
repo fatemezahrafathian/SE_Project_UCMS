@@ -659,7 +659,7 @@ public class StudentClassService: IStudentClassService
                 {
                     getStudentClassEntityScoreDto.ScoreInTotalScore = (double)studentTeamPhase.Score;
                     var score = (double) studentTeamPhase.Score * (double) phase.PortionInTotalScore / phase.PhaseScore;
-                    getStudentClassEntityScoreDto.PartialScore = Double.Round(score, 2);
+                    getStudentClassEntityScoreDto.ScoreInPartialScore = Double.Round(score, 2);
                 }
                 
                 result.Add(getStudentClassEntityScoreDto);
@@ -692,7 +692,7 @@ public class StudentClassService: IStudentClassService
             {
                 getStudentClassEntityScoreDto.ScoreInTotalScore = (double)exerciseSubmission.Score;
                 var score = (double) exerciseSubmission.Score * (double) exercise.PortionInTotalScore / exercise.ExerciseScore;
-                getStudentClassEntityScoreDto.PartialScore = Double.Round(score, 2);
+                getStudentClassEntityScoreDto.ScoreInPartialScore = Double.Round(score, 2);
             }
             
             result.Add(getStudentClassEntityScoreDto);
@@ -724,7 +724,7 @@ public class StudentClassService: IStudentClassService
             {
                 getStudentClassEntityScoreDto.ScoreInTotalScore = (double)studentExam.Score;
                 var score = (double) studentExam.Score * (double) exam.PortionInTotalScore / exam.ExamScore;
-                getStudentClassEntityScoreDto.PartialScore = Double.Round(score, 2);
+                getStudentClassEntityScoreDto.ScoreInPartialScore = Double.Round(score, 2);
             }
 
             result.Add(getStudentClassEntityScoreDto);
