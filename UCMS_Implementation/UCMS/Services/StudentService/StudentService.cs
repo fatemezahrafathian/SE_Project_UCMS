@@ -54,7 +54,7 @@ namespace UCMS.Services.StudentService
                 return new ServiceResponse<StudentProfileDto>
                 {
                     Success = false,
-                    Message = String.Format(Messages.UserNotFound, student.UserId)
+                    Message = String.Format(Messages.UserNotFound, userId)
                 };
             }
 
