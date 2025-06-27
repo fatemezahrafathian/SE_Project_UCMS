@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using UCMS.DTOs;
 using UCMS.DTOs.ClassDto;
 using UCMS.DTOs.User;
