@@ -258,6 +258,11 @@ public class PhaseSubmissionService: IPhaseSubmissionService
         var phaseSubmissions = await _phaseSubmissionRepository.GetPhaseSubmissionsForStudentByPhaseIdAsync(studentTeamPhase.StudentTeam.TeamId, dto.PhaseId, dto.SortBy, dto.SortOrder);
 
         var phaseSubmissionDtos = _mapper.Map<List<GetPhaseSubmissionPreviewForStudentDto>>(phaseSubmissions);
+
+        foreach (var studentTeamPhaseDto in phaseSubmissionDtos.Where(studentTeamPhaseDto => studentTeamPhaseDto.IsFinal))
+        {
+            studentTeamPhaseDto.Score = studentTeamPhase.Score;
+        }
         
         var submissionDict = phaseSubmissions.ToDictionary(s => s.Id, s => s.FilePath);
 
