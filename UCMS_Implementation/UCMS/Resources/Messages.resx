@@ -730,4 +730,10 @@
   <data name="InvalidInstructorForThisClass" xml:space="preserve">
       <value>InvalidInstructorForThisClass</value>
   </data>
+  <data name="StartTimeNotExceed" xml:space="preserve">
+      <value>StartTimeNotExceed</value>
+  </data>
+  <data name="EndTimeExceed" xml:space="preserve">
+      <value>EndTimeExceed</value>
+  </data>
 </root>

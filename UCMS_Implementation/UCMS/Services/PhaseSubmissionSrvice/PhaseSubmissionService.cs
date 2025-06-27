@@ -55,6 +55,16 @@ public class PhaseSubmissionService: IPhaseSubmissionService
             return ServiceResponseFactory.Failure<GetPhaseSubmissionPreviewForStudentDto>(Messages.PhaseCantBeAccessed); // StudentInNoTeamForThisPhase
         }
         
+        if (phase.StartDate > DateTime.UtcNow)
+        {
+            return ServiceResponseFactory.Failure<GetPhaseSubmissionPreviewForStudentDto>(Messages.StartTimeNotExceed);
+        }
+        
+        if (phase.EndDate < DateTime.UtcNow)
+        {
+            return ServiceResponseFactory.Failure<GetPhaseSubmissionPreviewForStudentDto>(Messages.EndTimeExceed);
+        }
+
         var validator = new CreatePhaseSubmissionDtoValidator();
         var result = await validator.ValidateAsync(dto);
         if (!result.IsValid)

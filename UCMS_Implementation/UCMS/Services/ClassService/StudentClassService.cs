@@ -418,9 +418,10 @@ public class StudentClassService: IStudentClassService
         int rowCounter = 2;
         int colCounter = 1;
         int headerCounter = 3;
-        double total = 0;
         foreach (var classStudent in cls.ClassStudents)
         {
+            double total = 0;
+
             worksheet.Cell(rowCounter, colCounter++).Value = classStudent.Student.User.LastName + " " + classStudent.Student.User.FirstName;
             worksheet.Cell(rowCounter, colCounter++).Value = classStudent.Student.StudentNumber;
             

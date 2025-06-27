@@ -47,6 +47,16 @@ public class ExerciseSubmissionService: IExerciseSubmissionService
             return ServiceResponseFactory.Failure<GetExerciseSubmissionPreviewForStudentDto>(Messages.CanNotaccessExercise);
         }
 
+        if (exercise.StartDate > DateTime.UtcNow)
+        {
+            return ServiceResponseFactory.Failure<GetExerciseSubmissionPreviewForStudentDto>(Messages.StartTimeNotExceed);
+        }
+        
+        if (exercise.EndDate < DateTime.UtcNow)
+        {
+            return ServiceResponseFactory.Failure<GetExerciseSubmissionPreviewForStudentDto>(Messages.EndTimeExceed);
+        }
+
         var validator = new CreateExerciseSubmissionDtoValidator();
         var result = await validator.ValidateAsync(dto);
         if (!result.IsValid)
