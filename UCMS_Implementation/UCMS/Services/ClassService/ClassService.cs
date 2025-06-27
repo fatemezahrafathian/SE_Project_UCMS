@@ -124,51 +124,72 @@ public class ClassService: IClassService
         return ServiceResponseFactory.Success(responseDto, Messages.ClassesRetrievedSuccessfully); // ClassesFetchedSuccessfully
     }
 
-    public async Task<ServiceResponse<List<GetClassEntryDto>>> GetClassEntries(int classId)
+    public async Task<ServiceResponse<GetClassEntriesDto>> GetClassEntries(int classId)
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
         var cls = await _classRepository.GetClassWithEntriesAsync(classId);
         if (cls == null)
         {
-            return ServiceResponseFactory.Failure<List<GetClassEntryDto>>(Messages.ClassNotFound);
+            return ServiceResponseFactory.Failure<GetClassEntriesDto>(Messages.ClassNotFound);
         }
         if (cls.InstructorId != user!.Instructor!.Id)
         {
-            return ServiceResponseFactory.Failure<List<GetClassEntryDto>>(Messages.ClassCantBeAccessed);
+            return ServiceResponseFactory.Failure<GetClassEntriesDto>(Messages.ClassCantBeAccessed);
         }
 
-        var entriesList = (from project in cls.Projects
-        from phase in project.Phases
-        select new GetClassEntryDto()
-        {
-            EntryId = phase.Id,
-            EntryType = EntryType.Phase,
-            EntryName = phase.Title,
-            PartialScore = phase.PhaseScore,
-            PortionInTotalScore = phase.PortionInTotalScore
-        }).ToList();
-        
-        entriesList.AddRange(cls.Exercises.Select(exercise => new GetClassEntryDto()
-        {
-            EntryId = exercise.Id,
-            EntryType = EntryType.Exercise,
-            EntryName = exercise.Title,
-            PartialScore = exercise.ExerciseScore,
-            PortionInTotalScore = exercise.PortionInTotalScore
-        }));
+        double totalScoreCounter = 0;
+        var entriesList = new List<GetClassEntryDto>();
 
-        entriesList.AddRange(cls.Exams.Select(exam => new GetClassEntryDto()
+        foreach (var project in cls.Projects)
         {
-            EntryId = exam.Id,
-            EntryType = EntryType.Exam,
-            EntryName = exam.Title,
-            PartialScore = exam.ExamScore,
-            PortionInTotalScore = exam.PortionInTotalScore
-        }));
+            foreach (var phase in project.Phases)
+            {
+                totalScoreCounter += phase.PhaseScore;
+                entriesList.Add(new GetClassEntryDto
+                {
+                    EntryId = phase.Id,
+                    EntryType = EntryType.Phase,
+                    EntryName = phase.Title,
+                    PartialScore = phase.PhaseScore,
+                    PortionInTotalScore = phase.PortionInTotalScore
+                });
+            }
+        }
 
-        return ServiceResponseFactory.Success(entriesList, Messages.ClassEntriesFetchedSuccessfully);
+        foreach (var exercise in cls.Exercises)
+        {
+            totalScoreCounter += exercise.ExerciseScore;
+            entriesList.Add(new GetClassEntryDto
+            {
+                EntryId = exercise.Id,
+                EntryType = EntryType.Exercise,
+                EntryName = exercise.Title,
+                PartialScore = exercise.ExerciseScore,
+                PortionInTotalScore = exercise.PortionInTotalScore
+            });
+        }
 
+        foreach (var exam in cls.Exams)
+        {
+            totalScoreCounter += exam.ExamScore;
+            entriesList.Add(new GetClassEntryDto
+            {
+                EntryId = exam.Id,
+                EntryType = EntryType.Exam,
+                EntryName = exam.Title,
+                PartialScore = exam.ExamScore,
+                PortionInTotalScore = exam.PortionInTotalScore
+            });
+        }
+
+        var getClassEntriesDto = new GetClassEntriesDto()
+        {
+            EntryDtos = entriesList,
+            SumOfSPartialScores = totalScoreCounter
+        };
+
+        return ServiceResponseFactory.Success(getClassEntriesDto, Messages.ClassEntriesFetchedSuccessfully);
     }
 
     public async Task<ServiceResponse<string>> DeleteClass(int classId)
