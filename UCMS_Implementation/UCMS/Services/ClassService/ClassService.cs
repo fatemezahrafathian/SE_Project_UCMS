@@ -138,56 +138,43 @@ public class ClassService: IClassService
             return ServiceResponseFactory.Failure<GetClassEntriesDto>(Messages.ClassCantBeAccessed);
         }
 
-        double totalScoreCounter = 0;
-        var entriesList = new List<GetClassEntryDto>();
-
-        foreach (var project in cls.Projects)
+        var entriesList = (from project in cls.Projects
+        from phase in project.Phases
+        select new GetClassEntryDto
         {
-            foreach (var phase in project.Phases)
-            {
-                totalScoreCounter += phase.PhaseScore;
-                entriesList.Add(new GetClassEntryDto
-                {
-                    EntryId = phase.Id,
-                    EntryType = EntryType.Phase,
-                    EntryName = phase.Title,
-                    PartialScore = phase.PhaseScore,
-                    PortionInTotalScore = phase.PortionInTotalScore
-                });
-            }
-        }
-
-        foreach (var exercise in cls.Exercises)
+            EntryId = phase.Id,
+            EntryType = EntryType.Phase,
+            EntryName = phase.Title,
+            PartialScore = phase.PhaseScore,
+            PortionInTotalScore = phase.PortionInTotalScore
+        }).ToList();
+        
+        entriesList.AddRange(cls.Exercises.Select(exercise => new GetClassEntryDto
         {
-            totalScoreCounter += exercise.ExerciseScore;
-            entriesList.Add(new GetClassEntryDto
-            {
-                EntryId = exercise.Id,
-                EntryType = EntryType.Exercise,
-                EntryName = exercise.Title,
-                PartialScore = exercise.ExerciseScore,
-                PortionInTotalScore = exercise.PortionInTotalScore
-            });
-        }
+            EntryId = exercise.Id,
+            EntryType = EntryType.Exercise,
+            EntryName = exercise.Title,
+            PartialScore = exercise.ExerciseScore,
+            PortionInTotalScore = exercise.PortionInTotalScore
+        }));
 
-        foreach (var exam in cls.Exams)
+        entriesList.AddRange(cls.Exams.Select(exam => new GetClassEntryDto
         {
-            totalScoreCounter += exam.ExamScore;
-            entriesList.Add(new GetClassEntryDto
-            {
-                EntryId = exam.Id,
-                EntryType = EntryType.Exam,
-                EntryName = exam.Title,
-                PartialScore = exam.ExamScore,
-                PortionInTotalScore = exam.PortionInTotalScore
-            });
-        }
+            EntryId = exam.Id,
+            EntryType = EntryType.Exam,
+            EntryName = exam.Title,
+            PartialScore = exam.ExamScore,
+            PortionInTotalScore = exam.PortionInTotalScore
+        }));
 
         var getClassEntriesDto = new GetClassEntriesDto()
         {
-            EntryDtos = entriesList,
-            SumOfSPartialScores = totalScoreCounter
+            EntryDtos = entriesList
         };
+        if (cls.TotalScore != null)
+        {
+            getClassEntriesDto.SumOfSPartialScores = (double) cls.TotalScore;
+        }
 
         return ServiceResponseFactory.Success(getClassEntriesDto, Messages.ClassEntriesFetchedSuccessfully);
     }
