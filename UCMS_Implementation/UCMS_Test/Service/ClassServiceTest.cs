@@ -5,10 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Moq;
 using UCMS.DTOs.ClassDto;
 using UCMS.Models;
 using UCMS.Repositories.ClassRepository.Abstraction;
+using UCMS.Repositories.ExamRepository.Abstraction;
+using UCMS.Repositories.ExerciseRepository.Abstraction;
+using UCMS.Repositories.PhaseRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.ClassService.Abstraction;
 using UCMS.Services.ClassService;
@@ -27,7 +31,9 @@ namespace UCMS_Test.Service
         private readonly Mock<IPasswordService> _passwordServiceMock;
         private readonly Mock<IStudentClassService> _studentClassServiceMock;
         private readonly ClassService _classService;
-
+        private readonly Mock<IPhaseRepository> _phaseRepositoryMock;
+        private readonly Mock<IExerciseRepository> _exerciseRepositoryMock;
+        private readonly Mock<IExamRepository> _examRepositoryMock;
         public ClassServiceTest()
         {
             _classRepoMock = new Mock<IClassRepository>();
@@ -35,6 +41,9 @@ namespace UCMS_Test.Service
             _imageServiceMock = new Mock<IImageService>();
             _passwordServiceMock = new Mock<IPasswordService>();
             _studentClassServiceMock = new Mock<IStudentClassService>();
+            _phaseRepositoryMock = new Mock<IPhaseRepository>();
+            _exerciseRepositoryMock = new Mock<IExerciseRepository>();
+            _examRepositoryMock = new Mock<IExamRepository>();
 
             // Setup AutoMapper with real profiles or simple config
             var config = new MapperConfiguration(cfg =>
@@ -61,7 +70,11 @@ namespace UCMS_Test.Service
                 _httpContextAccessorMock.Object,
                 _imageServiceMock.Object,
                 _passwordServiceMock.Object,
-                _studentClassServiceMock.Object);
+                _studentClassServiceMock.Object,
+                _phaseRepositoryMock.Object,
+                _exerciseRepositoryMock.Object,
+                _examRepositoryMock.Object
+                );
         }
 
  [Fact]
