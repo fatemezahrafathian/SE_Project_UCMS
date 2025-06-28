@@ -41,7 +41,7 @@ public class PhaseSubmissionService: IPhaseSubmissionService
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        var phase = await _phaseRepository.GetPhaseSimpleByIdAsync(phaseId);
+        var phase = await _phaseRepository.GetPhaseWithTeamRelationsByIdAsync(phaseId);
         if (phase==null)
         {
             return ServiceResponseFactory.Failure<GetPhaseSubmissionPreviewForStudentDto>(Messages.PhaseNotFound);
@@ -233,7 +233,7 @@ public class PhaseSubmissionService: IPhaseSubmissionService
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        var phase = await _phaseRepository.GetPhaseSimpleByIdAsync(dto.PhaseId);
+        var phase = await _phaseRepository.GetPhaseWithTeamRelationsByIdAsync(dto.PhaseId);
         if (phase==null)
         {
             return ServiceResponseFactory.Failure<List<GetPhaseSubmissionPreviewForStudentDto>>(Messages.PhaseNotFound);
@@ -308,7 +308,7 @@ public class PhaseSubmissionService: IPhaseSubmissionService
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        var phase = await _phaseRepository.GetPhaseWithRelationsByIdAsync(phaseId);
+        var phase = await _phaseRepository.GetPhaseWithClassStudentRelationsByIdAsync(phaseId);
         
         if (phase == null)
         {

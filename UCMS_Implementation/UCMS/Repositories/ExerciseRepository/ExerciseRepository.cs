@@ -53,8 +53,12 @@ public class ExerciseRepository:IExerciseRepository
     }
     public async Task UpdateAsync(Exercise exercise)
     {
-        _context.Exercises.Update(exercise);
-        await _context.SaveChangesAsync();
+        var existingExercise = await _context.Exercises.FindAsync(exercise.Id);
+        if (existingExercise != null)
+        {
+            _context.Exercises.Update(existingExercise);
+            await _context.SaveChangesAsync();
+        }
     }
     public async Task<bool> ExistsWithTitleExceptIdAsync(string title, int classId, int exerciseIdToExclude)
     {
@@ -63,8 +67,12 @@ public class ExerciseRepository:IExerciseRepository
     }
     public async Task DeleteAsync(Exercise exercise)
     {
-        _context.Exercises.Remove(exercise);
-        await _context.SaveChangesAsync();
+        var existingExercise = await _context.Exercises.FindAsync(exercise.Id);
+        if (existingExercise != null)
+        {
+            _context.Exercises.Remove(existingExercise);
+            await _context.SaveChangesAsync();
+        }
     }
     public async Task<List<Exercise>> GetExercisesByStudentIdAsync(int studentId)
     {

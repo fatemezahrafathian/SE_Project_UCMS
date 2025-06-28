@@ -41,13 +41,13 @@ public class TeamService : ITeamService
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        var project = await _projectRepository.GetSimpleProjectByIdAsync(projectId);
+        var project = await _projectRepository.GetProjectByIdAsync(projectId);
         if (project is null)
         {
             return ServiceResponseFactory.Failure<GetTeamForInstructorDto>(Messages.ProjectNotFound);
         }
 
-        if (!await _projectRepository.IsProjectForInstructorAsync(projectId, user!.Instructor!.Id))
+        if (project.Class.InstructorId!=user!.Instructor!.Id)
         {
             return ServiceResponseFactory.Failure<GetTeamForInstructorDto>(Messages.CanNotAccessTheProject);
         }
@@ -111,13 +111,13 @@ public async Task<ServiceResponse<List<GetTeamFileValidationResultDto>>> CreateT
 {
     var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-    var project = await _projectRepository.GetSimpleProjectByIdAsync(projectId);
+    var project = await _projectRepository.GetProjectByIdAsync(projectId);
     if (project is null)
     {
         return ServiceResponseFactory.Failure<List<GetTeamFileValidationResultDto>>(Messages.ProjectNotFound);
     }
 
-    if (!await _projectRepository.IsProjectForInstructorAsync(projectId, user!.Instructor!.Id))
+    if (project.Class.InstructorId!=user!.Instructor!.Id)
     {
         return ServiceResponseFactory.Failure<List<GetTeamFileValidationResultDto>>(Messages.CanNotAccessTheProject);
     }
@@ -276,13 +276,13 @@ public async Task<ServiceResponse<List<GetTeamFileValidationResultDto>>> CreateT
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        var project = await _projectRepository.GetSimpleProjectByIdAsync(projectId);
+        var project = await _projectRepository.GetProjectByIdAsync(projectId);
         if (project is null)
         {
             return ServiceResponseFactory.Failure<GetTeamTemplateFileDto>(Messages.ProjectNotFound);
         }
 
-        if (!await _projectRepository.IsProjectForInstructorAsync(projectId, user!.Instructor!.Id))
+        if (project.Class.InstructorId!=user!.Instructor!.Id)
         {
             return ServiceResponseFactory.Failure<GetTeamTemplateFileDto>(Messages.CanNotAccessTheProject);
         }
@@ -359,12 +359,13 @@ public async Task<ServiceResponse<List<GetTeamFileValidationResultDto>>> CreateT
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        if (!await _projectRepository.ProjectExists(projectId))
+        var project = await _projectRepository.GetProjectByIdAsync(projectId);
+        if (project==null)
         {
             return ServiceResponseFactory.Failure<List<GetTeamPreviewDto>>(Messages.ProjectNotFound);
         }
 
-        if (!await _projectRepository.IsProjectForInstructorAsync(projectId, user!.Instructor!.Id))
+        if (project.Class.InstructorId!=user!.Instructor!.Id)
         {
             return ServiceResponseFactory
                 .Failure<List<GetTeamPreviewDto>>(Messages.CanNotAccessTheProject);
@@ -381,12 +382,13 @@ public async Task<ServiceResponse<List<GetTeamFileValidationResultDto>>> CreateT
     {
         var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
 
-        if (!await _projectRepository.ProjectExists(projectId))
+        var project = await _projectRepository.GetProjectWithRelationsByIdAsync(projectId);
+        if (project==null)
         {
             return ServiceResponseFactory.Failure<List<GetTeamPreviewDto>>(Messages.ProjectNotFound);
         }
 
-        if (!await _projectRepository.IsProjectForStudentAsync(projectId, user!.Student!.Id))
+        if (project.Class.ClassStudents.All(cs=>cs.StudentId!=user!.Student!.Id))
         {
             return ServiceResponseFactory.Failure<List<GetTeamPreviewDto>>(Messages.CanNotAccessTheProject);
         }

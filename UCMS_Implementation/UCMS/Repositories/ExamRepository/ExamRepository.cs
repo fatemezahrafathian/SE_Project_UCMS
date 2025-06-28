@@ -44,8 +44,12 @@ public class ExamRepository:IExamRepository
     
     public async Task UpdateAsync(Exam exam)
     {
-        _context.Exams.Update(exam);
-        await _context.SaveChangesAsync();
+        var existingExam = await _context.Exams.FindAsync(exam.Id);
+        if (existingExam != null)
+        {
+            _context.Exams.Update(existingExam);
+            await _context.SaveChangesAsync();
+        }
     }
 
     public async Task<bool> ExistsWithTitleExceptIdAsync(string title, int classId, int examIdToExclude)
@@ -56,8 +60,12 @@ public class ExamRepository:IExamRepository
     
     public async Task DeleteAsync(Exam exam)
     {
-        _context.Exams.Remove(exam);
-        await _context.SaveChangesAsync();
+        var existingExam = await _context.Exams.FindAsync(exam.Id);
+        if (existingExam != null)
+        {
+            _context.Exams.Remove(existingExam);
+            await _context.SaveChangesAsync();
+        }
     }
     public async Task<List<Exam>> GetExamsByStudentIdAsync(int studentId)
     {

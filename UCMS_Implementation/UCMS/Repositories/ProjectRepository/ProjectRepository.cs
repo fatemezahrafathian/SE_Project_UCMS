@@ -34,15 +34,31 @@ public class ProjectRepository: IProjectRepository
             .FirstOrDefaultAsync(p => p.Id == projectId);
     }
 
+    public async Task<Project?> GetProjectWithRelationsByIdAsync(int projectId)
+    {
+        return await _context.Projects.Where(p => p.Id == projectId)
+            .Include(p => p.Class)
+            .ThenInclude(c => c.ClassStudents)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task UpdateAsync(Project project)
     {
-        _context.Projects.Update(project);
-        await _context.SaveChangesAsync();
+        var existingProject = await _context.Projects.FindAsync(project.Id);
+        if (existingProject != null)
+        {
+            _context.Projects.Update(project);
+            await _context.SaveChangesAsync();
+        }
     }
     public async Task DeleteAsync(Project project)
     {
-        _context.Projects.Remove(project);
-        await _context.SaveChangesAsync();
+        var existingProject = await _context.Projects.FindAsync(project.Id);
+        if (existingProject != null)
+        {
+            _context.Projects.Remove(existingProject);
+            await _context.SaveChangesAsync();
+        }
     }
     public async Task<List<Project>> FilterProjectsForInstructorAsync(int instructorId, string? title, string? classTitle, int? projectStatus, string orderBy, bool descending)
     {
@@ -592,24 +608,6 @@ public class ProjectRepository: IProjectRepository
     //     return result;
     // }
     
-    public async Task<bool> IsProjectForInstructorAsync(int projectId, int instructorId)
-    {
-        return await _context.Projects
-            .AnyAsync(p => p.Id == projectId && p.Class.InstructorId == instructorId);
-    }
-
-    public async Task<bool> IsProjectForStudentAsync(int projectId, int studentId)
-    {
-        return await _context.ClassStudents
-            .AnyAsync(cs =>
-                cs.Class.Projects.Any(p => p.Id == projectId) &&
-                cs.StudentId == studentId);
-    }
-
-    public async Task<bool> ProjectExists(int projectId)
-    {
-        return await _context.Projects.AnyAsync(p => p.Id == projectId);
-    }
     public async Task<bool> IsProjectNameDuplicateAsync(int classId, string projectName)
     {
         return await _context.Projects
