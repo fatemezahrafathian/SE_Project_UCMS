@@ -59,7 +59,13 @@ public class FileService: IFileService
 
     public bool IsValidExtension(IFormFile file, string validExtensions)
     {
-        var extension = Path.GetExtension(file.FileName).Remove(0, 1).ToLowerInvariant();
+        var extension = Path.GetExtension(file.FileName);
+
+        if (string.IsNullOrWhiteSpace(extension) || extension.Length <= 1)
+            return false;
+
+        extension = extension[1..].ToLowerInvariant();
+
         var allowedExtensions = validExtensions
             .Split(',', StringSplitOptions.RemoveEmptyEntries)
             .Select(e => e.Trim().ToLowerInvariant());
@@ -163,20 +169,7 @@ public class FileService: IFileService
 
         return memoryStream.ToArray();
     }
-
-    // public string? GetContentTypeFromPath(string? filePath)
-    // {
-    //     if (string.IsNullOrEmpty(filePath)) return null;
-    //     var extension = Path.GetExtension(filePath).ToLowerInvariant();
-    //     return extension switch
-    //     {
-    //         ".pdf" => "application/pdf",
-    //         ".docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    //         ".doc" => "application/msword",
-    //         _ => "application/octet-stream"
-    //     };
-    // }
-
+    
     public string? GetContentTypeFromPath(string? filePath)
     {
         if (string.IsNullOrEmpty(filePath))
@@ -189,38 +182,5 @@ public class FileService: IFileService
 
         return "application/octet-stream";
     }
-    
-    public async Task<List<FileDownloadDto?>> DownloadFiles(List<string> relativePaths)
-    {
-        var results = new List<FileDownloadDto?>();
-
-        foreach (var relativePath in relativePaths)
-        {
-            var fullPath = Path.Combine(_env.WebRootPath, relativePath.TrimStart('/'));
-
-            if (!File.Exists(fullPath))
-            {
-                results.Add(null);
-                continue;
-            }
-
-            var fileBytes = await File.ReadAllBytesAsync(fullPath);
-            var fileName = Path.GetFileName(relativePath);
-            var contentType = GetContentTypeFromPath(fileName);
-
-            var dto = new FileDownloadDto
-            {
-                FileBytes = fileBytes,
-                FileName = fileName,
-                ContentType = contentType ?? "application/octet-stream"
-            };
-
-            results.Add(dto);
-        }
-
-        return results;
-    }
-
-    
 }
 
