@@ -104,6 +104,11 @@ public class ProjectService: IProjectService
                     return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.ProjectStartDateCannotBeBeforeClassStartDate);
                 }
             }
+
+            if (existingProject.StartDate != dto.StartDate.Value && dto.StartDate.Value < DateTime.UtcNow)
+            {
+                return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.StartDateCanNotBeInPast);
+            }
         }
         if (dto.EndDate.HasValue)
         {
@@ -118,11 +123,12 @@ public class ProjectService: IProjectService
 
         if (dto.Title != null)
         {
-            if (await _repository.IsProjectNameDuplicateAsync(existingProject.ClassId, dto.Title))
+            if (await _repository.IsProjectNameDuplicateAsync(existingProject.ClassId, dto.Title) && existingProject.Title != dto.Title)
             {
                 return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(Messages.titleIsDuplicated);
             }
         }
+        
         var validator = new UpdateProjectDtoValidator(_fileService);
         var result = await validator.ValidateAsync(dto);
         if (!result.IsValid)

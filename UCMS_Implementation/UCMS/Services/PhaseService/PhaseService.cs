@@ -225,6 +225,10 @@ public class PhaseService:IPhaseService
             {
                 return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.PhaseStartTimeCannotBeBeforeProjectStartTime);
             }
+            if (existingPhase.StartDate != dto.StartDate.Value && dto.StartDate.Value < DateTime.UtcNow)
+            {
+                return ServiceResponseFactory.Failure<GetPhaseForInstructorDto>(Messages.StartDateCanNotBeInPast);
+            }
         }
         if (dto.EndDate.HasValue)
         {

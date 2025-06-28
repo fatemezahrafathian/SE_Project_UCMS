@@ -29,7 +29,7 @@ public class UpdateExerciseServiceTest
         ExerciseScore = 10,
         StartDate = DateTime.UtcNow.AddDays(1),
         EndDate = DateTime.UtcNow.AddDays(2),
-        FileFormats = ".pdf, .zip"
+        FileFormats = "pdf, zip"
     };
 
     [Fact]

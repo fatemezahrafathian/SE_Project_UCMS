@@ -42,7 +42,7 @@ namespace UCMS.Services.StudentService
         public async Task<ServiceResponse<StudentProfileDto>> GetCurrentStudent()
         {
             var user = _httpContextAccessor.HttpContext?.Items["User"] as User;
-            Student? student = await _studentRepository.GetStudentByUserIdAsync(user.Id);
+            Student? student = await _studentRepository.GetStudentByUserIdAsync(user!.Id);
 
             return BuildStudentProfileOutput(student, user.Id);
         }

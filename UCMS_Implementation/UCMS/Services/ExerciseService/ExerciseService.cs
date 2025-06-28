@@ -109,6 +109,10 @@ public class ExerciseService:IExerciseService
                     return ServiceResponseFactory.Failure<GetExerciseForInstructorDto>(Messages.ExerciseStartDateCannotBeBeforeClassStartDate);
                 }
             }
+            if (existingExercise.StartDate != dto.StartDate.Value && dto.StartDate.Value < DateTime.UtcNow)
+            {
+                return ServiceResponseFactory.Failure<GetExerciseForInstructorDto>(Messages.StartDateCanNotBeInPast);
+            }
         }
         if (dto.EndDate.HasValue)
         {

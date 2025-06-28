@@ -32,12 +32,12 @@ public class UpdateExerciseDtoValidator:AbstractValidator<PatchExerciseDto>
                 .GreaterThan(0).WithMessage(Messages.ExerciseScoreMustBePositive);
         });
 
-        When(x => x.StartDate.HasValue, () =>
-        {
-            RuleFor(x => x.StartDate.Value)
-                .Must(date => date >= DateTime.UtcNow)
-                .WithMessage(Messages.StartDateCanNotBeInPast);
-        });
+        // When(x => x.StartDate.HasValue, () =>
+        // {
+        //     RuleFor(x => x.StartDate.Value)
+        //         .Must(date => date >= DateTime.UtcNow)
+        //         .WithMessage(Messages.StartDateCanNotBeInPast);
+        // });
 
         When(x => x.EndDate.HasValue, () =>
         {
