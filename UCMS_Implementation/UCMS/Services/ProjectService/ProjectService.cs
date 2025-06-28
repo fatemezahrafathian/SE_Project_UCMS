@@ -1,12 +1,15 @@
 using AutoMapper;
 using UCMS.DTOs;
 using UCMS.DTOs.ProjectDto;
+using UCMS.DTOs.TeamDto;
 using UCMS.Factories;
 using UCMS.Models;
 using UCMS.Repositories.ClassRepository.Abstraction;
 using UCMS.Repositories.ProjectRepository.Abstarction;
+using UCMS.Repositories.TeamRepository.Abstraction;
 using UCMS.Resources;
 using UCMS.Services.FileService;
+using UCMS.Services.TeamService.Abstraction;
 
 namespace UCMS.Services.ProjectService;
 
@@ -18,15 +21,16 @@ public class ProjectService: IProjectService
     private readonly IClassRepository _classRepository;
     private readonly IStudentClassRepository _studentClassRepository;
     private readonly IFileService _fileService;
-    
+    private readonly ITeamService _teamService;
 
-    public ProjectService(IProjectRepository repository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IClassRepository classRepository, IFileService fileService,IStudentClassRepository studentClassRepository)
+    public ProjectService(IProjectRepository repository, IHttpContextAccessor httpContextAccessor, IMapper mapper, IClassRepository classRepository, IFileService fileService,IStudentClassRepository studentClassRepository, ITeamService teamRepository)
     {
         _repository = repository;
         _httpContextAccessor = httpContextAccessor;
         _mapper = mapper;
         _classRepository = classRepository;
         _studentClassRepository = studentClassRepository;
+        _teamService = teamRepository;
         _fileService = fileService;
     }
 
@@ -70,6 +74,7 @@ public class ProjectService: IProjectService
             var errorMessage = result.Errors.First().ErrorMessage;
             return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(errorMessage);
         }
+        
         string? filePath = null;
         if (dto.ProjectFile != null)
         {
@@ -80,6 +85,24 @@ public class ProjectService: IProjectService
         newProject.ClassId=currentClass.Id;
         newProject.ProjectFilePath = filePath;
         await _repository.AddAsync(newProject);
+        
+        var students = await _studentClassRepository.GetStudentsInClassAsync(classId);
+        foreach (var s in students)
+        {
+            List<string> l = new List<string>(){s.StudentNumber};
+            var e = await _teamService.CreateTeam(newProject.Id, new CreateTeamDto()
+            {
+                Name = s.StudentNumber,
+                LeaderStudentNumber = s.StudentNumber,
+                StudentNumbers = l
+            });
+            if (!e.Success)
+            {
+                return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(e.Message);
+            }
+        }
+
+        
         var projectDto = _mapper.Map<GetProjectForInstructorDto>(newProject);
 
         return ServiceResponseFactory.Success(projectDto, Messages.ProjectCreatedSuccessfully); 
