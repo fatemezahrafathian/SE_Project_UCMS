@@ -99,6 +99,7 @@ public class ProjectService: IProjectService
             if (!e.Success)
             {
                 return ServiceResponseFactory.Failure<GetProjectForInstructorDto>(e.Message);
+                
             }
         }
 
