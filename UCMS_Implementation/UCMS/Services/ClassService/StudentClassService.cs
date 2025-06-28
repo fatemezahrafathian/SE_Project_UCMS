@@ -555,7 +555,7 @@ public class StudentClassService: IStudentClassService
                 {
                     if (phase.PortionInTotalScore == null)
                     {
-                        return ServiceResponseFactory.Failure<List<GetStudentClassScoreDto>>(Messages.PortionInTotalScoreMustBeSetFirst);
+                        continue;
                     }
 
                     var studentTeamPhase = await _studentTeamPhaseRepository.GetStudentTeamPhaseAsync(user.Student.Id, phase.Id);
@@ -575,7 +575,7 @@ public class StudentClassService: IStudentClassService
             {
                 if (exercise.PortionInTotalScore == null)
                 {
-                    return ServiceResponseFactory.Failure<List<GetStudentClassScoreDto>>(Messages.PortionInTotalScoreMustBeSetFirst);
+                    continue;
                 }
 
                 var exerciseSubmission = await _exerciseSubmissionRepository.GetFinalExerciseSubmissionsAsync(user.Student.Id, exercise.Id);
@@ -594,7 +594,7 @@ public class StudentClassService: IStudentClassService
             {
                 if (exam.PortionInTotalScore == null)
                 {
-                    return ServiceResponseFactory.Failure<List<GetStudentClassScoreDto>>(Messages.PortionInTotalScoreMustBeSetFirst);
+                    continue;
                 }
                 
                 var studentExam = await _studentExamRepository.GetStudentExamAsync(user.Student.Id, exam.Id);
@@ -659,7 +659,7 @@ public class StudentClassService: IStudentClassService
                 {
                     getStudentClassEntityScoreDto.ScoreInTotalScore = (double)studentTeamPhase.Score;
                     var score = (double) studentTeamPhase.Score * (double) phase.PortionInTotalScore / phase.PhaseScore;
-                    getStudentClassEntityScoreDto.PartialScore = Double.Round(score, 2);
+                    getStudentClassEntityScoreDto.ScoreInPartialScore = Double.Round(score, 2);
                 }
                 
                 result.Add(getStudentClassEntityScoreDto);
@@ -692,7 +692,7 @@ public class StudentClassService: IStudentClassService
             {
                 getStudentClassEntityScoreDto.ScoreInTotalScore = (double)exerciseSubmission.Score;
                 var score = (double) exerciseSubmission.Score * (double) exercise.PortionInTotalScore / exercise.ExerciseScore;
-                getStudentClassEntityScoreDto.PartialScore = Double.Round(score, 2);
+                getStudentClassEntityScoreDto.ScoreInPartialScore = Double.Round(score, 2);
             }
             
             result.Add(getStudentClassEntityScoreDto);
@@ -724,7 +724,7 @@ public class StudentClassService: IStudentClassService
             {
                 getStudentClassEntityScoreDto.ScoreInTotalScore = (double)studentExam.Score;
                 var score = (double) studentExam.Score * (double) exam.PortionInTotalScore / exam.ExamScore;
-                getStudentClassEntityScoreDto.PartialScore = Double.Round(score, 2);
+                getStudentClassEntityScoreDto.ScoreInPartialScore = Double.Round(score, 2);
             }
 
             result.Add(getStudentClassEntityScoreDto);
