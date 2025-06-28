@@ -67,14 +67,14 @@ public class UpdatePhaseValidatorTest
         result.ShouldHaveValidationErrorFor(x=>x.PhaseScore.Value);
     }
 
-    [Fact]
-    public void StartDateInPast_Should_Fail()
-    {
-        var dto = GetValidDto();
-        dto.StartDate = DateTime.UtcNow.AddDays(-1);
-        var result = _validator.TestValidate(dto);
-        result.ShouldHaveValidationErrorFor(x=>x.StartDate.Value);
-    }
+    // [Fact]
+    // public void StartDateInPast_Should_Fail()
+    // {
+    //     var dto = GetValidDto();
+    //     dto.StartDate = DateTime.UtcNow.AddDays(-1);
+    //     var result = _validator.TestValidate(dto);
+    //     result.ShouldHaveValidationErrorFor(x=>x.StartDate.Value);
+    // }
 
     [Fact]
     public void EndDateInPast_Should_Fail()

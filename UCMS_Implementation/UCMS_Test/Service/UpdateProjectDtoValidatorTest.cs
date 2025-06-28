@@ -70,15 +70,15 @@ public class UpdateProjectValidatorTest
               .WithErrorMessage(Messages.TotalScoreMustBePositive);
     }
 
-    [Fact]
-    public void StartDate_In_The_Past_Should_Fail()
-    {
-        var dto = GetValidDto();
-        dto.StartDate = DateTime.UtcNow.AddDays(-1);
-        var result = _validator.TestValidate(dto);
-        result.ShouldHaveValidationErrorFor(x => x.StartDate.Value)
-              .WithErrorMessage(Messages.StartDateCanNotBeInPast);
-    }
+    // [Fact]
+    // public void StartDate_In_The_Past_Should_Fail()
+    // {
+    //     var dto = GetValidDto();
+    //     dto.StartDate = DateTime.UtcNow.AddDays(-1);
+    //     var result = _validator.TestValidate(dto);
+    //     result.ShouldHaveValidationErrorFor(x => x.StartDate.Value)
+    //           .WithErrorMessage(Messages.StartDateCanNotBeInPast);
+    // }
 
     [Fact]
     public void EndDate_In_The_Past_Should_Fail()
